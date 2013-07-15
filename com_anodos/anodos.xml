@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="3.1.0" method="upgrade">
+	<name>com_anodos</name>
+	<creationDate>2013-07-10</creationDate>
+	<copyright>Copyright (C) 2013. All rights reserved.</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<author>Andrey J Bezpalov</author>
+	<authorEmail>abezpalov@ya.ru</authorEmail>
+	<authorUrl>http://anodos.ru</authorUrl>
+	<version>0.0.1</version>
+	<description>Anodos B2B</description>
+
+	<install>
+		<sql>
+			<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+		</sql>
+	</install>
+	<uninstall>
+		<sql>
+			<file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+		</sql>
+	</uninstall>
+
+	<files folder="site">
+		<filename>index.html</filename>
+		<filename>anodos.php</filename>
+		<filename>controller.php</filename>
+		<filename>router.php</filename>
+		<folder>views</folder>
+		<folder>models</folder>
+		<folder>controllers</folder>
+		<folder>helpers</folder>
+	</files>
+	<languages folder="site">
+		<language tag="ru-RU">language/ru-RU.com_anodos.ini</language>
+	</languages>
+
+	<administration>
+		<menu img="components/com_anodos/assets/images/s_com_anodos.png" >COM_ANODOS_MENU</menu>
+		<submenu>
+			<menu link="option=com_anodos&amp;view=contractors" view="contractors" img="components/com_anodos/assets/images/s_contractors.png" alt="Anodos/Contractors">COM_ANODOS_SUBMENU_CONTRACTORS</menu>
+			<menu link="option=com_categories&amp;view=categories&amp;extension=com_anodos.contractor" img="components/com_anodos/assets/images/s_contractor_categories.png" alt="Anodos/ContractorCategories">COM_ANODOS_SUBMENU_CONTRACTOR_CATEGORIES</menu>
+			<menu link="option=com_anodos&amp;view=products" view="products" img="components/com_anodos/assets/images/s_products.png" alt="Anodos/Products">COM_ANODOS_SUBMENU_PRODUCTS</menu>
+			<menu link="option=com_categories&amp;view=categories&amp;extension=com_anodos.product" img="components/com_anodos/assets/images/s_product_categories.png" alt="Anodos/ProductCategories">COM_ANODOS_SUBMENU_PRODUCT_CATEGORIES</menu>
+		</submenu>
+		<files folder="administrator">
+			<filename>access.xml</filename>
+			<filename>config.xml</filename>
+			<filename>controller.php</filename>
+			<filename>index.html</filename>
+			<filename>anodos.php</filename>
+			<folder>controllers</folder>
+			<folder>assets</folder>
+			<folder>helpers</folder>
+			<folder>models</folder>
+			<folder>sql</folder>
+			<folder>tables</folder>
+			<folder>views</folder>
+		</files>
+		<languages folder="administrator">
+			<language tag="ru-RU">language/ru-RU.com_anodos.ini</language>
+			<language tag="ru-RU">language/ru-RU.com_anodos.sys.ini</language>
+		</languages>
+	</administration>
+</extension>
