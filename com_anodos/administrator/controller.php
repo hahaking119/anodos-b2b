@@ -8,7 +8,7 @@ class AnodosController extends JControllerLegacy {
 
 		require_once JPATH_COMPONENT.'/helpers/anodos.php';
 
-		$view = JFactory::getApplication()->input->getCmd('view', 'contractors');
+		$view = JFactory::getApplication()->input->getCmd('view', 'partners');
 		JFactory::getApplication()->input->set('view', $view);
 
 		parent::display($cachable, $urlparams);

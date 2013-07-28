@@ -38,10 +38,21 @@
 	<administration>
 		<menu img="components/com_anodos/assets/images/s_com_anodos.png" >COM_ANODOS_MENU</menu>
 		<submenu>
-			<menu link="option=com_anodos&amp;view=contractors" view="contractors" img="components/com_anodos/assets/images/s_contractors.png" alt="Anodos/Contractors">COM_ANODOS_SUBMENU_CONTRACTORS</menu>
-			<menu link="option=com_categories&amp;view=categories&amp;extension=com_anodos.contractor" img="components/com_anodos/assets/images/s_contractor_categories.png" alt="Anodos/ContractorCategories">COM_ANODOS_SUBMENU_CONTRACTOR_CATEGORIES</menu>
+			<menu link="option=com_anodos&amp;view=partners" view="partners" img="components/com_anodos/assets/images/s_partners.png" alt="Anodos/Partners">COM_ANODOS_SUBMENU_PARTNERS</menu>
+			<menu link="option=com_categories&amp;view=categories&amp;extension=com_anodos.partner" img="components/com_anodos/assets/images/s_partner_categories.png" alt="Anodos/PartnerCategories">COM_ANODOS_SUBMENU_PARTNER_CATEGORIES</menu>
 			<menu link="option=com_anodos&amp;view=products" view="products" img="components/com_anodos/assets/images/s_products.png" alt="Anodos/Products">COM_ANODOS_SUBMENU_PRODUCTS</menu>
 			<menu link="option=com_categories&amp;view=categories&amp;extension=com_anodos.product" img="components/com_anodos/assets/images/s_product_categories.png" alt="Anodos/ProductCategories">COM_ANODOS_SUBMENU_PRODUCT_CATEGORIES</menu>
+			<menu link="option=com_anodos&amp;view=updaters" view="updaters" img="components/com_anodos/assets/images/s_updaters.png" alt="Anodos/Updaters">COM_ANODOS_SUBMENU_UPDATERS</menu>
+			<menu link="option=com_categories&amp;view=categories&amp;extension=com_anodos.updater" img="components/com_anodos/assets/images/s_updater_categories.png" alt="Anodos/UpdaterCategories">COM_ANODOS_SUBMENU_UPDATER_CATEGORIES</menu>
+			<menu link="option=com_anodos&amp;view=categorysynonyms" view="categorysynonyms" img="components/com_anodos/assets/images/s_categorysynonyms.png" alt="Anodos/CategorySynonyms">COM_ANODOS_SUBMENU_CATEGORY_SYNONYMS</menu>
+			<menu link="option=com_anodos&amp;view=vendorsynonyms" view="vendorsynonyms" img="components/com_anodos/assets/images/s_vendorsynonyms.png" alt="Anodos/VendorSynonyms">COM_ANODOS_SUBMENU_VENDOR_SYNONYMS</menu>
+			<menu link="option=com_anodos&amp;view=pricetypes" view="pricetypes" img="components/com_anodos/assets/images/s_pricetypes.png" alt="Anodosprices/Pricetypes">COM_ANODOS_SUBMENU_PRICE_TYPES</menu>
+			<menu link="option=com_anodos&amp;view=currencies" view="currencies" img="components/com_anodos/assets/images/s_currencies.png" alt="Anodosprices/Currencies">COM_ANODOS_SUBMENU_CURRENCIES</menu>
+			<menu link="option=com_anodos&amp;view=prices" view="prices" img="components/com_anodos/assets/images/s_prices.png" alt="Anodosprices/Prices">COM_ANODOS_SUBMENU_PRICES</menu>
+			<menu link="option=com_anodos&amp;view=currencyrates" view="currencyrates" img="components/com_anodos/assets/images/s_currencyrates.png" alt="Anodosprices/Currensyrates">COM_ANODOS_SUBMENU_CURRENCY_RATES</menu>
+			<menu link="option=com_anodos&amp;view=stocks" view="stocks" img="components/com_anodos/assets/images/s_stocks.png" alt="Anodos/Stocks">COM_ANODOS_SUBMENU_STOCKS</menu>
+			<menu link="option=com_categories&amp;view=categories&amp;extension=com_anodos.stock" img="components/com_anodos/assets/images/s_stock_categories.png" alt="Anodos/StockCategories">COM_ANODOS_SUBMENU_STOCK_CATEGORIES</menu>
+			<menu link="option=com_anodos&amp;view=productquantities" view="productquantities" img="components/com_anodos/assets/images/s_productquantities.png" alt="Anodosprices/ProductQuantities">COM_ANODOS_SUBMENU_PRODUCT_QUANTITIES</menu>
 		</submenu>
 		<files folder="administrator">
 			<filename>access.xml</filename>

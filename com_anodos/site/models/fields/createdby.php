@@ -1,7 +1,7 @@
 <?php
 /**
  * @version     0.0.1
- * @package     com_anodoscontractors
+ * @package     com_anodosupdater
  * @copyright   Copyright (C) 2012. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  * @author      Andrey J Bezpalov <abezpalov@ya.ru> - http://anodos.ru

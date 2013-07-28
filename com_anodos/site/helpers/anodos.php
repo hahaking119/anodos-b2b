@@ -8,5 +8,4 @@ abstract class AnodosHelper {
 		$result = 'Something';
 		return $result;
 	}
-
 }
