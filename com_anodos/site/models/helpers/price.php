@@ -1,18 +1,7 @@
 <?php
-/**
- * @version     0.0.1
- * @package     com_anodosupdater
- * @copyright   Copyright (C) 2012. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
- * @author      Andrey J Bezpalov <abezpalov@ya.ru> - http://anodos.ru
- */
 
-// No direct access
 defined('_JEXEC') or die;
 
-/**
- * Price helper.
- */
 class Price {
 
 	// Возвращает последнюю цену на продукт указанного поставщика
@@ -21,7 +10,7 @@ class Price {
 	}
 
 	// Заносит цену в базу
-	public function addPrice($contractorId, $productId, $price, $currencyId, $priceTypeId, $addDate = 3, $createdBy = 0) {
+	public function addPrice($partnerId, $productId, $price, $currencyId, $priceTypeId, $addDate = 3, $createdBy = 0) {
 
 		// Определяем переменные
 		$version = 0;
@@ -33,9 +22,9 @@ class Price {
 		$query = "
 			SELECT MAX(version)
 			FROM `#__anodos_price`
-			WHERE `#__anodos_price`.`contractor_id` = '{$contractorId}'
-			AND   `#__anodos_price`.`product_id`    = '{$productId}'
-			AND   `#__anodos_price`.`created`       = NOW();";
+			WHERE `#__anodos_price`.`partner_id` = '{$partnerId}'
+			AND   `#__anodos_price`.`product_id` = '{$productId}'
+			AND   `#__anodos_price`.`created` = NOW();";
 		$db->setQuery($query);
 		$version =  $db->loadResult();
 
@@ -49,7 +38,7 @@ class Price {
 		// Заносим информацию в базу
 		$query="
 			INSERT INTO `#__anodos_price` (
-				`contractor_id`,
+				`partner_id`,
 				`product_id`,
 				`created`,
 				`version`,
@@ -60,7 +49,7 @@ class Price {
 				`publish_up`,
 				`publish_down`)
 			VALUES (
-				'{$contractorId}',
+				'{$partnerId}',
 				'{$productId}',
 				NOW(),
 				'{$version}',
@@ -138,7 +127,7 @@ class Price {
 	}
 
 	// Снятие с публикации устаревшей информации о ценах
-	public function clearSQL($contractorId) {
+	public function clearSQL($partnerId) {
 
 		// Подключаемся к базе
 		$db = JFactory::getDBO();
@@ -147,7 +136,7 @@ class Price {
 		$query = "
 			UPDATE `#__anodos_price`
 			SET state = '0'
-			WHERE `contractor_id` = '{$contractorId}';";
+			WHERE `contractor_id` = '{$partnerId}';";
 		$db->setQuery($query);
 		$db->query();
 

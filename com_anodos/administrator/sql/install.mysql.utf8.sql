@@ -126,10 +126,9 @@ INSERT INTO `#__categories` (`id`, `asset_id`, `parent_id`, `lft`, `rgt`, `level
 (0, 0, 1, 1, 2, 1, 'uncategorised', 'com_anodos.updater', 'Uncategorised', 'uncategorised', '', '', 1, 0, '0000-00-00 00:00:00', 1, '{"target":"","image":""}', '', '', '{"page_title":"","author":"","robots":""}', 42, '2011-01-01 00:00:01', 0, '0000-00-00 00:00:00', 0, '*', 1);
 
 INSERT INTO `#__anodos_updater` (`id`, `partner_id`, `category_id`, `name`, `alias`, `state`, `ordering`, `description`, `checked_out`, `checked_out_time`, `created`, `created_by`, `modified`, `modified_by`, `publish_up`, `publish_down`, `metadata`, `hits`, `updated`, `updated_by`, `client`, `login`, `pass`, `cookie`, `key`) VALUES (0, 0, 0, 'Обновление курсов валют ЦБР', 'CBR', 1, 0, '', 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', '', 0, '0000-00-00 00:00:00', 0, '', '', '', '', '61f3cff654657b5ba7c69cb949a22a5a');
-INSERT INTO `#__anodos_updater` (`id`, `partner_id`, `category_id`, `name`, `alias`, `state`, `ordering`, `description`, `checked_out`, `checked_out_time`, `created`, `created_by`, `modified`, `modified_by`, `publish_up`, `publish_down`, `metadata`, `hits`, `updated`, `updated_by`, `client`, `login`, `pass`, `cookie`, `key`) VALUES (0, 0, 0, 'Обновление данных Merlion', 'Merlion', 1, 1, '', 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', '', 0, '0000-00-00 00:00:00', 0, '', '', '', '', '0');
+INSERT INTO `#__anodos_updater` (`id`, `partner_id`, `category_id`, `name`, `alias`, `state`, `ordering`, `description`, `checked_out`, `checked_out_time`, `created`, `created_by`, `modified`, `modified_by`, `publish_up`, `publish_down`, `metadata`, `hits`, `updated`, `updated_by`, `client`, `login`, `pass`, `cookie`, `key`) VALUES (0, 0, 0, 'Обновление данных Merlion', 'Merlion', 1, 1, '', 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', '', 0, '0000-00-00 00:00:00', 0, '', '', '', '', 'e33193701a19d5fe636be0880b34f649');
 INSERT INTO `#__anodos_updater` (`id`, `partner_id`, `category_id`, `name`, `alias`, `state`, `ordering`, `description`, `checked_out`, `checked_out_time`, `created`, `created_by`, `modified`, `modified_by`, `publish_up`, `publish_down`, `metadata`, `hits`, `updated`, `updated_by`, `client`, `login`, `pass`, `cookie`, `key`) VALUES (0, 0, 0, 'Обновление данных Treolan', 'Treolan', 1, 2, '', 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', '', 0, '0000-00-00 00:00:00', 0, '', '', '', '', '0');
 INSERT INTO `#__anodos_updater` (`id`, `partner_id`, `category_id`, `name`, `alias`, `state`, `ordering`, `description`, `checked_out`, `checked_out_time`, `created`, `created_by`, `modified`, `modified_by`, `publish_up`, `publish_down`, `metadata`, `hits`, `updated`, `updated_by`, `client`, `login`, `pass`, `cookie`, `key`) VALUES (0, 0, 0, 'Обновление из конфигуратора Fujitsu', 'Fujitsu', 1, 3, '', 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', '', 0, '0000-00-00 00:00:00', 0, '', '', '', '', '0');
-
 
 CREATE  TABLE IF NOT EXISTS `#__anodos_category_synonym` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT ,
@@ -259,7 +258,8 @@ CREATE  TABLE IF NOT EXISTS `#__anodos_stock` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(255) NOT NULL ,
   `alias` VARCHAR(255) NOT NULL ,
-  `delivery_time` DATETIME NOT NULL DEFAULT '0000-00-10 00:00:00' COMMENT 'Срок поставки со склада (желательно указывать с небольшим запасом). По умолчанию планирую отображать наличие со складов со сроком поставки менее 10 дней.' ,
+  `delivery_time_min` DATETIME NOT NULL DEFAULT '0000-00-04 00:00:00' ,
+  `delivery_time_max` DATETIME NOT NULL DEFAULT '0000-00-10 00:00:00' ,
   `partner_id` BIGINT UNSIGNED NOT NULL DEFAULT '0' ,
   `category_id` BIGINT NOT NULL DEFAULT '0' ,
   `state` TINYINT(3) NOT NULL DEFAULT '1' ,

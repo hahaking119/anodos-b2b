@@ -61,8 +61,12 @@ $document->addStyleSheet('components/com_anodos/assets/css/anodos.css');
 							<div class="controls"><?php echo $this->form->getInput('partner_id'); ?></div>
 						</div>
 						<div class="control-group">
-							<div class="control-label"><?php echo $this->form->getLabel('delivery_time'); ?></div>
-							<div class="controls"><?php echo $this->form->getInput('delivery_time'); ?></div>
+							<div class="control-label"><?php echo $this->form->getLabel('delivery_time_min'); ?></div>
+							<div class="controls"><?php echo $this->form->getInput('delivery_time_min'); ?></div>
+						</div>
+						<div class="control-group">
+							<div class="control-label"><?php echo $this->form->getLabel('delivery_time_max'); ?></div>
+							<div class="controls"><?php echo $this->form->getInput('delivery_time_max'); ?></div>
 						</div>
 						<div class="control-group">
 							<div class="control-label"><?php echo $this->form->getLabel('category_id'); ?></div>

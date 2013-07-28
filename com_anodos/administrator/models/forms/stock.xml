@@ -14,9 +14,13 @@
 			size="40"
 			label="COM_ANODOS_FORM_ALIAS" description="COM_ANODOS_FORM_ALIAS_DESC" />
 
-		<field name="delivery_time" type="text"
+		<field name="delivery_time_min" type="text"
 			size="40"
-			label="COM_ANODOS_FORM_DELIVERY_TYME" description="COM_ANODOS_FORM_DELIVERY_TYME_DESC" />
+			label="COM_ANODOS_FORM_DELIVERY_TYME_MIN" description="COM_ANODOS_FORM_DELIVERY_TYME_MIN_DESC" />
+
+		<field name="delivery_time_max" type="text"
+			size="40"
+			label="COM_ANODOS_FORM_DELIVERY_TYME_MAX" description="COM_ANODOS_FORM_DELIVERY_TYME_DESC_MAX" />
 
 		<field name="partner_id" type="sql"
 			query="SELECT 0 AS `id`, '- Не определен -' AS `name` UNION SELECT `id`, `name` FROM `#__anodos_partner`"

@@ -1,18 +1,7 @@
 <?php
-/**
- * @version     0.0.1
- * @package     com_anodosupdater
- * @copyright   Copyright (C) 2012. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
- * @author      Andrey J Bezpalov <abezpalov@ya.ru> - http://anodos.ru
- */
 
-// No direct access
 defined('_JEXEC') or die;
 
-/**
- * Vendor helper.
- */
 class Vendor {
 
 	// TODO TEST Возвращает информацию о производителе (по alias из базы)
@@ -24,7 +13,7 @@ class Vendor {
 		// Выполняем запрос
 		$query = "
 			SELECT *
-			FROM `#__anodos_vendor`
+			FROM `#__anodos_partner`
 			WHERE `alias` = '{$alias}';";
 		$db->setQuery($query);
 		$vendor = $db->loadObject();
@@ -41,14 +30,16 @@ class Vendor {
 
 		// Выполняем запрос добавления
 		$query = "
-			INSERT INTO #__anodos_vendor (
+			INSERT INTO #__anodos_partner (
 				`name`,
 				`alias`,
+				`vendor`,
 				`created`,
 				`created_by`)
 			VALUES (
 				'{$name}',
 				'{$alias}',
+				'1',
 				NOW(),
 				'{$createdBy}');";
 		$db->setQuery($query);
@@ -57,7 +48,7 @@ class Vendor {
 		// Выполняем запрос выборки
 		$query = "
 			SELECT *
-			FROM `#__anodos_vendor`
+			FROM `#__anodos_partner`
 			WHERE `alias` = '{$alias}';";
 		$db->setQuery($query);
 		$vendor = $db->loadObject();

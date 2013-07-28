@@ -136,49 +136,51 @@ class UpdaterMerlion {
 		}
 
 		// Получаем id валюты USD
-//		if (true != $this->currency['USD'] = Currency::getCurrencyFromAlias('USD')) {
-//			$this->addMsg("true != \$this->currency['USD'] = Currency::getCurrencyFromAlias('USD')");
-//			return false;
-//		}
+		$this->currency['USD'] = Currency::getCurrencyFromAlias('USD');
+		if (!isset($this->currency['USD'])) {
+			$this->addMsg('Нет валюты: USD.');
+			return false;
+		}
 
 		// Получаем имя папки для загрузки
-//		if (true != $this->dir = $this->getDir()) {
-//			$this->addMsg('true != $this->dir = $this->getDir()');
-//			return false;
-//		}
+		if (true != $this->dir = $this->getDir()) {
+			$this->addMsg('Не задана папка загрузки.');
+			return false;
+		}
 
 		// Загружаем прайс во временную папку
-//		if (true != $this->loadToDir($this->dir)) {
-//			$this->addMsg('true != $this->loadToDir($this->dir)');
-//			return false;
-//		}
+		if (true != $this->loadToDir($this->dir)) {
+			$this->addMsg('true != $this->loadToDir($this->dir)');
+			return false;
+		}
 
 		// Находим загруженный прайс
-//		if (true != $this->file = $this->getFile($this->dir)) {
-//			$this->addMsg('true != $this->file = $this->getFile($this->dir)');
-//			return false;
-//		}
+		if (true != $this->file = $this->getFile($this->dir)) {
+			$this->addMsg('true != $this->file = $this->getFile($this->dir)');
+			return false;
+		}
 
 		// Загружаем данные в массив
-//		if (true != $this->getData($this->file)) {
-//			$this->addMsg('true != $this->getData($this->file)');
-//			return false;
-//		}
+		if (true != $this->getData($this->file)) {
+			$this->addMsg('true != $this->getData($this->file)');
+			return false;
+		}
 
 //		$this->addMsg('stop'); return false;
 
 		// Помечаем неактуальными устаревшие данные в базе
-//		Price::clearSQL($this->contractor->id);
-//		Stock::clearSQL($this->stock['merlion-russia-stock']->id);
+		Price::clearSQL($this->contractor->id);
+		Stock::clearSQL($this->stock['merlion-russia-stock']->id);
 
 		// Загружаем данные в базу
-//		if (true != $this->toSQL()) { return false; }
+		if (true != $this->toSQL()) { return false; }
 
 		// Отмечаем время обновления
-//		Updater::setUpdated($this->updater->id);
+		$this->setUpdated($this->updater->id);
 
 		// Выводим сообщение о завершении обработки
-//		$this->addMsg("{$this->updater->name} завершено.");
+		$this->addMsg("The End.");
+		return true;
 	}
 
 	// Создает папку для загрузки, возвращает ее имя

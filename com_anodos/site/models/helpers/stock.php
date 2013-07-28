@@ -57,7 +57,7 @@ class Stock {
 		return $stock;
 	}
 
-	public function linkStockToContractor ($stockId, $contractorId, $createdBy = 0) {
+	public function linkStockToPartner($stockId, $partnerId, $createdBy = 0) {
 
 		// Подключаемся к базе
 		$db = JFactory::getDBO();
@@ -65,7 +65,7 @@ class Stock {
 		// Выполняем запрос
 		$query = "
 			UPDATE `#__anodos_stock`
-			SET `contractor_id` = {$contractorId}
+			SET `partner_id` = {$partnerId}
 			WHERE `id` = '{$stockId}';";
 		$db->setQuery($query);
 		$db->query();
@@ -101,13 +101,13 @@ class Stock {
 		// Инициализируем переменные
 		$db =& JFactory::getDBO();
 
-		// TODO проверем наличие цены c теми же ключами
+		// TODO проверем записи цены c теми же ключами
 		$query = "
 			SELECT MAX(version)
 			FROM `#__anodos_product_quantity`
 			WHERE `#__anodos_product_quantity`.`stock_id` = '{$stockId}'
-			AND   `#__anodos_product_quantity`.`product_id`    = '{$productId}'
-			AND   `#__anodos_product_quantity`.`created`       = NOW();";
+			AND   `#__anodos_product_quantity`.`product_id` = '{$productId}'
+			AND   `#__anodos_product_quantity`.`created` = NOW();";
 		$db->setQuery($query);
 		$version =  $db->loadResult();
 
