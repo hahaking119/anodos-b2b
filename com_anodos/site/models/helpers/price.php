@@ -86,7 +86,7 @@ class Price {
 	}
 
 	// Добавляет тип цен
-	public function addPriceType($name, $alias, $type = 0, $fixed = 0, $createdBy = 0) {
+	public function addPriceType($name, $alias, $input = 1, $output = 0, $fixed = 0, $createdBy = 0) {
 
 		// Подключаемся к базе
 		$db = JFactory::getDBO();
@@ -96,7 +96,8 @@ class Price {
 			INSERT INTO #__anodos_price_type (
 				`name`,
 				`alias`,
-				`type`,
+				`input`,
+				`output`,
 				`fixed`,
 				`state`,
 				`created`,
@@ -105,7 +106,8 @@ class Price {
 			VALUES (
 				'{$name}',
 				'{$alias}',
-				'{$type}',
+				'{$input}',
+				'{$output}',
 				'{$fixed}',
 				'1',
 				NOW(),
@@ -136,7 +138,7 @@ class Price {
 		$query = "
 			UPDATE `#__anodos_price`
 			SET state = '0'
-			WHERE `contractor_id` = '{$partnerId}';";
+			WHERE `partner_id` = '{$partnerId}';";
 		$db->setQuery($query);
 		$db->query();
 

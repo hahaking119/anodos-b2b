@@ -3,6 +3,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.filesystem.file');
+require_once JPATH_COMPONENT.'/models/helpers/updater.php';
 require_once JPATH_COMPONENT.'/models/helpers/partner.php';
 require_once JPATH_COMPONENT.'/models/helpers/currency.php';
 
@@ -31,64 +32,11 @@ class UpdaterCBR {
 		$this->msg .= $msg."\n";
 	}
 
-	protected function getUpdater($id) {
-
-		// Подключаемся к базе
-		$db = JFactory::getDBO();
-
-		// Выполняем запрос
-		$query = "
-			SELECT *
-			FROM `#__anodos_updater`
-			WHERE `id` = '{$id}';";
-		$db->setQuery($query);
-		$updater = $db->loadObject();
-
-		// Возвращаем результат
-		return $updater;
-	}
-
-	// Привязывает загрузчика к контрагенту
-	protected function linkToPartner ($updaterId, $partnerId) {
-
-		// Подколючаемся к базе
-		$db = JFactory::getDBO();
-
-		// Выполняем запрос
-		$query = "
-			UPDATE `#__anodos_updater`
-			SET `partner_id` = {$partnerId}
-			WHERE `id` = '{$partnerId}';";
-		$db->setQuery($query);
-		$db->query();
-
-		// Возвразщаем результат
-		return true;
-	}
-
-	// Устанавливает время обновления
-	protected function setUpdated ($id) {
-
-		// Подколючаемся к базе
-		$db = JFactory::getDBO();
-
-		// Выполняем запрос
-		$query = "
-			UPDATE `#__anodos_updater`
-			SET `updated` = NOW()
-			WHERE `id` = '{$id}';";
-		$db->setQuery($query);
-		$db->query();
-
-		// Возвразщаем результат
-		return true;
-	}
-
 	// Точка входа 
 	public function update($id) {
 
 		// Получаем объект загрузчика
-		$this->updater = $this->getUpdater($id);
+		$this->updater = Updater::getUpdater($id);
 
 		// Получаем объект партнера
 		$this->partner = Partner::getPartnerFromAlias($this->partnerAlias);
@@ -104,7 +52,7 @@ class UpdaterCBR {
 
 		// Проверяем привязку загрузчика к контрагенту
 		if ($this->updater->partner_id != $this->partner->id) {
-			$this->linkToPartner($this->updater->id, $this->partner->id);		
+			Updater::linkToPartner($this->updater->id, $this->partner->id);		
 		}
 
 		// Определяем дату
@@ -132,7 +80,7 @@ class UpdaterCBR {
 		}
 
 		// Отмечаем время обновления
-		$this->setUpdated($this->updater->id);
+		Updater::setUpdated($this->updater->id);
 
 		// Выводим сообщение о завершении обработки
 		$this->addMsg("Завершено.");

@@ -4,7 +4,7 @@ defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
 
-class AnodosViewCategorySynonym extends JViewLegacy {
+class AnodosViewCategorysynonym extends JViewLegacy {
 
 	protected $state;
 	protected $item;

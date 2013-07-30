@@ -32,7 +32,11 @@ class Product {
 		}
 
 		// Возвращаем результат
-		return $product;
+		if (isset($product->id)) {
+			return $product;
+		} else {
+			return false;
+		}
 	}
 
 	// Добавляет продукт

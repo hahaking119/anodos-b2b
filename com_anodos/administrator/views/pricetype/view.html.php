@@ -4,7 +4,7 @@ defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
 
-class AnodosViewPriceType extends JViewLegacy {
+class AnodosViewPricetype extends JViewLegacy {
 
 	protected $state;
 	protected $item;

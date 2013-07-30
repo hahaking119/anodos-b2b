@@ -12,9 +12,9 @@ class AnodosViewProducts extends JViewLegacy {
 
 	public function display($tpl = null) {
 
-		$this->state		= $this->get('State');
-		$this->items		= $this->get('Items');
-		$this->pagination	= $this->get('Pagination');
+		$this->state = $this->get('State');
+		$this->items = $this->get('Items');
+		$this->pagination = $this->get('Pagination');
 
 		// Check for errors
 		if (count($errors = $this->get('Errors'))) {

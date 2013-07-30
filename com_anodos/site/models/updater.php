@@ -26,7 +26,7 @@ class AnodosModelUpdater extends JModelList {
 	public function reportToMail() { // TODO
 
 		if (mail("abezpalov@ya.ru", $this->subject, $this->msg, "From: bot@anodos.ru \r\n")) {
-			echo "Messege acepted for delivery.";
+			echo "Message acepted for delivery.";
 		} else {
 			echo "Some error happen.";
 		}
@@ -67,6 +67,7 @@ class AnodosModelUpdater extends JModelList {
 			return true;
 		} else {
 			$this->subject .= 'error';
+			$this->msg .= $updater->getMsg();
 			return false;
 		}
 	}
