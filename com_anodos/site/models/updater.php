@@ -23,8 +23,7 @@ class AnodosModelUpdater extends JModelList {
 		$this->msg .= $msg."\n";
 	}
 
-	public function reportToMail() { // TODO
-
+	public function reportToMail() {
 		if (mail("abezpalov@ya.ru", $this->subject, $this->msg, "From: bot@anodos.ru \r\n")) {
 			echo "Message acepted for delivery.";
 		} else {
@@ -36,9 +35,12 @@ class AnodosModelUpdater extends JModelList {
 
 		// Получаем данные загрузчика
 		$updater = $this->getUpdater($id);
-		if (md5($key) == $updater->key) {
-			$this->addMsg('Ключ загрузчика подошел.');
-		} else {
+		if (!isset($updater->id)) {
+			$this->addMsg('Error #'.__LINE__." - обращение к несуществующему загрузчику.");
+			return false;
+		}
+
+		if (md5($key) != $updater->key) {
 			$this->addMsg('Ключ загрузчика не подошел.');
 			$this->addMsg("\$key = $key");
 			$this->addMsg("md5(\$key) = ".md5($key));
@@ -59,7 +61,6 @@ class AnodosModelUpdater extends JModelList {
 		// Запускаем загрузчик
 		$this->subject = "Anodos {$updater->alias} update ";
 		$updater = 'Updater'.$updater->alias;
-		$this->addMsg("\$updater = $updater");
 		$updater = new $updater;
 		if ($updater->update($id)) {
 			$this->subject .= 'complite';

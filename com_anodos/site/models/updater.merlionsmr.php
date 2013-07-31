@@ -15,16 +15,19 @@ require_once JPATH_COMPONENT.'/models/helpers/product.php';
 require_once JPATH_COMPONENT.'/models/helpers/price.php';
 require_once JPATH_COMPONENT.'/models/helpers/currency.php';
 
-class UpdaterMerlionMsk {
+class UpdaterMerlionSmr {
 
 	// Объявляем переменные
 	protected $partnerAlias = 'merlion';
 	protected $partnerName = 'Merlion';
+
 	protected $updater;
 	protected $partner;
+
 	protected $stock = array();
 	protected $priceType = array();
 	protected $currency = array();
+	protected $data = array();
 	protected $msg;
 
 	public function getMsg() {
@@ -59,8 +62,8 @@ class UpdaterMerlionMsk {
 		}
 
 		// Получаем объект склада
-		$alias = 'merlion-msk-stock';
-		$name = 'Московский склад Merlion';
+		$alias = 'merlion-smr-stock';
+		$name = 'Самарский склад Merlion';
 		$this->stock[$alias] = Stock::getStockFromAlias($alias);
 		if (!isset($this->stock[$alias]->id)) {
 			$this->stock[$alias] = Stock::addStock($name, $alias, $this->partner->id, 0);
@@ -101,6 +104,7 @@ class UpdaterMerlionMsk {
 			return false;
 		}
 
+
 		// Загружаем прайс во временную папку
 		if (!$this->loadToDir($dir)) {
 			$this->addMsg('Error #'.__LINE__.' - Ошибка загрузки прайса в локальную папку.');
@@ -116,7 +120,7 @@ class UpdaterMerlionMsk {
 
 		// Помечаем неактуальными устаревшие данные в базе
 		Price::clearSQL($this->partner->id);
-		Stock::clearSQL($this->stock['merlion-msk-stock']->id);
+		Stock::clearSQL($this->stock['merlion-smr-stock']->id);
 
 		// Загружаем данные в массив
 		if (!$this->getData($file)) {
@@ -195,7 +199,7 @@ class UpdaterMerlionMsk {
 		if (true == $ch = curl_init()) {
 
 			// Устанавливаем URL запроса
-			curl_setopt($ch, CURLOPT_URL, 'https://iz.merlion.ru/?action=Y3F86565&action1=YD56AF97&lol=f3725fa395c62ca96b1c665791c371d6&type=xml');
+			curl_setopt($ch, CURLOPT_URL, 'https://iz.merlion.ru/?action=Y3F86565&action1=YD56AF97&lol=7847cfad4a5f9721df110e4038e8cdf2&type=xml');
 
 			// Пробуем получить вывод в файл
 			$fp = fopen($dir.'Data.xml.zip', "w");
@@ -398,7 +402,7 @@ class UpdaterMerlionMsk {
 			if (!isset($synonym->id)) { // Нет синонима в базе
 				$this->addMsg("Не удалось добавить синоним категории: {$product['categorySynonym']}");
 			} else {
-				$this->addMsg("Добавлен синоним категории : {$synonym->name}");
+				$this->addMsg("Добавлен синоним категории: {$synonym->name}");
 			}
 		}
 
@@ -430,7 +434,7 @@ class UpdaterMerlionMsk {
 		$quantity = $this->getCorrectedQuantity($product['Avail']);
 		if ((true == $price) and (true == $quantity)) {
 			Price::addPrice($this->partner->id, $productId, $price, $this->currency['USD']->id, $this->priceType['rdp']->id, 3, 0);
-			Stock::addQuantity($this->stock['merlion-msk-stock']->id, $productId, $quantity, 3, 0);
+			Stock::addQuantity($this->stock['merlion-smr-stock']->id, $productId, $quantity, 3, 0);
 			return true;
 		} else {
 			return false;

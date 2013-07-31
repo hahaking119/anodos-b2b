@@ -28,7 +28,7 @@
 			label="COM_ANODOS_FORM_PARTNER" description="COM_ANODOS_FORM_PARTNER_DESC" />
 
 		<field name="category_id" type="category"
-			size="40" required="true" extension="com_anodos.ctock" filter="raw"
+			size="40" required="true" extension="com_anodos.stock" filter="raw"
 			label="COM_ANODOS_FORM_CATEGORY" description="COM_ANODOS_FORM_CATEGORY_DESC" />
 
 		<field name="state" type="list"

@@ -24,7 +24,7 @@ $document->addStyleSheet('components/com_anodos/assets/css/anodos.css');
 	}
 </script>
 
-<form action="<?php echo JRoute::_('index.php?option=com_anodosstocks&layout=edit&id='.(int) $this->item->id); ?>" method="post" name="adminForm" id="stock-form" class="form-validate">
+<form action="<?php echo JRoute::_('index.php?option=com_anodos&layout=edit&id='.(int) $this->item->id); ?>" method="post" name="adminForm" id="stock-form" class="form-validate">
 	<div class="row-fluid">
 		<!-- Begin Content -->
 		<div class="span10 form-horizontal">
