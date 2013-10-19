@@ -4,9 +4,9 @@ defined('_JEXEC') or die;
 
 class AnodosTableProduct extends JTable {
 
-	public function __construct(&$db) {
-		parent::__construct('#__anodos_product', 'id', $db);
-	}
+    public function __construct(&$db) {
+        parent::__construct('#__anodos_product', 'id', $db);
+    }
 
 	public function bind($array, $ignore = '') {
 

@@ -11,33 +11,6 @@ DROP TABLE IF EXISTS "#__anodos_product";
 DROP TABLE IF EXISTS "#__anodos_product_vat";
 DROP TABLE IF EXISTS "#__anodos_partner";
 
-INSERT INTO "#__categories" (
-  "parent_id",
-  "lft",
-  "rgt",
-  "level",
-  "path",
-  "extension",
-  "title",
-  "alias",
-  "note",
-  "description",
-  "published",
-  "checked_out",
-  "access",
-  "params",
-  "metadesc",
-  "metakey",
-  "metadata",
-  "created_user_id",
-  "created_time",
-  "language")
-VALUES
-('1', '1', '2', '1', 'uncategorised', 'com_anodos.partner', 'Uncategorised', 'uncategorised', '', '', '1', '0', '1', '{"target":"","image":""}', '', '', '{"page_title":"","author":"","robots":""}', '42', '2011-01-01 00:00:01','*'),
-('1', '1', '2', '1', 'uncategorised', 'com_anodos.product', 'Uncategorised', 'uncategorised', '', '', '1', '0', '1', '{"target":"","image":""}', '', '', '{"page_title":"","author":"","robots":""}', '42', '2011-01-01 00:00:01','*'),
-('1', '1', '2', '1', 'uncategorised', 'com_anodos.updater', 'Uncategorised', 'uncategorised', '', '', '1', '0', '1', '{"target":"","image":""}', '', '', '{"page_title":"","author":"","robots":""}', '42', '2011-01-01 00:00:01','*'),
-('1', '1', '2', '1', 'uncategorised', 'com_anodos.stock'  , 'Uncategorised', 'uncategorised', '', '', '1', '0', '1', '{"target":"","image":""}', '', '', '{"page_title":"","author":"","robots":""}', '42', '2011-01-01 00:00:01','*');
-
 CREATE TABLE IF NOT EXISTS "#__anodos_partner" (
 	"id" serial8 NOT NULL,
 	"name" varchar(255) NOT NULL DEFAULT '',
@@ -142,11 +115,11 @@ INSERT INTO "#__anodos_updater" (
   "ordering",
   "key" )
 VALUES
-(DEFAULT, '1', '1', 'Обновление курсов валют ЦБР', 'CBR', 1, 0, '61f3cff654657b5ba7c69cb949a22a5a'),
-(DEFAULT, '1', '1', 'Обновление из конфигуратора Fujitsu', 'Fujitsu', 1, 3, '0'),
-(DEFAULT, '1', '1', 'Обновление данных Treolan', 'Treolan', 1, 2, '13c9666ea5dede5ca60a90a515d3762f'),
-(DEFAULT, '1', '1', 'Обновление данных Merlion (Москва)', 'MerlionMsk', 1, 1, 'e33193701a19d5fe636be0880b34f649'),
-(DEFAULT, '1', '1', 'Обновление данных Merlion (Самара)', 'MerlionSmr', 1, 4, '8411e9754b9b7e6d16be6f84c71a23cb');
+(DEFAULT, '1', '1', 'Обновление курсов валют ЦБР', 'CBR', 1, 0, 'e33193701a19d5fe636be0880b34f649'),
+(DEFAULT, '1', '1', 'Обновление из конфигуратора Fujitsu', 'Fujitsu', 1, 3, '00d3600a2bdd09cd5450648581568976'),
+(DEFAULT, '1', '1', 'Обновление данных Treolan', 'Treolan', 1, 2, '174c6bbd46dc5fc516e126045dac4095'),
+(DEFAULT, '1', '1', 'Обновление данных Merlion (Москва)', 'MerlionMsk', 1, 1, '00d3600a2bdd09cd5450648581568976'),
+(DEFAULT, '1', '1', 'Обновление данных Merlion (Самара)', 'MerlionSmr', 1, 4, '589f5103767c025b8f2b48f549823fb1');
 
 CREATE TABLE IF NOT EXISTS "#__anodos_category_synonym" (
 	"id" serial8 NOT NULL,
