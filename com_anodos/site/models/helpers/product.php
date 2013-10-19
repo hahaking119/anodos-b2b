@@ -13,9 +13,9 @@ class Product {
 		// Выполняем запрос
 		$query = "
 			SELECT *
-			FROM `#__anodos_product`
-			WHERE '{$article}' = `article`
-			AND '{$vendorId}' = `vendor_id`;";
+			FROM #__anodos_product
+			WHERE '{$article}' = article
+			AND '{$vendorId}' = vendor_id;";
 		$db->setQuery($query);
 		$product = $db->loadObject();
 
@@ -25,8 +25,8 @@ class Product {
 			// Выполняем запрос
 			$query = "
 				SELECT *
-				FROM `#__anodos_product`
-				WHERE '{$id}' = `{$product->duble_of}`;";
+				FROM #__anodos_product
+				WHERE '{$id}' = {$product->duble_of};";
 			$db->setQuery($query);
 			$product = $db->loadObject();
 		}
@@ -50,15 +50,15 @@ class Product {
 		// Выполняем запрос вставки
 		$query = "
 			INSERT INTO #__anodos_product (
-				`name`,
-				`alias`,
-				`full_name`,
-				`category_id`,
-				`vendor_id`,
-				`article`,
-				`created`,
-				`created_by`,
-				`state`)
+				name,
+				alias,
+				full_name,
+				category_id,
+				vendor_id,
+				article,
+				created,
+				created_by,
+				state)
 			VALUES (
 				'{$name}',
 				'{$alias}',
@@ -75,9 +75,9 @@ class Product {
 		// Выполняем запрос выборки
 		$query = "
 			SELECT *
-			FROM `#__anodos_product`
-			WHERE '{$article}' = `article`
-			AND '{$vendorId}' = `vendor_id`;";
+			FROM #__anodos_product
+			WHERE '{$article}' = article
+			AND '{$vendorId}' = vendor_id;";
 		$db->setQuery($query);
 		$product = $db->loadObject();
 

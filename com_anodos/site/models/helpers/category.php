@@ -13,9 +13,9 @@ class Category {
 		// Выполняем запрос выборки
 		$query = "
 			SELECT *
-			FROM `#__anodos_category_synonym`
-			WHERE '{$synonym}' <=> `name`
-			AND '{$partnerId}' = `partner_id`;";
+			FROM #__anodos_category_synonym
+			WHERE '{$synonym}' = name
+			AND '{$partnerId}' = partner_id;";
 		$db->setQuery($query);
 		$synonym = $db->loadObject();
 
@@ -33,15 +33,15 @@ class Category {
 
 		// Выполняем запрос вставки
 		$query = "
-			INSERT INTO `#__anodos_category_synonym` (
-				`name`,
-				`category_id`,
-				`partner_id`,
-				`created`,
-				`created_by`)
+			INSERT INTO #__anodos_category_synonym (
+				name,
+				category_id,
+				partner_id,
+				created,
+				created_by)
 			VALUES (
 				'{$synonym}',
-				'0',
+				'1',
 				'{$partnerId}',
 				NOW(),
 				'{$createdBy}');";
@@ -51,9 +51,9 @@ class Category {
 		// Выполняем запрос выборки
 		$query = "
 			SELECT *
-			FROM `#__anodos_category_synonym`
-			WHERE '{$synonym}' <=> `name`
-			AND '{$partnerId}' = `partner_id`;";
+			FROM #__anodos_category_synonym
+			WHERE '{$synonym}' = name
+			AND '{$partnerId}' = partner_id;";
 		$db->setQuery($query);
 		$synonym = $db->loadObject();
 

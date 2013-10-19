@@ -58,7 +58,7 @@ class AnodosViewPrices extends JViewLegacy {
 	protected function getSortFields() {
 		return array(
 			'product_name' => JText::_('COM_ANODOS_PRODUCT'),
-			'partner_name' => JText::_('COM_ANODOS_PARTNER'),
+			'stock_name' => JText::_('COM_ANODOS_STOCK'),
 			'price' => JText::_('COM_ANODOS_PRICE'),
 			'a.state' => JText::_('COM_ANODOS_STATE'),
 			'a.created' => JText::_('COM_ANODOS_CREATED'),

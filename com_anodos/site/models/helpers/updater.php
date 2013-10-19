@@ -12,8 +12,8 @@ class Updater {
 		// Выполняем запрос
 		$query = "
 			SELECT *
-			FROM `#__anodos_updater`
-			WHERE `id` = '{$id}';";
+			FROM #__anodos_updater
+			WHERE id = '{$id}';";
 		$db->setQuery($query);
 		$updater = $db->loadObject();
 
@@ -29,9 +29,9 @@ class Updater {
 
 		// Выполняем запрос
 		$query = "
-			UPDATE `#__anodos_updater`
-			SET `partner_id` = {$partnerId}
-			WHERE `id` = '{$partnerId}';";
+			UPDATE #__anodos_updater
+			SET partner_id = {$partnerId}
+			WHERE id = '{$partnerId}';";
 		$db->setQuery($query);
 		$db->query();
 
@@ -47,9 +47,9 @@ class Updater {
 
 		// Выполняем запрос
 		$query = "
-			UPDATE `#__anodos_updater`
-			SET `updated` = NOW()
-			WHERE `id` = '{$id}';";
+			UPDATE #__anodos_updater
+			SET updated = NOW()
+			WHERE id = '{$id}';";
 		$db->setQuery($query);
 		$db->query();
 

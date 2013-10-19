@@ -13,8 +13,8 @@ class Stock {
 		// Выполняем запрос
 		$query = "
 			SELECT *
-			FROM `#__anodos_stock`
-			WHERE `alias` = '{$alias}';";
+			FROM #__anodos_stock
+			WHERE alias = '{$alias}';";
 		$db->setQuery($query);
 		$stock = $db->loadObject();
 
@@ -31,11 +31,11 @@ class Stock {
 		// Выполняем запрос вставки
 		$query = "
 			INSERT INTO #__anodos_stock (
-				`name`,
-				`alias`,
-				`partner_id`,
-				`created`,
-				`created_by`)
+				name,
+				alias,
+				partner_id,
+				created,
+				created_by)
 			VALUES (
 				'{$name}',
 				'{$alias}',
@@ -48,8 +48,8 @@ class Stock {
 		// Выполняем запрос выборки
 		$query = "
 			SELECT *
-			FROM `#__anodos_stock`
-			WHERE `alias` = '{$alias}';";
+			FROM #__anodos_stock
+			WHERE alias = '{$alias}';";
 		$db->setQuery($query);
 		$stock = $db->loadObject();
 
@@ -64,9 +64,9 @@ class Stock {
 
 		// Выполняем запрос
 		$query = "
-			UPDATE `#__anodos_stock`
-			SET `partner_id` = {$partnerId}
-			WHERE `id` = '{$stockId}';";
+			UPDATE #__anodos_stock
+			SET partner_id = {$partnerId}
+			WHERE id = '{$stockId}';";
 		$db->setQuery($query);
 		$db->query();
 
@@ -82,9 +82,9 @@ class Stock {
 
 		// Выполняем запрос
 		$query = "
-			UPDATE `#__anodos_product_quantity`
+			UPDATE #__anodos_product_quantity
 			SET state = '0'
-			WHERE `stock_id` = '{$stockId}';";
+			WHERE stock_id = '{$stockId}';";
 		$db->setQuery($query);
 		$db->query();
 
@@ -104,31 +104,23 @@ class Stock {
 		// TODO проверем записи цены c теми же ключами
 		$query = "
 			SELECT MAX(version)
-			FROM `#__anodos_product_quantity`
-			WHERE `#__anodos_product_quantity`.`stock_id` = '{$stockId}'
-			AND   `#__anodos_product_quantity`.`product_id` = '{$productId}'
-			AND   `#__anodos_product_quantity`.`created` = NOW();";
+			FROM #__anodos_product_quantity
+			WHERE #__anodos_product_quantity.stock_id = '{$stockId}'
+			AND #__anodos_product_quantity.product_id = '{$productId}'
+			AND #__anodos_product_quantity.created = NOW();";
 		$db->setQuery($query);
 		$version =  $db->loadResult();
 
-		//Получаем последнюю версию
-		if (NULL != $version) {
-			$version++;
-		} else {
-			$version = 0;
-		}
-
 		// Заносим информацию в базу
 		$query="
-			INSERT INTO `#__anodos_product_quantity` (
-				`product_id`,
-				`stock_id`,
-				`version`,
-				`quantity`,
-				`created`,
-				`created_by`,
-				`publish_up`,
-				`publish_down`)
+			INSERT INTO #__anodos_product_quantity (
+				product_id,
+				stock_id,
+				quantity,
+				created,
+				created_by,
+				publish_up,
+				publish_down)
 			VALUES (
 				'{$productId}',
 				'{$stockId}',

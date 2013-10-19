@@ -96,6 +96,9 @@ if (!empty($this->extra_sidebar)) {
 						<?php echo JHtml::_('grid.sort', 'COM_ANODOS_NAME', 'a.name', $listDirn, $listOrder); ?>
 					</th>
 					<th class="left">
+						<?php echo JHtml::_('grid.sort', 'COM_ANODOS_PARTNER', 'partner_name', $listDirn, $listOrder); ?>
+					</th>
+					<th class="left">
 						<?php echo JHtml::_('grid.sort', 'COM_ANODOS_VENDOR', 'vendor_name', $listDirn, $listOrder); ?>
 					</th>
 					<th class='left'>
@@ -134,6 +137,9 @@ if (!empty($this->extra_sidebar)) {
 					<?php else : ?>
 						<?php echo $this->escape($item->name); ?>
 					<?php endif; ?>
+					</td>
+					<td class="left">
+						<?php echo $item->partner_name; ?>
 					</td>
 					<td class="left">
 						<select name="vendors[]" class="inputbox">

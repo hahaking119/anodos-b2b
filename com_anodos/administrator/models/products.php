@@ -63,7 +63,7 @@ class AnodosModelProducts extends JModelList {
 				'a.*'
 			)
 		);
-		$query->from('`#__anodos_product` AS a');
+		$query->from('#__anodos_product AS a');
 
 		// Join category
 		$query->select('category.title AS category_name');
@@ -72,10 +72,6 @@ class AnodosModelProducts extends JModelList {
 		// Join vendor
 		$query->select('vendor.name AS vendor_name');
 		$query->join('LEFT', '#__anodos_partner AS vendor ON vendor.id = a.vendor_id');
-
-		// Join checked out user
-		$query->select('uc.name AS editor_name');
-		$query->join('LEFT', '#__users AS uc ON uc.id=a.checked_out');
 
 		// Join over the user field 'created_by'
 		$query->select('author.name AS author_name');

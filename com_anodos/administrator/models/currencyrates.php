@@ -63,7 +63,7 @@ class AnodosModelCurrencyRates extends JModelList {
 				'a.*'
 			)
 		);
-		$query->from('`#__anodos_currency_rate` AS a');
+		$query->from('#__anodos_currency_rate AS a');
 
 		// Join currency
 		$query->select('currency.name AS currency_name');

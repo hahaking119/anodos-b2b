@@ -20,14 +20,11 @@ class UpdaterMerlionSmr {
 	// Объявляем переменные
 	protected $partnerAlias = 'merlion';
 	protected $partnerName = 'Merlion';
-
 	protected $updater;
 	protected $partner;
-
 	protected $stock = array();
 	protected $priceType = array();
 	protected $currency = array();
-	protected $data = array();
 	protected $msg;
 
 	public function getMsg() {
@@ -103,7 +100,6 @@ class UpdaterMerlionSmr {
 			$this->addMsg('Error #'.__LINE__.' - Не задана папка загрузки.');
 			return false;
 		}
-
 
 		// Загружаем прайс во временную папку
 		if (!$this->loadToDir($dir)) {
@@ -368,19 +364,20 @@ class UpdaterMerlionSmr {
 		// Обнуляем переменные
 		$productId = 0;
 		$categoryId = 0;
+		$vendorId = 0;
 		$price = 0;
 
 		// Получаем id производителя
-		$synonym = Vendor::getSynonym($product['Brand']);
-		if (isset($synonym->vendor_id)) { // Есть id производителя
-			$vendorId = $synonym->vendor_id;
-		} else { // Нет id производителя
-			$vendorId = 0;
+		$synonym = Vendor::getSynonym($product['Brand'], $this->partner->id);
+		if (isset($synonym->vendor_id)) {
+			if (1 != $synonym->vendor_id) {
+				$vendorId = $synonym->vendor_id;
+			}
 		}
 
 		// Проверяем есть ли синоним производителя
 		if (!isset($synonym->id)) {
-			$synonym = Vendor::addSynonym($product['Brand']);
+			$synonym = Vendor::addSynonym($product['Brand'], $this->partner->id);
 			if (!isset($synonym->id)) {
 				$this->addMsg("Не удалось добавить синоним производителя: {$product['Brand']}");
 			} else {
@@ -391,9 +388,9 @@ class UpdaterMerlionSmr {
 		// Получаем id категории
 		$synonym = Category::getSynonym($product['categorySynonym'], $this->partner->id);
 		if (isset($synonym->category_id)) {
-			$categoryId = $synonym->category_id;
-		} else {
-			$categoryId = 0;
+			if (1 != $synonym->category_id) {
+				$categoryId = $synonym->category_id;
+			}
 		}
 
 		// Проверяем есть ли синоним категории
@@ -402,7 +399,7 @@ class UpdaterMerlionSmr {
 			if (!isset($synonym->id)) { // Нет синонима в базе
 				$this->addMsg("Не удалось добавить синоним категории: {$product['categorySynonym']}");
 			} else {
-				$this->addMsg("Добавлен синоним категории: {$synonym->name}");
+				$this->addMsg("Добавлен синоним категории : {$synonym->name}");
 			}
 		}
 
@@ -429,12 +426,16 @@ class UpdaterMerlionSmr {
 			}
 		}
 
-		// Добавляем цену и количество (только если есть в наличии)
+		// Добавляем цену и количество
 		$price = $this->getCorrectedPrice($product['Price']);
 		$quantity = $this->getCorrectedQuantity($product['Avail']);
-		if ((true == $price) and (true == $quantity)) {
-			Price::addPrice($this->partner->id, $productId, $price, $this->currency['USD']->id, $this->priceType['rdp']->id, 3, 0);
+
+		if (true == $quantity) {
 			Stock::addQuantity($this->stock['merlion-smr-stock']->id, $productId, $quantity, 3, 0);
+		}
+
+		if (true == $price) {
+			Price::addPrice($this->stock['merlion-smr-stock']->id, $productId, $price, $this->currency['USD']->id, $this->priceType['rdp']->id, 3, 0);
 			return true;
 		} else {
 			return false;

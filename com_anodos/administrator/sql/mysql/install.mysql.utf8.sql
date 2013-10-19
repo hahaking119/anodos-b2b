@@ -151,18 +151,19 @@ DEFAULT CHARACTER SET = utf8;
 
 CREATE  TABLE IF NOT EXISTS `#__anodos_vendor_synonym` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `partner_id` BIGINT UNSIGNED NOT NULL ,
   `vendor_id` BIGINT UNSIGNED NOT NULL ,
   `name` VARCHAR(255) NOT NULL ,
   `state` TINYINT(3) NOT NULL DEFAULT '1' ,
-  `checked_out` BIGINT NOT NULL DEFAULT '0' ,
+  `checked_out` BIGINT UNSIGNED NOT NULL DEFAULT '0' ,
   `checked_out_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' ,
   `created` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' ,
   `created_by` BIGINT UNSIGNED NOT NULL DEFAULT '0' ,
   `modified` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' ,
-  `modified_by` BIGINT NOT NULL DEFAULT '0' ,
+  `modified_by` BIGINT UNSIGNED NOT NULL DEFAULT '0' ,
   PRIMARY KEY (`id`) ,
   INDEX `anodos_vendor_synonym_vendor_idx` (`vendor_id` ASC) ,
-  UNIQUE INDEX `name_UNIQUE` (`name` ASC) )
+  INDEX `anodos_vendor_synonym_partner_idx` (`partner_id` ASC) )
 ENGINE = MyISAM
 DEFAULT CHARACTER SET = utf8;
 
@@ -218,7 +219,7 @@ INSERT INTO `#__anodos_currency` (`id`, `name`, `alias`, `name_html`, `state`, `
 INSERT INTO `#__anodos_currency` (`id`, `name`, `alias`, `name_html`, `state`, `ordering`, `description`, `checked_out`, `checked_out_time`, `created`, `created_by`, `modified`, `modified_by`, `publish_up`, `publish_down`, `metadata`) VALUES (0, 'Евро', 'EUR', '&#8364;', 1, 1, '', 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', '');
 
 CREATE  TABLE IF NOT EXISTS `#__anodos_price` (
-  `partner_id` BIGINT UNSIGNED NOT NULL COMMENT 'Идентификатор поставщика.' ,
+  `stock_id` BIGINT UNSIGNED NOT NULL COMMENT 'Идентификатор склада.' ,
   `product_id` BIGINT UNSIGNED NOT NULL COMMENT 'Идентификатор продукта.' ,
   `created` DATETIME NOT NULL ,
   `version` INT UNSIGNED NOT NULL DEFAULT '0' ,
@@ -232,11 +233,11 @@ CREATE  TABLE IF NOT EXISTS `#__anodos_price` (
   `modified_by` INT UNSIGNED NOT NULL DEFAULT '0' ,
   `publish_up` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' ,
   `publish_down` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' ,
-  PRIMARY KEY (`partner_id`, `product_id`, `created`, `version`) ,
-  INDEX `anodos_price_partner_idx` (`partner_id` ASC) ,
+  PRIMARY KEY (`product_id`, `created`, `version`, `stock_id`) ,
   INDEX `anodos_price_product_idx` (`product_id` ASC) ,
   INDEX `anodos_price_price_type_idx` (`price_type_id` ASC) ,
-  INDEX `anodos_price_currency_idx` (`currency_id` ASC) )
+  INDEX `anodos_price_currency_idx` (`currency_id` ASC) ,
+  INDEX `anodos_price_stock_idx` (`stock_id` ASC) )
 ENGINE = MyISAM
 DEFAULT CHARACTER SET = utf8
 COMMENT = 'Цены';

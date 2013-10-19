@@ -62,7 +62,7 @@ class AnodosModelProductQuantities extends JModelList {
 				'a.*'
 			)
 		);
-		$query->from('`#__anodos_product_quantity` AS a');
+		$query->from('#__anodos_product_quantity AS a');
 
 		// Join product
 		$query->select('product.name AS product_name');

@@ -62,7 +62,7 @@ class AnodosModelCategorySynonyms extends JModelList {
 				'a.*'
 			)
 		);
-		$query->from('`#__anodos_category_synonym` AS a');
+		$query->from('#__anodos_category_synonym AS a');
 
 		// Join vendor
 		$query->select('partner.name AS partner_name');
@@ -71,10 +71,6 @@ class AnodosModelCategorySynonyms extends JModelList {
 		// Join category
 		$query->select('category.title AS category_name');
 		$query->join('LEFT', '#__categories AS category ON category.id = a.category_id');
-
-		// Join checked out user.
-		$query->select('uc.name AS editor_name');
-		$query->join('LEFT', '#__users AS uc ON uc.id=a.checked_out');
 
 		// Join over the user field 'created_by'
 		$query->select('author.name AS author_name');

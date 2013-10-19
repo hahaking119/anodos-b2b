@@ -61,11 +61,7 @@ class AnodosModelPriceTypes extends JModelList {
 				'a.*'
 			)
 		);
-		$query->from('`#__anodos_price_type` AS a');
-
-		// Join checked out user
-		$query->select('uc.name AS editor_name');
-		$query->join('LEFT', '#__users AS uc ON uc.id=a.checked_out');
+		$query->from('#__anodos_price_type AS a');
 
 		// Join over the user field 'created_by'
 		$query->select('author.name AS author_name');

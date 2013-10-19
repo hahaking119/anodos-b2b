@@ -7,7 +7,7 @@
 			label="COM_ANODOS_FORM_ID" description="COM_ANODOS_FORM_ID_DESC" />
 
 		<field name="partner_id" type="sql"
-			query="SELECT 0 AS `id`, '- Please select -' AS `name` UNION SELECT `id`, `name` FROM `#__anodos_partner`"
+			query="SELECT id, name FROM #__anodos_partner"
 			key_field="id" value_field="name"
 			label="COM_ANODOS_FORM_PARTNER" description="COM_ANODOS_FORM_PARTNER_DESC" />
 

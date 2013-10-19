@@ -13,7 +13,7 @@ class Currency {
 		$query = "
 			SELECT *
 			FROM #__anodos_currency
-			WHERE '{$alias}' <=> alias;";
+			WHERE '{$alias}' = alias;";
 		$db->setQuery($query);
 		$currency = $db->loadObject();
 
@@ -31,16 +31,16 @@ class Currency {
 		$query = "
 			INSERT
 			INTO #__anodos_currency (
-				`id`,
-				`name`,
-				`alias`,
-				`name_html`,
-				`state`,
-				`description`,
-				`created`,
-				`created_by`)
+				id,
+				name,
+				alias,
+				name_html,
+				state,
+				description,
+				created,
+				created_by)
 			VALUES (
-				0,
+				DEFAULT,
 				'{$name}',
 				'{$alias}',
 				'{$alias}',
@@ -55,7 +55,7 @@ class Currency {
 		$query = "
 			SELECT *
 			FROM #__anodos_currency
-			WHERE '{$alias}' <=> alias;";
+			WHERE '{$alias}' = alias;";
 		$db->setQuery($query);
 		$currency = $db->loadObject();
 
@@ -75,7 +75,7 @@ class Currency {
 			FROM #__anodos_currency_rate
 			WHERE
 				#__anodos_currency_rate.currency_id = '{$id}' AND
-				#__anodos_currency_rate.date = '{$date}';";
+				#__anodos_currency_rate.rate_date = '{$date}';";
 		$db->setQuery($query);
 		$rate = $db->loadResult();
 
@@ -92,13 +92,13 @@ class Currency {
 		// Заносим информацию в базу
 		$query = "
 			INSERT INTO #__anodos_currency_rate (
-				`currency_id`,
-				`date`,
-				`rate`,
-				`quantity`,
-				`state`,
-				`created`,
-				`created_by`)
+				currency_id,
+				rate_date,
+				rate,
+				quantity,
+				state,
+				created,
+				created_by)
 			VALUES (
 				'{$id}',
 				'{$date}',
@@ -122,9 +122,9 @@ class Currency {
 
 		// Выполняем запрос
 		$query = "
-			UPDATE `#__anodos_currency_rate`
+			UPDATE #__anodos_currency_rate
 			SET state = '0'
-			WHERE `currency_id` = '{$id}';";
+			WHERE currency_id = '{$id}';";
 		$db->setQuery($query);
 		$db->query();
 

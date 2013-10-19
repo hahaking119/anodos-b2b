@@ -7,7 +7,7 @@ jimport('joomla.filesystem.folder');
 jimport('joomla.filesystem.archive');
 jimport('joomla.filesystem.archive.zip');
 require_once JPATH_COMPONENT.'/models/helpers/updater.php';
-require_once JPATH_COMPONENT.'/models/helpers/contractor.php';
+require_once JPATH_COMPONENT.'/models/helpers/partner.php';
 require_once JPATH_COMPONENT.'/models/helpers/stock.php';
 require_once JPATH_COMPONENT.'/models/helpers/vendor.php';
 require_once JPATH_COMPONENT.'/models/helpers/category.php';
@@ -18,44 +18,47 @@ require_once JPATH_COMPONENT.'/models/helpers/currency.php';
 class UpdaterFujitsu {
 
 	// Объявляем переменные
-	public $ok = true;
-	protected $updaterAlias = 'fujitsu-price-updater';
-	protected $contractorAlias = 'fujitsu';
-	protected $contractorName = 'Fujitsu';
-
+	protected $partnerAlias = 'merlion';
+	protected $partnerName = 'Merlion';
 	protected $updater;
-	protected $contractor;
-	protected $vendor;
+	protected $partner;
 	protected $stock = array();
 	protected $priceType = array();
 	protected $currency = array();
-
-	protected $data = array();
-
 	protected $msg;
+
+	public function getMsg() {
+		return $this->msg;
+	}
+
+	protected function addMsg($msg) {
+		$this->msg .= $msg."\n";
+	}
 
 	// Точка входа
 	public function update() {
 
-		// Получаем объект загрузчика
-		$this->updater = Updater::getUpdaterFromAlias($this->updaterAlias);
+		// TODO выход
+		return false;
 
-		// Получаем объект контрагента
-		$this->contractor = Contractor::getContractorFromAlias($this->contractorAlias);
-		if (false == $this->contractor->id) { // Если контрагента нет
-			// Добавляем контрагента
-			$this->contractor = Contractor::addContractor($this->contractorName, $this->contractorAlias, 0);
-			if (false == $this->contractor->id) { // Если контрагента нет
-				// Выводим ошибку добавления контрагента
-				$this->addMsg("Не возможно добавить контрагента: {$this->contractorName}.");
-			} else { // Если контрагент есть
-				$this->addMsg("Добавлен контрагент: {$this->contractorName}.");
+		// Получаем объект загрузчика
+		$this->updater = Updater::getUpdater($id);
+
+		// Получаем объект партнера
+		$this->partner = Partner::getPartnerFromAlias($this->partnerAlias);
+		if (!isset($this->partner->id)) {
+			$this->partner = Partner::addPartner($this->partnerName, $this->partnerAlias, 0);
+			if (!isset($this->partner->id)) {
+				$this->addMsg('Error #'.__LINE__." - Не возможно добавить партнера.");
+				return false;
+			} else {
+				$this->addMsg("Добавлен партнер: {$this->partnerName}.");
 			}
 		}
 
 		// Проверяем привязку загрузчика к контрагенту
-		if ($this->updater->contractor_id != $this->contractor->id) { // Если не привязан
-			Updater::linkToContractor($this->updater->id, $this->contractor->id);
+		if ($this->updater->partner_id != $this->partner->id) {
+			Updater::linkToPartner($this->updater->id, $this->partner->id);
 		}
 
 		// TODO TEST Получаем объект производителя
@@ -72,49 +75,56 @@ class UpdaterFujitsu {
 		}
 
 		// Получаем объект склада
-		$stockAlias = 'fujitsu-germany-stock';
-		$stockName = 'Германский склад Fujitsu';
-		$this->stock[$stockAlias] = Stock::getStockFromAlias($stockAlias);
-		if (false === $this->stock[$stockAlias]->id) { // Если склада нет
-			// Добавляем склад
-			$this->stock[$stockAlias] = Stock::addStock($stockName, $stockAlias, $this->contractor->id, 0);
-			if (false === $this->stock[$stockAlias]->id) { // Если склада нет
-				// Выводим ошибку добавления контрагента
-				$this->addMsg("Не возможно добавить склад: {$stockName}.");
+		$alias = 'fujitsu-germany-stock';
+		$name = 'Склад Fujitsu в Германии';
+		$this->stock[$alias] = Stock::getStockFromAlias($alias);
+		if (!isset($this->stock[$alias]->id)) {
+			$this->stock[$alias] = Stock::addStock($name, $alias, $this->partner->id, 0);
+			if (!isset($this->stock[$alias]->id)) {
+				$this->addMsg('Error #'.__LINE__." - Не возможно добавить склад: {$name}.");
 				return false;
-			} else { // Если склад есть
-				$this->addMsg("Добавлен склад: {$this->stock[$stockAlias]->name}.");
+			} else {
+				$this->addMsg("Добавлен склад: {$this->stock[$alias]->name}.");
 			}
 		}
 
 		// Получаем объект типа цены
-		$this->priceType['rdp'] = Price::getPriceTypeFromAlias('rdp');
-		if (false === $this->priceType['rdp']->id) { // Если типа цены нет
-			// Добавляем тип цены
-			$this->priceType['rdp'] = Price::addPriceType('Рекомендованная диллерская цена (RDP, вход)', 'rdp', 0, 0, 0);
-			if (false === $this->priceType['rdp']->id) { // Если типа цены нет
-				// Выводим ошибку добавления типа цены
-				$this->addMsg("Не возможно добавить тип цены: Рекомендованная диллерская цена (RDP, вход).");
+		$alias = 'rdp';
+		$name = 'Рекомендованная диллерская цена (RDP, вход)';
+		$this->priceType[$alias] = Price::getPriceTypeFromAlias('rdp');
+		if (!isset($this->priceType[$alias]->id)) {
+			$this->priceType[$alias] = Price::addPriceType($name, $alias, 1, 0, 0);
+			if (!isset($this->priceType[$alias]->id)) {
+				$this->addMsg('Error #'.__LINE__." - Не возможно добавить тип цены: {$name}.");
 				return false;
-			} else { // Если тип цены есть
-				$this->addMsg("Добавлен тип цены: {$this->priceType['rdp']->name}.");
+			} else {
+				$this->addMsg("Добавлен тип цены: {$this->priceType[$alias]->name}.");
 			}
 		}
 
 		// Получаем id валюты USD
-		if (false === $this->currency['USD'] = Currency::getCurrencyFromAlias('USD')) {
-			$this->addMsg('Отсутствует валюта: USD.');
-			$this->addMsg('Дальнейшее выполнение обработчика невозможно.');
+		$alias = 'USD';
+		$this->currency[$alias] = Currency::getCurrencyFromAlias($alias);
+		if (!isset($this->currency[$alias])) {
+			$this->addMsg('Error #'.__LINE__." - Нет валюты: {$alias}.");
 			return false;
 		}
 
 		// Получаем имя папки для загрузки
-		if (false === $dir = $this->getDir()) {
+		$dir = $this->getDir();
+		if (!$dir) {
+			$this->addMsg('Error #'.__LINE__.' - Не задана папка загрузки.');
 			return false;
 		}
 
 		// Загружаем прайс во временную папку
-		if (false === $files = $this->getFile($dir)) { return false; }
+		if (!$this->loadToDir($dir)) {
+			$this->addMsg('Error #'.__LINE__.' - Ошибка загрузки прайса в локальную папку.');
+			return false;
+		}
+
+		// TODO TEST STOP
+		$this->addMsg('STOP in '.__LINE__.'.'); return false;		
 
 		// Помечаем неактуальными устаревшие данные в базе
 		Price::clearSQL($this->contractor->id);

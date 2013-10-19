@@ -81,8 +81,8 @@ class AnodosModelUpdater extends JModelList {
 		// Выполняем запрос
 		$query = "
 			SELECT *
-			FROM `#__anodos_updater`
-			WHERE `id` = '{$id}';";
+			FROM #__anodos_updater
+			WHERE id = '{$id}';";
 		$db->setQuery($query);
 		$updater = $db->loadObject();
 

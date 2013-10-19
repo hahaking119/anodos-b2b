@@ -13,8 +13,8 @@ class Partner {
 		// Выполняем запрос
 		$query = "
 			SELECT *
-			FROM `#__anodos_partner`
-			WHERE `alias` = '{$alias}';";
+			FROM #__anodos_partner
+			WHERE alias = '{$alias}';";
 		$db->setQuery($query);
 		$partner = $db->loadObject();
 
@@ -31,10 +31,10 @@ class Partner {
 		// Выполняем запрос добавления
 		$query = "
 			INSERT INTO #__anodos_partner (
-				`name`,
-				`alias`,
-				`created`,
-				`created_by`)
+				name,
+				alias,
+				created,
+				created_by)
 			VALUES (
 				'{$name}',
 				'{$alias}',
@@ -46,8 +46,8 @@ class Partner {
 		// Выполняем запрос выборки
 		$query = "
 			SELECT *
-			FROM `#__anodos_partner`
-			WHERE `alias` = '{$alias}';";
+			FROM #__anodos_partner
+			WHERE alias = '{$alias}';";
 		$db->setQuery($query);
 		$partner = $db->loadObject();
 

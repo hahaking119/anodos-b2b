@@ -132,7 +132,8 @@ class UpdaterTreolan {
 		}
 
 		// Помечаем неактуальными устаревшие данные в базе
-		Price::clearSQL($this->partner->id);
+		Price::clearSQL($this->stock['treolan-msk-stock']->id);
+		Price::clearSQL($this->stock['treolan-transit-stock']->id);
 		Stock::clearSQL($this->stock['treolan-msk-stock']->id);
 		Stock::clearSQL($this->stock['treolan-transit-stock']->id);
 
@@ -277,7 +278,7 @@ class UpdaterTreolan {
 //						<td nowrap x:autofilter="all" xmlns="">Öåíà*</td>
 //						<td nowrap x:autofilter="all" xmlns="">Öåíà ðóá.**</td>
 //						<td nowrap x:autofilter="all" xmlns="">Äîï.</td>
-//						<td nowrap x:autofilter="all" xmlns="">Ãàð.</td>
+//						<td nowrap x:autofilter="all" xmдизертироватьlns="">Ãàð.</td>
 //					</tr>
 //					<tr class="sGroup">
 //						<td colspan="12">Êàòåãîðèÿ - 01. Ñåðâåðû -&gt;  1-ïðîöåññîðíûå ñåðâåðû -&gt; ASUS RS100</td>
@@ -402,19 +403,20 @@ class UpdaterTreolan {
 		// Обнуляем переменные
 		$productId = 0;
 		$categoryId = 0;
+		$vendorId = 0;
 		$price = 0;
 
-		// Получаем id производителя
-		$synonym = Vendor::getSynonym($product['vendor']);
-		if (isset($synonym->vendor_id)) { // Есть id производителя
-			$vendorId = $synonym->vendor_id;
-		} else { // Нет id производителя
-			$vendorId = 0;
+		// Получаем id производителя если он указан
+		$synonym = Vendor::getSynonym($product['vendor'], $this->partner->id);
+		if (isset($synonym->vendor_id)) {
+			if (1 != $synonym->vendor_id) {
+				$vendorId = $synonym->vendor_id;
+			}
 		}
 
-		// Проверяем есть ли синоним производителя
+		// Добавляем синоним производителя если его нет
 		if (!isset($synonym->id)) {
-			$synonym = Vendor::addSynonym($product['vendor']);
+			$synonym = Vendor::addSynonym($product['vendor'], $this->partner->id);
 			if (!isset($synonym->id)) {
 				$this->addMsg("Не удалось добавить синоним производителя: {$product['vendor']}");
 			} else {
@@ -422,15 +424,15 @@ class UpdaterTreolan {
 			}
 		}
 
-		// Получаем id категории
+		// Получаем id категории если она указана
 		$synonym = Category::getSynonym($product['category'], $this->partner->id);
 		if (isset($synonym->category_id)) {
-			$categoryId = $synonym->category_id;
-		} else {
-			$categoryId = 0;
+			if (1 != $synonym->category_id) {
+				$categoryId = $synonym->category_id;
+			}
 		}
 
-		// Проверяем есть ли синоним категории
+		// Добавляем синоним категории если его нет
 		if (!isset($synonym->id)) {
 			$synonym = Category::addSynonym($product['category'], $this->partner->id);
 			if (!isset($synonym->id)) { // Нет синонима в базе
@@ -473,13 +475,22 @@ class UpdaterTreolan {
 		if ((true == $quantityStock) or (true == $quantityStock)) { // Наличие есть
 
 			// Заносим информацию о наличие в базу
-			Stock::addQuantity($this->stock['treolan-russia-stock']->id, $productId, $quantityStock, 3, 0);
-			Stock::addQuantity($this->stock['treolan-russia-transit']->id, $productId, $quantityTransit, 3, 0);
+			Stock::addQuantity($this->stock['treolan-msk-stock']->id, $productId, $quantityStock, 3, 0);
+			Stock::addQuantity($this->stock['treolan-transit-stock']->id, $productId, $quantityTransit, 3, 0);
 
 			// Есть ли долларовая цена?
 			if (true == $priceUSD) {
 				Price::addPrice(
-					$this->partner->id,
+					$this->stock['treolan-msk-stock']->id,
+					$productId,
+					$priceUSD,
+					$this->currency['USD']->id,
+					$this->priceType['rdp']->id,
+					3,
+					0
+				);
+				Price::addPrice(
+					$this->stock['treolan-transit-stock']->id,
 					$productId,
 					$priceUSD,
 					$this->currency['USD']->id,
@@ -492,7 +503,16 @@ class UpdaterTreolan {
 			// Есть ли рублевая цена?
 			if (true == $priceRUB) {
 				Price::addPrice(
-					$this->partner->id,
+					$this->stock['treolan-msk-stock']->id,
+					$productId,
+					$priceRUB,
+					$this->currency['RUB']->id,
+					$this->priceType['rdp']->id,
+					3,
+					0
+				);
+				Price::addPrice(
+					$this->stock['treolan-transit-stock']->id,
 					$productId,
 					$priceRUB,
 					$this->currency['RUB']->id,

@@ -89,7 +89,7 @@ if (!empty($this->extra_sidebar)) {
 						<?php echo JHtml::_('grid.sort', 'COM_ANODOS_PRODUCT', 'product_name', $listDirn, $listOrder); ?>
 					</th>
 					<th class="left">
-						<?php echo JHtml::_('grid.sort', 'COM_ANODOS_PARTNER', 'partner_name', $listDirn, $listOrder); ?>
+						<?php echo JHtml::_('grid.sort', 'COM_ANODOS_STOCK', 'stock_name', $listDirn, $listOrder); ?>
 					</th>
 					<th class="center" colspan="2">
 						<?php echo JHtml::_('grid.sort', 'COM_ANODOS_PRICE', 'price', $listDirn, $listOrder); ?>
@@ -125,7 +125,7 @@ if (!empty($this->extra_sidebar)) {
 						<?php echo $item->product_name; ?>
 					</td>
 					<td class="left">
-						<?php echo $item->partner_name; ?>
+						<?php echo $item->stock_name; ?>
 					</td>
 					<td class="right">
 						<?php echo $item->price; ?>

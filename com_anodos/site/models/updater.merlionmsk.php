@@ -364,19 +364,20 @@ class UpdaterMerlionMsk {
 		// Обнуляем переменные
 		$productId = 0;
 		$categoryId = 0;
+		$vendorId = 0;
 		$price = 0;
 
 		// Получаем id производителя
-		$synonym = Vendor::getSynonym($product['Brand']);
-		if (isset($synonym->vendor_id)) { // Есть id производителя
-			$vendorId = $synonym->vendor_id;
-		} else { // Нет id производителя
-			$vendorId = 0;
+		$synonym = Vendor::getSynonym($product['Brand'], $this->partner->id);
+		if (isset($synonym->vendor_id)) {
+			if (1 != $synonym->vendor_id) {
+				$vendorId = $synonym->vendor_id;
+			}
 		}
 
 		// Проверяем есть ли синоним производителя
 		if (!isset($synonym->id)) {
-			$synonym = Vendor::addSynonym($product['Brand']);
+			$synonym = Vendor::addSynonym($product['Brand'], $this->partner->id);
 			if (!isset($synonym->id)) {
 				$this->addMsg("Не удалось добавить синоним производителя: {$product['Brand']}");
 			} else {
@@ -387,9 +388,9 @@ class UpdaterMerlionMsk {
 		// Получаем id категории
 		$synonym = Category::getSynonym($product['categorySynonym'], $this->partner->id);
 		if (isset($synonym->category_id)) {
-			$categoryId = $synonym->category_id;
-		} else {
-			$categoryId = 0;
+			if (1 != $synonym->category_id) {
+				$categoryId = $synonym->category_id;
+			}
 		}
 
 		// Проверяем есть ли синоним категории
@@ -425,12 +426,16 @@ class UpdaterMerlionMsk {
 			}
 		}
 
-		// Добавляем цену и количество (только если есть в наличии)
+		// Добавляем цену и количество
 		$price = $this->getCorrectedPrice($product['Price']);
 		$quantity = $this->getCorrectedQuantity($product['Avail']);
-		if ((true == $price) and (true == $quantity)) {
-			Price::addPrice($this->partner->id, $productId, $price, $this->currency['USD']->id, $this->priceType['rdp']->id, 3, 0);
+
+		if (true == $quantity) {
 			Stock::addQuantity($this->stock['merlion-msk-stock']->id, $productId, $quantity, 3, 0);
+		}
+
+		if (true == $price) {
+			Price::addPrice($this->stock['merlion-msk-stock']->id, $productId, $price, $this->currency['USD']->id, $this->priceType['rdp']->id, 3, 0);
 			return true;
 		} else {
 			return false;

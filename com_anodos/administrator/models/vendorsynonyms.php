@@ -61,15 +61,15 @@ class AnodosModelVendorSynonyms extends JModelList {
 				'a.*'
 			)
 		);
-		$query->from('`#__anodos_vendor_synonym` AS a');
+		$query->from('#__anodos_vendor_synonym AS a');
+
+		// Join vendor
+		$query->select('partner.name AS partner_name');
+		$query->join('LEFT', '#__anodos_partner AS partner ON partner.id = a.partner_id');
 
 		// Join vendor
 		$query->select('vendor.name AS vendor_name');
 		$query->join('LEFT', '#__anodos_partner AS vendor ON vendor.id = a.vendor_id');
-
-		// Join checked out user
-		$query->select('uc.name AS editor_name');
-		$query->join('LEFT', '#__users AS uc ON uc.id=a.checked_out');
 
 		// Join over the user field 'created_by'
 		$query->select('author.name AS author_name');
@@ -119,6 +119,42 @@ class AnodosModelVendorSynonyms extends JModelList {
 
 		// Возвращаем результат
 		return $vendors;
+	}
+
+	public function getAuthorsList() {
+
+		// Create a new query object.
+		$db = $this->getDbo();
+		$query = $db->getQuery(true);
+
+		// Construct the query
+		$query->select('u.id AS value, u.name AS text')
+			->from('#__users AS u')
+			->join('INNER', '#__anodos_vendor_synonym AS c ON c.created_by = u.id')
+			->group('u.id, u.name')
+			->order('u.name');
+
+		// Setup the query
+		$db->setQuery($query);
+
+		// Return the result
+		return $db->loadObjectList();
+	}
+
+	public function getVendorsList() {
+
+		// Create a new query object.
+		$db = $this->getDbo();
+		$query = $db->getQuery(true);
+
+		// Construct the query
+		$query = "SELECT NULL AS value, '- Не выбран -' AS text;";
+
+		// Setup the query
+		$db->setQuery($query);
+
+		// Return the result
+		return $db->loadObjectList();
 	}
 
 	// Сохраняет изменения в синонимах категорий

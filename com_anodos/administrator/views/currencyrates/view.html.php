@@ -91,7 +91,7 @@ class AnodosViewCurrencyrates extends JViewLegacy {
 		return array(
 			'a.state' => JText::_('COM_ANODOS_STATE'),
 			'currency_name' => JText::_('COM_ANODOS_CURRENCY'),
-			'a.date' => JText::_('COM_ANODOS_DATE'),
+			'a.rate_date' => JText::_('COM_ANODOS_RATE_DATE'),
 			'quantity' => JText::_('COM_ANODOS_QUANTITY'),
 			'rate' => JText::_('COM_ANODOS_RATE'),
 			'a.created' => JText::_('COM_ANODOS_CREATED'),

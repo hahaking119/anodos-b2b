@@ -5,12 +5,12 @@ defined('_JEXEC') or die;
 class Price {
 
 	// Возвращает последнюю цену на продукт указанного поставщика
-	public function getPrice($contractorId, $productId, $state = 1) {
+	public function getPrice($stockId, $productId, $state = 1) {
 		//TODO
 	}
 
 	// Заносит цену в базу
-	public function addPrice($partnerId, $productId, $price, $currencyId, $priceTypeId, $addDate = 3, $createdBy = 0) {
+	public function addPrice($stockId, $productId, $price, $currencyId, $priceTypeId, $addDate = 3, $createdBy = 0) {
 
 		// Определяем переменные
 		$version = 0;
@@ -21,10 +21,10 @@ class Price {
 		// TODO проверем наличие цены c теми же ключами
 		$query = "
 			SELECT MAX(version)
-			FROM `#__anodos_price`
-			WHERE `#__anodos_price`.`partner_id` = '{$partnerId}'
-			AND   `#__anodos_price`.`product_id` = '{$productId}'
-			AND   `#__anodos_price`.`created` = NOW();";
+			FROM #__anodos_price
+			WHERE #__anodos_price.stock_id = '{$stockId}'
+			AND   #__anodos_price.product_id = '{$productId}'
+			AND   #__anodos_price.created = NOW();";
 		$db->setQuery($query);
 		$version =  $db->loadResult();
 
@@ -37,19 +37,19 @@ class Price {
 
 		// Заносим информацию в базу
 		$query="
-			INSERT INTO `#__anodos_price` (
-				`partner_id`,
-				`product_id`,
-				`created`,
-				`version`,
-				`price`,
-				`currency_id`,
-				`price_type_id`,
-				`created_by`,
-				`publish_up`,
-				`publish_down`)
+			INSERT INTO #__anodos_price (
+				stock_id,
+				product_id,
+				created,
+				version,
+				price,
+				currency_id,
+				price_type_id,
+				created_by,
+				publish_up,
+				publish_down)
 			VALUES (
-				'{$partnerId}',
+				'{$stockId}',
 				'{$productId}',
 				NOW(),
 				'{$version}',
@@ -75,8 +75,8 @@ class Price {
 		// Выполняем запрос
 		$query = "
 			SELECT * 
-			FROM `#__anodos_price_type`
-			WHERE `alias` = '{$alias}'
+			FROM #__anodos_price_type
+			WHERE alias = '{$alias}'
 		;";
 		$db->setQuery($query);
 		$priceType = $db->loadObject();
@@ -86,7 +86,7 @@ class Price {
 	}
 
 	// Добавляет тип цен
-	public function addPriceType($name, $alias, $input = 1, $output = 0, $fixed = 0, $createdBy = 0) {
+	public function addPriceType($name, $alias, $createdBy = 0) {
 
 		// Подключаемся к базе
 		$db = JFactory::getDBO();
@@ -94,21 +94,15 @@ class Price {
 		// Выполняем запрос
 		$query = "
 			INSERT INTO #__anodos_price_type (
-				`name`,
-				`alias`,
-				`input`,
-				`output`,
-				`fixed`,
-				`state`,
-				`created`,
-				`created_by`
+				name,
+				alias,
+				state,
+				created,
+				created_by
 				)
 			VALUES (
 				'{$name}',
 				'{$alias}',
-				'{$input}',
-				'{$output}',
-				'{$fixed}',
 				'1',
 				NOW(),
 				'{$createdBy}');";
@@ -118,8 +112,8 @@ class Price {
 		// Выполняем запрос
 		$query = "
 			SELECT * 
-			FROM `#__anodos_price_type`
-			WHERE `alias` = '{$alias}'
+			FROM #__anodos_price_type
+			WHERE alias = '{$alias}'
 		;";
 		$db->setQuery($query);
 		$priceType = $db->loadObject();
@@ -129,16 +123,16 @@ class Price {
 	}
 
 	// Снятие с публикации устаревшей информации о ценах
-	public function clearSQL($partnerId) {
+	public function clearSQL($stockId) {
 
 		// Подключаемся к базе
 		$db = JFactory::getDBO();
 
 		// Выполняем запрос
 		$query = "
-			UPDATE `#__anodos_price`
+			UPDATE #__anodos_price
 			SET state = '0'
-			WHERE `partner_id` = '{$partnerId}';";
+			WHERE stock_id = '{$stockId}';";
 		$db->setQuery($query);
 		$db->query();
 

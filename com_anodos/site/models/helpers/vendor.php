@@ -13,8 +13,8 @@ class Vendor {
 		// Выполняем запрос
 		$query = "
 			SELECT *
-			FROM `#__anodos_partner`
-			WHERE `alias` = '{$alias}';";
+			FROM #__anodos_partner
+			WHERE alias = '{$alias}';";
 		$db->setQuery($query);
 		$vendor = $db->loadObject();
 
@@ -31,11 +31,11 @@ class Vendor {
 		// Выполняем запрос добавления
 		$query = "
 			INSERT INTO #__anodos_partner (
-				`name`,
-				`alias`,
-				`vendor`,
-				`created`,
-				`created_by`)
+				name,
+				alias,
+				vendor,
+				created,
+				created_by)
 			VALUES (
 				'{$name}',
 				'{$alias}',
@@ -48,8 +48,8 @@ class Vendor {
 		// Выполняем запрос выборки
 		$query = "
 			SELECT *
-			FROM `#__anodos_partner`
-			WHERE `alias` = '{$alias}';";
+			FROM #__anodos_partner
+			WHERE alias = '{$alias}';";
 		$db->setQuery($query);
 		$vendor = $db->loadObject();
 
@@ -58,7 +58,7 @@ class Vendor {
 	}
 
 	// Определяем id производителя
-	public function getSynonym($synonym) {
+	public function getSynonym($synonym, $partnerId) {
 
 		// Подключаемся к базе
 		$db = JFactory::getDBO();
@@ -66,8 +66,9 @@ class Vendor {
 		// Выполняем запрос
 		$query = "
 			SELECT *
-			FROM `#__anodos_vendor_synonym`
-			WHERE '{$synonym}' <=> `name`;";
+			FROM #__anodos_vendor_synonym
+			WHERE '{$synonym}' = name
+			AND '{$partnerId}' = partner_id;";
 		$db->setQuery($query);
 		$synonym = $db->loadObject();
 
@@ -76,7 +77,7 @@ class Vendor {
 	}
 
 	// Добавляет синоним производителя
-	public function addSynonym($synonym) {
+	public function addSynonym($synonym, $partnerId, $createdBy = 0) {
 
 		// Подключаемся к базе
 		$db = JFactory::getDBO();
@@ -85,26 +86,30 @@ class Vendor {
 
 		// Выполняем запрос вставки
 		$query = "
-			INSERT INTO `#__anodos_vendor_synonym` (
-				`name`,
-				`vendor_id`,
-				`created`)
+			INSERT INTO #__anodos_vendor_synonym (
+				name,
+				partner_id,
+				vendor_id,
+				created,
+				created_by)
 			VALUES (
 				'{$synonym}',
-				'0',
-				NOW());";
+				'{$partnerId}',
+				'1',
+				NOW(),
+				'{$createdBy}');";
 		$db->setQuery($query);
 		$db->query();
 
 		// Выполняем запрос выборки
 		$query = "
 			SELECT *
-			FROM `#__anodos_vendor_synonym`
-			WHERE '{$synonym}' <=> `name`;";
+			FROM #__anodos_vendor_synonym
+			WHERE '{$synonym}' = name
+			AND '{$partnerId}' = partner_id;";
 		$db->setQuery($query);
 		$synonym = $db->loadObject();
 
-		// Возвращаем результат
 		return $synonym;
 	}
 }

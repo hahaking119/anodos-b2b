@@ -17,6 +17,8 @@ class AnodosViewVendorsynonyms extends JViewLegacy {
 		$this->items = $this->get('Items');
 		$this->pagination = $this->get('Pagination');
 		$this->vendors = $this->get('Vendors');
+		$this->authorsList = $this->get('AuthorsList');
+		$this->vendorsList = $this->get('VendorsList');
 
 		// Check for errors
 		if (count($errors = $this->get('Errors'))) {
@@ -96,10 +98,17 @@ class AnodosViewVendorsynonyms extends JViewLegacy {
 		//Set sidebar action - New in 3.0
 		JHtmlSidebar::setAction('index.php?option=com_anodos&view=vendorsynonyms');
 		$this->extra_sidebar = '';
+
 		JHtmlSidebar::addFilter(
 			JText::_('JOPTION_SELECT_PUBLISHED'),
 			'filter_published',
 			JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), "value", "text", $this->state->get('filter.state'), true)
+		);
+
+		JHtmlSidebar::addFilter(
+			JText::_('JOPTION_SELECT_AUTHOR'),
+			'filter_author_id',
+			JHtml::_('select.options', $this->authorsList, 'value', 'text', $this->state->get('filter.author_id'))
 		);
 	}
 

@@ -9,7 +9,7 @@ class AnodosModelPrices extends JModelList {
 	public function __construct($config = array()) {
 		if (empty($config['filter_fields'])) {
 			$config['filter_fields'] = array(
-				'partner_name', 'partner.name',
+				'stock_name', 'stock.name',
 				'product_name', 'product.name',
 				'created', 'a.created',
 				'price', 'a.price',
@@ -64,11 +64,11 @@ class AnodosModelPrices extends JModelList {
 				'a.*'
 			)
 		);
-		$query->from('`#__anodos_price` AS a');
+		$query->from('#__anodos_price AS a');
 
 		// Join contractor
-		$query->select('partner.name AS partner_name');
-		$query->join('LEFT', '#__anodos_partner AS partner ON partner.id = a.partner_id');
+		$query->select('stock.name AS stock_name');
+		$query->join('LEFT', '#__anodos_stock AS stock ON stock.id = a.stock_id');
 
 		// Join product
 		$query->select('product.name AS product_name');

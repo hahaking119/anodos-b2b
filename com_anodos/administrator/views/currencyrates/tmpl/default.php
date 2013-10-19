@@ -90,7 +90,7 @@ if (!empty($this->extra_sidebar)) {
 						<?php echo JHtml::_('grid.sort', 'COM_ANODOS_CURRENCY', 'currency_name', $listDirn, $listOrder); ?>
 					</th>
 					<th class="left">
-						<?php echo JHtml::_('grid.sort', 'COM_ANODOS_DATE', 'a.date', $listDirn, $listOrder); ?>
+						<?php echo JHtml::_('grid.sort', 'COM_ANODOS_RATE_DATE', 'a.rate_date', $listDirn, $listOrder); ?>
 					</th>
 					<th class="center">
 						<?php echo JHtml::_('grid.sort', 'COM_ANODOS_QUANTITY', 'a.quantity', $listDirn, $listOrder); ?>
@@ -129,7 +129,7 @@ if (!empty($this->extra_sidebar)) {
 						<?php echo $item->currency_name; ?>
 					</td>
 					<td class="left">
-						<?php echo $item->date; ?>
+						<?php echo $item->rate_date; ?>
 					</td>
 					<td class="right">
 						<?php echo $item->quantity; ?>
