@@ -11,6 +11,33 @@ DROP TABLE IF EXISTS "#__anodos_product";
 DROP TABLE IF EXISTS "#__anodos_product_vat";
 DROP TABLE IF EXISTS "#__anodos_partner";
 
+INSERT INTO "#__categories" (
+	"parent_id",
+	"lft",
+	"rgt",
+	"level",
+	"path",
+	"extension",
+	"title",
+	"alias",
+	"note",
+	"description",
+	"published",
+	"checked_out",
+	"access",
+	"params",
+	"metadesc",
+	"metakey",
+	"metadata",
+	"created_user_id",
+	"created_time",
+	"language")
+VALUES
+('1', '1', '2', '1', 'uncategorised', 'com_anodos.partner', 'Uncategorised', 'uncategorised', '', '', '1', '0', '1', '{"target":"","image":""}', '', '', '{"page_title":"","author":"","robots":""}', '42', '2011-01-01 00:00:01','*'),
+('1', '1', '2', '1', 'uncategorised', 'com_anodos.product', 'Uncategorised', 'uncategorised', '', '', '1', '0', '1', '{"target":"","image":""}', '', '', '{"page_title":"","author":"","robots":""}', '42', '2011-01-01 00:00:01','*'),
+('1', '1', '2', '1', 'uncategorised', 'com_anodos.updater', 'Uncategorised', 'uncategorised', '', '', '1', '0', '1', '{"target":"","image":""}', '', '', '{"page_title":"","author":"","robots":""}', '42', '2011-01-01 00:00:01','*'),
+('1', '1', '2', '1', 'uncategorised', 'com_anodos.stock'  , 'Uncategorised', 'uncategorised', '', '', '1', '0', '1', '{"target":"","image":""}', '', '', '{"page_title":"","author":"","robots":""}', '42', '2011-01-01 00:00:01','*');
+
 CREATE TABLE IF NOT EXISTS "#__anodos_partner" (
 	"id" serial8 NOT NULL,
 	"name" varchar(255) NOT NULL DEFAULT '',

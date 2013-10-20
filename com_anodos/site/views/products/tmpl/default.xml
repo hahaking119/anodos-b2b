@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<metadata>
+	<layout title="COM_PRICER_VIEW_CATALOG_TITLE">
+		<message>COM_PRICER_VIEW_CATALOG_DESC</message>
+	</layout>
+	<fields name="reguest">
+		<fieldset
+			name="reguest"
+			addfieldpath="/administrator/components/com_pricer/models/fields"
+		>
+			<field
+				name="id"
+				type="pricer"
+				label="PRICER_FIELD_GREETING_LABEL"
+				description="PRICER_FIELD_GREETING_DESC"
+			/>
+		</fieldset>
+	</fields>
+</metadata>
