@@ -70,10 +70,9 @@ class Vendor {
 			WHERE '{$synonym}' = name
 			AND '{$partnerId}' = partner_id;";
 		$db->setQuery($query);
-		$synonym = $db->loadObject();
 
 		// Возвращаем результат
-		return $synonym;
+		return $db->loadObject();
 	}
 
 	// Добавляет синоним производителя
@@ -89,13 +88,11 @@ class Vendor {
 			INSERT INTO #__anodos_vendor_synonym (
 				name,
 				partner_id,
-				vendor_id,
 				created,
 				created_by)
 			VALUES (
 				'{$synonym}',
 				'{$partnerId}',
-				'1',
 				NOW(),
 				'{$createdBy}');";
 		$db->setQuery($query);
@@ -108,8 +105,8 @@ class Vendor {
 			WHERE '{$synonym}' = name
 			AND '{$partnerId}' = partner_id;";
 		$db->setQuery($query);
-		$synonym = $db->loadObject();
 
-		return $synonym;
+		// Возвращаем результат
+		return $db->loadObject();
 	}
 }

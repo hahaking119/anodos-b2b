@@ -110,15 +110,11 @@ class AnodosModelVendorSynonyms extends JModelList {
 		$db =& JFactory::getDBO();
 
 		// Загружаем категории из базы
-		$query = $db->getQuery(true);
-		$query->select('id, name, state');
-		$query->from('#__anodos_partner');
-		$query->order('name');
+		$query = "SELECT * FROM #__anodos_partner WHERE state = 1 AND vendor = 1 ORDER BY name ASC;";
 		$db->setQuery($query);
-		$vendors = $db->loadObjectList();
 
 		// Возвращаем результат
-		return $vendors;
+		return $db->loadObjectList();
 	}
 
 	public function getAuthorsList() {

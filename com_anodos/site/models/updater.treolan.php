@@ -138,7 +138,10 @@ class UpdaterTreolan {
 		Stock::clearSQL($this->stock['treolan-transit-stock']->id);
 
 		// Загружаем данные в массив
-		if (true != $this->getData($file)) { return false; }
+		if (true != $this->getData($file)) {
+			$this->addMsg('Error #'.__LINE__.' - Пожалуй, массив данных не удалось загрузить');
+			return false;
+		}
 
 		// Отмечаем время обновления
 		Updater::setUpdated($this->updater->id);
@@ -406,12 +409,10 @@ class UpdaterTreolan {
 		$vendorId = 0;
 		$price = 0;
 
-		// Получаем id производителя если он указан
+		// Получаем id производителя, если указан в базе
 		$synonym = Vendor::getSynonym($product['vendor'], $this->partner->id);
 		if (isset($synonym->vendor_id)) {
-			if (1 != $synonym->vendor_id) {
-				$vendorId = $synonym->vendor_id;
-			}
+			$vendorId = $synonym->vendor_id;
 		}
 
 		// Добавляем синоним производителя если его нет
@@ -427,9 +428,7 @@ class UpdaterTreolan {
 		// Получаем id категории если она указана
 		$synonym = Category::getSynonym($product['category'], $this->partner->id);
 		if (isset($synonym->category_id)) {
-			if (1 != $synonym->category_id) {
-				$categoryId = $synonym->category_id;
-			}
+			$categoryId = $synonym->category_id;
 		}
 
 		// Добавляем синоним категории если его нет
@@ -472,11 +471,23 @@ class UpdaterTreolan {
 		$quantityTransit = $this->getCorrectedQuantity($this->getCorrectedQuantity($product['stock_transit']) - $quantityStock);
 
 		// Есть ли наличие хотя бы на одном из складов?
-		if ((true == $quantityStock) or (true == $quantityStock)) { // Наличие есть
+		if ((true == $quantityStock) or (true == $quantityTransit)) { // Наличие есть
 
 			// Заносим информацию о наличие в базу
-			Stock::addQuantity($this->stock['treolan-msk-stock']->id, $productId, $quantityStock, 3, 0);
-			Stock::addQuantity($this->stock['treolan-transit-stock']->id, $productId, $quantityTransit, 3, 0);
+			Stock::addQuantity(
+				$this->stock['treolan-msk-stock']->id,
+				$productId,
+				$quantityStock,
+				3,
+				0
+			);
+			Stock::addQuantity(
+				$this->stock['treolan-transit-stock']->id,
+				$productId,
+				$quantityTransit,
+				3,
+				0
+			);
 
 			// Есть ли долларовая цена?
 			if (true == $priceUSD) {

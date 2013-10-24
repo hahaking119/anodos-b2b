@@ -12,28 +12,8 @@ class Price {
 	// Заносит цену в базу
 	public function addPrice($stockId, $productId, $price, $currencyId, $priceTypeId, $addDate = 3, $createdBy = 0) {
 
-		// Определяем переменные
-		$version = 0;
-
 		// Подключаемся к базе
 		$db = JFactory::getDBO();
-
-		// TODO проверем наличие цены c теми же ключами
-		$query = "
-			SELECT MAX(version)
-			FROM #__anodos_price
-			WHERE #__anodos_price.stock_id = '{$stockId}'
-			AND   #__anodos_price.product_id = '{$productId}'
-			AND   #__anodos_price.created = NOW();";
-		$db->setQuery($query);
-		$version =  $db->loadResult();
-
-		//Получаем последнюю версию
-		if (NULL != $version) {
-			$version++;
-		} else {
-			$version = 0;
-		}
 
 		// Заносим информацию в базу
 		$query="
@@ -41,7 +21,6 @@ class Price {
 				stock_id,
 				product_id,
 				created,
-				version,
 				price,
 				currency_id,
 				price_type_id,
@@ -52,7 +31,6 @@ class Price {
 				'{$stockId}',
 				'{$productId}',
 				NOW(),
-				'{$version}',
 				'{$price}',
 				'{$currencyId}',
 				'{$priceTypeId}',

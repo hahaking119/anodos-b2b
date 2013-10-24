@@ -1,51 +1,51 @@
 function openCategories() {
-	$('categories').removeClass('close');
-	$('category-selected-square').set('onClick', 'closeCategories()');
-	$('category-selected-square').set('text', '⊟');
-	$('category-selected-text').set('onClick', 'closeCategories()');
+	$('#b2b-categories').removeClass('closed');
+	$('#category-selected-square').attr('onClick', 'closeCategories()');
+	$('#category-selected-square').attr('text', '⊟');
+	$('#category-selected-text').attr('onClick', 'closeCategories()');
 }
 
 function closeCategories() {
-	$('categories').addClass('close');
-	$('category-selected-square').set('onClick', 'openCategories()');
-	$('category-selected-square').set('text', '⊞');
-	$('category-selected-text').set('onClick', 'openCategories()');
+	$('#b2b-categories').addClass('closed');
+	$('#category-selected-square').attr('onClick', 'openCategories()');
+	$('#category-selected-square').attr('text', '⊞');
+	$('#category-selected-text').attr('onClick', 'openCategories()');
 }
 
 function openCategory(id) {
-	$('category-'+id).removeClass('close');
-	$('category-square-'+id).set('onClick', 'closeCategory('+id+')');
-	$('category-square-'+id).set('text', '⊟');
+	$('#category-'+id).removeClass('closed');
+	$('#category-square-'+id).attr('onClick', 'closeCategory('+id+')');
+	$('#category-square-'+id).attr('text', '⊟');
 }
 
 function closeCategory(id) {
-	$('category-'+id).addClass('close');
-	$('category-square-'+id).set('onClick', 'openCategory('+id+')');
-	$('category-square-'+id).set('text', '⊞');
+	$('#category-'+id).addClass('closed');
+	$('#category-square-'+id).attr('onClick', 'openCategory('+id+')');
+	$('#category-square-'+id).attr('text', '⊞');
 }
 
 function setCategorySelected(id) {
-	$('category-selected-text').set('text', $('category-text-'+id).get('text'));
-	$('form-category-selected').set('value', id);
+	$('#category-selected-text').text($('#category-text-'+id).text());
+	$('#form-category-selected').attr('value', id);
 	closeCategories();
 }
 
 function openVendors() {
-	$('vendors').removeClass('close');
-	$('vendor-selected-square').set('onClick', 'closeVendors()');
-	$('vendor-selected-square').set('text', '⊟');
-	$('vendor-selected-text').set('onClick', 'closeVendors()');
+	$('#b2b-vendors').removeClass('closed');
+	$('#vendor-selected-square').attr('onClick', 'closeVendors()');
+	$('#vendor-selected-square').attr('text', '⊟');
+	$('#vendor-selected-text').attr('onClick', 'closeVendors()');
 }
 
 function closeVendors() {
-	$('vendors').addClass('close');
-	$('vendor-selected-square').set('onClick', 'openVendors()');
-	$('vendor-selected-square').set('text', '⊞');
-	$('vendor-selected-text').set('onClick', 'openVendors()');
+	$('#b2b-vendors').addClass('closed');
+	$('#vendor-selected-square').attr('onClick', 'openVendors()');
+	$('#vendor-selected-square').attr('text', '⊞');
+	$('#vendor-selected-text').attr('onClick', 'openVendors()');
 }
 
 function setVendorSelected(id) {
-	$('vendor-selected-text').set('text', $('vendor-'+id).get('text'));
-	$('form-vendor-selected').set('value', id);
+	$('#vendor-selected-text').text($('#vendor-'+id).text());
+	$('#form-vendor-selected').attr('value', id);
 	closeVendors();
 }

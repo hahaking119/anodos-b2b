@@ -95,21 +95,8 @@ class Stock {
 	// Заносим количество в базу
 	public function addQuantity($stockId, $productId, $quantity, $addDate = 3, $createdBy = 0) {
 
-		// Определяем переменные
-		$version = 0;
-
 		// Инициализируем переменные
 		$db =& JFactory::getDBO();
-
-		// TODO проверем записи цены c теми же ключами
-		$query = "
-			SELECT MAX(version)
-			FROM #__anodos_product_quantity
-			WHERE #__anodos_product_quantity.stock_id = '{$stockId}'
-			AND #__anodos_product_quantity.product_id = '{$productId}'
-			AND #__anodos_product_quantity.created = NOW();";
-		$db->setQuery($query);
-		$version =  $db->loadResult();
 
 		// Заносим информацию в базу
 		$query="
@@ -124,7 +111,6 @@ class Stock {
 			VALUES (
 				'{$productId}',
 				'{$stockId}',
-				'{$version}',
 				'{$quantity}',
 				NOW(),
 				'{$createdBy}',

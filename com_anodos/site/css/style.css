@@ -2,46 +2,38 @@
 
 /* Прячем внутренности закрытых элементов */
 
-div.close > #pricer-categories-list {
+.closed ul {
 	display: none;
 }
 
-li.close > ul {
-	display: none;
-}
-
-div#pricer-categories span[onclick] {
+div#b2b-categories span[onclick] {
 	cursor: pointer;
 }
 
-div.close#pricer-vendors > ul {
-	display: none;
-}
-
-div#pricer-vendors li[onclick] {
+div#b2b-vendors li[onclick] {
 	cursor: pointer;
 }
 
-div#pricer-vendors span[onclick] {
+div#b2b-vendors span[onclick] {
 	cursor: pointer;
 }
 
-#pricer-categories ul {
+#b2b-categories ul {
 	list-style: none;
 	padding: 0;
 	margin: 0;
 }
 
-#pricer-categories li {
+#b2b-categories li {
 	margin: 2px 2px 2px 10px;
 }
 
-#pricer-vendors ul {
+#b2b-vendors ul {
 	list-style: none;
 	padding: 0;
 	margin: 0;
 }
 
-#pricer-vendors li {
+#b2b-vendors li {
 	margin: 2px 2px 2px 10px;
 }

@@ -18,8 +18,8 @@ require_once JPATH_COMPONENT.'/models/helpers/currency.php';
 class UpdaterFujitsu {
 
 	// Объявляем переменные
-	protected $partnerAlias = 'merlion';
-	protected $partnerName = 'Merlion';
+	protected $partnerAlias = 'fujitsu';
+	protected $partnerName = 'Fujitsu';
 	protected $updater;
 	protected $partner;
 	protected $stock = array();
@@ -36,10 +36,7 @@ class UpdaterFujitsu {
 	}
 
 	// Точка входа
-	public function update() {
-
-		// TODO выход
-		return false;
+	public function update($id) {
 
 		// Получаем объект загрузчика
 		$this->updater = Updater::getUpdater($id);
@@ -92,6 +89,20 @@ class UpdaterFujitsu {
 		$alias = 'rdp';
 		$name = 'Рекомендованная диллерская цена (RDP, вход)';
 		$this->priceType[$alias] = Price::getPriceTypeFromAlias('rdp');
+		if (!isset($this->priceType[$alias]->id)) {
+			$this->priceType[$alias] = Price::addPriceType($name, $alias, 1, 0, 0);
+			if (!isset($this->priceType[$alias]->id)) {
+				$this->addMsg('Error #'.__LINE__." - Не возможно добавить тип цены: {$name}.");
+				return false;
+			} else {
+				$this->addMsg("Добавлен тип цены: {$this->priceType[$alias]->name}.");
+			}
+		}
+
+		// Получаем объект типа цены
+		$alias = 'lp';
+		$name = 'Порядок розничной цены (LP, выход)';
+		$this->priceType[$alias] = Price::getPriceTypeFromAlias('lp');
 		if (!isset($this->priceType[$alias]->id)) {
 			$this->priceType[$alias] = Price::addPriceType($name, $alias, 1, 0, 0);
 			if (!isset($this->priceType[$alias]->id)) {
@@ -356,15 +367,5 @@ class UpdaterFujitsu {
 		// TODO заносим состояние складов
 
 		return true;
-	}
-
-	// Возвращает строку сообщений
-	public function getMsg() {
-		return $this->msg;
-	}
-
-	// Добавляет сообщение
-	private function addMsg($msg) {
-		$this->msg .= "{$msg}<br/>\n";
 	}
 }

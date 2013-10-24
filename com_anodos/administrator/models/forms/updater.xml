@@ -12,7 +12,7 @@
 			label="COM_ANODOS_FORM_PARTNER" description="COM_ANODOS_FORM_PARTNER_DESC" />
 
 		<field name="category_id" type="category"
-			size="40" required="true" extension="com_anodos.updater" filter="raw"
+			size="40" extension="com_anodos.updater" filter="raw"
 			label="COM_ANODOS_FORM_CATEGORY" description="COM_ANODOS_FORM_CATEGORY_DESC" />
 
 		<field name="name" type="text" default=""

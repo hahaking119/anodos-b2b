@@ -17,10 +17,9 @@ class Category {
 			WHERE '{$synonym}' = name
 			AND '{$partnerId}' = partner_id;";
 		$db->setQuery($query);
-		$synonym = $db->loadObject();
 
 		// Возвращаем результат
-		return $synonym;
+		return $db->loadObject();
 	}
 
 	// Добавляет синоним категории в базу
@@ -35,13 +34,11 @@ class Category {
 		$query = "
 			INSERT INTO #__anodos_category_synonym (
 				name,
-				category_id,
 				partner_id,
 				created,
 				created_by)
 			VALUES (
 				'{$synonym}',
-				'1',
 				'{$partnerId}',
 				NOW(),
 				'{$createdBy}');";
@@ -55,9 +52,8 @@ class Category {
 			WHERE '{$synonym}' = name
 			AND '{$partnerId}' = partner_id;";
 		$db->setQuery($query);
-		$synonym = $db->loadObject();
 
 		// Возвращаем результат
-		return $synonym;
+		return $db->loadObject();
 	}
 }

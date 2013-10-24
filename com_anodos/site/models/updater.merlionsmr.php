@@ -115,7 +115,7 @@ class UpdaterMerlionSmr {
 		}
 
 		// Помечаем неактуальными устаревшие данные в базе
-		Price::clearSQL($this->partner->id);
+		Price::clearSQL($this->stock['merlion-smr-stock']->id);
 		Stock::clearSQL($this->stock['merlion-smr-stock']->id);
 
 		// Загружаем данные в массив
@@ -367,15 +367,13 @@ class UpdaterMerlionSmr {
 		$vendorId = 0;
 		$price = 0;
 
-		// Получаем id производителя
+		// Получаем id производителя, если указан в базе
 		$synonym = Vendor::getSynonym($product['Brand'], $this->partner->id);
 		if (isset($synonym->vendor_id)) {
-			if (1 != $synonym->vendor_id) {
-				$vendorId = $synonym->vendor_id;
-			}
+			$vendorId = $synonym->vendor_id;
 		}
 
-		// Проверяем есть ли синоним производителя
+		// Добавляем синоним производителя, если его нет в базе
 		if (!isset($synonym->id)) {
 			$synonym = Vendor::addSynonym($product['Brand'], $this->partner->id);
 			if (!isset($synonym->id)) {
@@ -385,15 +383,13 @@ class UpdaterMerlionSmr {
 			}
 		}
 
-		// Получаем id категории
+		// Получаем id категории, если указан в базе
 		$synonym = Category::getSynonym($product['categorySynonym'], $this->partner->id);
 		if (isset($synonym->category_id)) {
-			if (1 != $synonym->category_id) {
-				$categoryId = $synonym->category_id;
-			}
+			$categoryId = $synonym->category_id;
 		}
 
-		// Проверяем есть ли синоним категории
+		// Добавляем синоним категории, если его нет в базе
 		if (!isset($synonym->id)) {
 			$synonym = Category::addSynonym($product['categorySynonym'], $this->partner->id);
 			if (!isset($synonym->id)) { // Нет синонима в базе
@@ -431,11 +427,26 @@ class UpdaterMerlionSmr {
 		$quantity = $this->getCorrectedQuantity($product['Avail']);
 
 		if (true == $quantity) {
-			Stock::addQuantity($this->stock['merlion-smr-stock']->id, $productId, $quantity, 3, 0);
+			Stock::addQuantity(
+				$this->stock['merlion-msk-stock']->id,
+				$productId,
+				$quantity,
+				3,
+				0
+			);
 		}
 
 		if (true == $price) {
-			Price::addPrice($this->stock['merlion-smr-stock']->id, $productId, $price, $this->currency['USD']->id, $this->priceType['rdp']->id, 3, 0);
+			Price::addPrice(
+				$this->stock['merlion-msk-stock']->id,
+				$productId,
+				$price,
+				$this->currency['USD']->id,
+				$this->priceType['rdp']->id,
+				3,
+				0
+			);
+
 			return true;
 		} else {
 			return false;

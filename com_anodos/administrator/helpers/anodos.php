@@ -4,6 +4,8 @@ defined('_JEXEC') or die;
 
 class AnodosHelper {
 
+	public static $extension = 'com_anodos';
+
 	public static function addSubmenu($vName = '') {
 
 		JHtmlSidebar::addEntry(

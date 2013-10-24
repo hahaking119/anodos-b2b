@@ -31,7 +31,7 @@ class Updater {
 		$query = "
 			UPDATE #__anodos_updater
 			SET partner_id = {$partnerId}
-			WHERE id = '{$partnerId}';";
+			WHERE id = '{$updaterId}';";
 		$db->setQuery($query);
 		$db->query();
 

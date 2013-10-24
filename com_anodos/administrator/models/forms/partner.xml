@@ -15,7 +15,7 @@
 			label="COM_ANODOS_FORM_ALIAS" description="COM_ANODOS_FORM_ALIAS_DESC" />
 
 		<field name="category_id" type="category"
-			size="40" required="true" extension="com_anodos.partner" filter="raw"
+			size="40" extension="com_anodos.partner" filter="raw"
 			label="COM_ANODOS_FORM_CATEGORY" description="COM_ANODOS_FORM_CATEGORY_DESC" />
 
 		<field name="vendor" type="list"

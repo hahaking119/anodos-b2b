@@ -57,8 +57,10 @@ class AnodosModelProducts extends JModelList {
 		$query = "
 			SELECT *
 			FROM #__categories
-			WHERE parent_id = {$parentId}
-			AND extension = 'com_anodos.product'
+			WHERE
+				parent_id = {$parentId} AND
+				published = 1 AND
+				extension = 'com_anodos.product'
 			ORDER BY lft;
 		";
 
@@ -346,15 +348,12 @@ class AnodosModelProducts extends JModelList {
 
 		// Получаем список дочерних категорий
 		$query = "
-			SELECT
-				id,
-				parent_id,
-				lft,
-				extension
+			SELECT *
 			FROM #__categories
 			WHERE
 				parent_id = {$catid} AND
-				extension = 'com_pricerproducts'
+				published = 1 AND
+				extension = 'com_anodos.product'
 			ORDER BY lft;
 		";
 		$db->setQuery($query);
