@@ -37,3 +37,8 @@ div#b2b-vendors span[onclick] {
 #b2b-vendors li {
 	margin: 2px 2px 2px 10px;
 }
+
+#b2b-products > thead > tr > th {
+	text-align: center;
+	vertical-align: middle;
+}

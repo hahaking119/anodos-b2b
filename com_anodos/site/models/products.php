@@ -95,7 +95,7 @@ class AnodosModelProducts extends JModelList {
 							$span->setAttribute('id', "category-square-{$category[$i]->id}");
 							$span->setAttribute('onClick', "openCategory({$category[$i]->id})");
 						$newLI->appendChild($span = $dom->createElement('span', "&nbsp;"));
-						$newLI->setAttribute('class', "close");
+						$newLI->setAttribute('class', "closed");
 					} else {
 						$newLI->appendChild($span = $dom->createElement('span', "&nbsp;"));
 					}
@@ -229,105 +229,65 @@ class AnodosModelProducts extends JModelList {
 //			INNER JOIN #__pricer_currency AS currency ON tmp.currency_alias = currency.alias
 //			";
 
-//		$query = "
-//			SELECT
-//				product.id AS product_id,
-//				product.title AS product_title,
-//				product.article AS product_article,
-//				category.id AS category_id,
-//				category.title AS category_title,
-//				category.lft AS category_lft,
-//				vendor.id AS vendor_id,
-//				vendor.title AS vendor_title,
-//				distributor.price AS price,
-//				distributor.price_rub AS price_rub,
-//				distributor.quantity AS quantity,
-//				distributor.delivery_time AS delivery_time,
-//				distributor.distributor_title AS distributor_title,
-//				currency.title AS currency_title,
-//				currency.name_html AS currency_html
-//			FROM #__pricer_product AS product
-//			INNER JOIN #__categories AS category
-//				ON product.catid = category.id
-//			INNER JOIN #__pricer_vendor AS vendor
-//				ON product.vendor_id = vendor.id
-//			INNER JOIN (
-//				SELECT 
-//					product.id,
-//					product.article,
-//					stock.title AS stock_title,
-//					stock.delivery_time AS delivery_time,
-//					contractor.title AS distributor_title,
-//					product_quantity.quantity AS quantity,
-//					min(price_table.price*currency_rate.rate/currency_rate.quantity) AS price_rub,
-//					price_table.price,
-//					price_table.currency_alias
-//				FROM #__pricer_product AS product
-//				INNER JOIN #__pricer_product_quantity AS product_quantity ON product_quantity.product_id = product.id
-//				INNER JOIN #__pricer_stock AS stock ON product_quantity.stock_id = stock.id
-//				INNER JOIN #__pricer_contractor AS contractor ON contractor.id = stock.contractor_id
-//				INNER JOIN #__pricer_price AS price_table ON product.id = price_table.product_id
-//				INNER JOIN #__pricer_currency_rate AS currency_rate ON price_table.currency_alias = currency_rate.currency_alias
-//				WHERE
-//					product_quantity.quantity > 0 AND
-//					currency_rate.state = 1 AND
-//					stock.state = 1 AND
-//					product.state = 1 AND
-//					price_table.state = 1
-//				GROUP BY product.id
-//			) AS distributor
-//				ON distributor.id = product.id
-//			INNER JOIN #__pricer_currency AS currency
-//				ON distributor.currency_alias = currency.alias
-//		";
+		$query = "
+			SELECT
+				product.id AS product_id,
+				product.name AS product_name,
+				product.article AS product_article,
+				category.id AS category_id,
+				category.title AS category_name,
+				category.lft AS category_lft,
+				vendor.id AS vendor_id,
+				vendor.name AS vendor_name
+			FROM #__anodos_product AS product
+			INNER JOIN #__categories AS category
+				ON product.category_id = category.id
+			INNER JOIN #__anodos_partner AS vendor
+				ON product.vendor_id = vendor.id
+		";
 
 		// Если есть хоть какие-то условия выборки
-//		if ((-1 != $categoryId) or (true == $vendorId)) {
-//			$query .= "WHERE ";
-//			$i = 0;
-//			if (sizeof($categories) > 1) {
-//				$query .= "( ";
-//				for ($j=0; $j<sizeof($categories); $j++) {
-//					if (0 != $j) {
-//						$query .= "OR ";
-//					}
-//					$query .= "product.catid = {$categories[$j]->id} ";
-//				}
-//				$query .= ") ";
-//				$i++;
-//			}
-//			elseif ((-1 != $categoryId) and (true == $i)) { // Если указаны не все категории
-//				$query .= "AND product.catid = {$categoryId} ";
-//				$i++;
-//			}
-//			elseif ((-1 != $categoryId) and (true != $i)) { // Если указаны не все категории
-//				$query .= "product.catid = {$categoryId} ";
-//				$i++;
-//			}
-//			if ((true == $vendorId) and (true == $i)) { // Если указан вендор
-//				$query .= "AND vendor.id = {$vendorId} ";
-//				$i++;
-//			}
-//			if ((true == $vendorId) and (true != $i)) { // Если указан вендор
-//				$query .= "vendor.id = {$vendorId} ";
-//				$i++;
-//			}
-//		}
-
-		// Группируем
-//		$query .= "GROUP BY product_id ";
+		if ((-1 != $categoryId) or (true == $vendorId)) {
+			$query .= "WHERE ";
+			$i = 0;
+			if (sizeof($categories) > 1) {
+				$query .= "( ";
+				for ($j=0; $j<sizeof($categories); $j++) {
+					if (0 != $j) {
+						$query .= "OR ";
+					}
+					$query .= "product.category_id = {$categories[$j]->id} ";
+				}
+				$query .= ") ";
+				$i++;
+			}
+			elseif ((-1 != $categoryId) and (true == $i)) { // Если указаны не все категории
+				$query .= "AND product.category_id = {$categoryId} ";
+				$i++;
+			}
+			elseif ((-1 != $categoryId) and (true != $i)) { // Если указаны не все категории
+				$query .= "product.category_id = {$categoryId} ";
+				$i++;
+			}
+			if ((true == $vendorId) and (true == $i)) { // Если указан вендор
+				$query .= "AND vendor.id = {$vendorId} ";
+				$i++;
+			}
+			if ((true == $vendorId) and (true != $i)) { // Если указан вендор
+				$query .= "vendor.id = {$vendorId} ";
+				$i++;
+			}
+		}
 
 		// Сортируем
-//		if (true != $sortBy) {
-//			$query .= "ORDER BY category_lft, vendor_title, product_title ";
-//		} else {
-//			// TODO: В зависимости от условий сортировки
-//		}
+		if (true != $sortBy) {
+			$query .= "ORDER BY category_lft, vendor_name, product_name ";
+		} else {
+			// TODO: В зависимости от условий сортировки
+		}
 
-//		// Закрываем запрос
-//		$query .=";";
-
-	$query = 'SELECT * FROM #__anodos_product;';
+		// Закрываем запрос
+		$query .=";";
 
 		// Выполняем запрос и возвращаем результат
 		$db->setQuery($query);
@@ -335,7 +295,7 @@ class AnodosModelProducts extends JModelList {
 		
 		foreach($products as $i => $product) {
 //			$products[$i]->price_rub = number_format (round($product->price_rub, 0, PHP_ROUND_HALF_UP), 2, ',', ' ');
-			$products[$i]->price = number_format (round($product->price, 2, PHP_ROUND_HALF_UP), 2, ',', ' ');
+//			$products[$i]->price = number_format (round($product->price, 2, PHP_ROUND_HALF_UP), 2, ',', ' ');
 		}
 
 		return $products;
@@ -371,6 +331,32 @@ class AnodosModelProducts extends JModelList {
 				$this->getCategoriesArray($categories, $catid);
 			}
 		}
+	}
+
+	// Возвращает список категорий для модального окна добавления
+	public function getParentCategoryList() {
+
+		// Инициализируем переменные
+		$db =& JFactory::getDBO();
+
+		// Загружаем категории из базы
+		$query = $db->getQuery(true);
+		$query->select('id, lft, level, path, extension, title, alias, published');
+		$query->from('#__categories');
+		$query->where("extension = 'com_anodos.product'");
+		$query->order('lft');
+		$db->setQuery($query);
+		$categories = $db->loadObjectList();
+
+		// Проводим изменение имени с учетом уровня вложенности
+		for ($i=0; $i<sizeof($categories); $i++) {
+			$prefix = '';
+			for ($k=1; $k<$categories[$i]->level; $k++) {
+				$prefix = '- ' . $prefix;
+			}
+			$categories[$i]->title = $prefix . $categories[$i]->title;
+		}
+		return $categories;
 	}
 
 	public function getOrders() {

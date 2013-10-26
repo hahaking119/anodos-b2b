@@ -27,4 +27,25 @@ class AnodosControllerUpdater extends AnodosController {
 		// Закрываем приложение
 		JFactory::getApplication()->close();
 	}
+
+	public function addCategory() {
+
+		$app = JFactory::getApplication();
+		$params = $app->getParams();
+
+		// Получаем данные
+		$name = JRequest::getVar('name', '');
+		$parent = JRequest::getVar('parent', 1);
+
+		// Передаем данные в модель
+		$model = parent::getModel('Updater', 'AnodosModel', array('ignore_request' => true));
+		$model->addCategory($name, $parent);
+
+		// Выводим сообщения из модели
+		$msg = $model->getMsg();
+		echo $msg;
+
+		// Закрываем приложение
+		JFactory::getApplication()->close();
+	}
 }

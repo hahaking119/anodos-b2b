@@ -35,6 +35,8 @@ class AnodosViewProducts extends JViewLegacy {
 //		$this->parameters = $this->get('Parameters');
 //		$this->msg = $this->get('Msg');
 
+		$this->parentCategoryList = $this->get('ParentCategoryList');
+
 		if (count($errors = $this->get('Errors'))) {;
 			throw new Exception(implode("\n", $errors));
 		}
