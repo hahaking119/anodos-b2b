@@ -90,10 +90,16 @@ class AnodosModelUpdater extends JModelList {
 		return $updater;
 	}
 
-	public function addCategory($name, $parent) {
+	public function addProductCategory($categoryName, $parentId) {
+
+		// Подключаем библиотеки
+		require_once JPATH_COMPONENT.'/helpers/anodos.php';
+		require_once JPATH_COMPONENT.'/models/helpers/category.php';
+
+		// Получаем объект текущего пользователя
+		$user = JFactory::getUser();
 
 		// Проверяем право доступа
-		require_once JPATH_COMPONENT.'/helpers/anodos.php';
 		$canDo = AnodosHelper::getActions();
 		if (!$canDo->get('core.admin')) {
 			$this->addMsg('<div class="alert alert-danger">Error #'.__LINE__.' - отказано в доступе.</div>');
@@ -103,52 +109,135 @@ class AnodosModelUpdater extends JModelList {
 		}
 
 		// TODO test
-//		$this->addMsg('<div class="alert alert-success">$name = '.$name.'</div>');
-//		$this->addMsg('<div class="alert alert-success">$alias = '.$alias.'</div>');
-//		$this->addMsg('<div class="alert alert-success">$parent = '.$parent.'</div>');
+		$this->addMsg('<div class="alert alert-success">$categoryName = '.$categoryName.'</div>');
+		$this->addMsg('<div class="alert alert-success">$parentId = '.$parentId.'</div>');
 
-		// TODO Заносим в базу
+		// TODO Получаем объект родительской категории
+		$parent = Category::getCategory($parentId);
+		$this->addMsg('<div class="alert alert-success">$parent->title = '.$parent->title.'</div>');
 
-		// Get the database object
-		$db = JFactory::getDbo();
+		// Копируем объект родительской категории
+		$category = $parent;
 
-		// JTableCategory is autoloaded in J! 3.0, so...
-		if (version_compare(JVERSION, '3.0', 'lt')) {
-			JTable::addIncludePath(JPATH_PLATFORM . 'joomla/database/table');
+		// Вносим необходимые правки
+		$category->asset_id = 0;
+		$category->parent_id = $parentId;
+		$category->lft = Category::getNextLFT($parent);
+		$category->rgt = 0;
+		$category->level++;
+		$category->title = $categoryName;
+		$category->alias = JFilterOutput::stringURLSafe($category->title);
+		if (true == $category->path) {
+			$category->path .= '/'.$category->alias;
+		} else {
+			$category->path = $category->alias;
 		}
-
-		// Initialize a new category
-		$category = JTable::getInstance('Category');
 		$category->extension = 'com_anodos.product';
-		$category->title = $name;
-		$category->description = '';
+		$category->note = '';
+		$category->description = ' ';
 		$category->published = 1;
-		$category->access = 1;
 		$category->params = '{}';
-		$category->metadata = '{}';
 		$category->metadesc = ' ';
 		$category->metakey = ' ';
+		$category->metadata = '{}';
+		$category->created_user_id = $user->id;
 		$category->language = '*';
-		$category->parent_id = $parent; 
+		$category->version = 1;
 
-		// Set the location in the tree
-		$category->setLocation($parent, 'last-child');
+		// Добавляем категорию в базу
+		$result = Category::addCategory($category);
 
-		// Check to make sure our data is valid
-		if (!$category->check()) {
-			JError::raiseNotice(500, $category->getError());
+		// Перестраиваем дерево категорий
+		$id = $category->id;
+		$category = JTable::getInstance('Category');
+		$category->rebuild();
+	}
+
+	public function addVendor($name) {
+
+		// Подключаем библиотеки
+		require_once JPATH_COMPONENT.'/helpers/anodos.php';
+		require_once JPATH_COMPONENT.'/models/helpers/vendor.php';
+
+		// Получаем объект текущего пользователя
+		$user = JFactory::getUser();
+
+		// Проверяем право доступа
+		$canDo = AnodosHelper::getActions();
+		if (!$canDo->get('core.admin')) {
+			$this->addMsg('<div class="alert alert-danger">Error #'.__LINE__.' - отказано в доступе.</div>');
 			return false;
 		} else {
-			$this->addMsg('<div class="alert alert-success">Добавлена категория: '.$name.'.</div>');
+			$this->addMsg('<div class="alert alert-success">Доступ разрешен.</div>');
 		}
 
-		// Now store the category
-		if (!$category->store(true)) {
-			JError::raiseNotice(500, $category->getError());
+		// TODO test
+		$this->addMsg('<div class="alert alert-success">$name = '.$name.'</div>');
+
+		// Вносим необходимые правки
+		$vendor->asset_id = 0;
+		$vendor->name = $name;
+		$vendor->alias = JFilterOutput::stringURLSafe($name);
+		$vendor->published = 1;
+		$vendor->created_by = $user->id;
+
+		// Добавляем категорию в базу
+		$result = Vendor::addVendor($vendor);
+	}
+
+	public function linkSynonymToCategory($synonymId, $categoryId) {
+
+		// Подключаем библиотеки
+		require_once JPATH_COMPONENT.'/helpers/anodos.php';
+		require_once JPATH_COMPONENT.'/models/helpers/category.php';
+		$this->addMsg('<?xml version="1.0" encoding="UTF-8"?>');
+		$this->addMsg('<body>');
+
+		// Получаем объект текущего пользователя
+		$user = JFactory::getUser();
+
+		// Проверяем право доступа
+		$canDo = AnodosHelper::getActions();
+		if (!$canDo->get('core.admin')) {
+			$this->addMsg('<div class="alert alert-danger">Error #'.__LINE__.' - отказано в доступе.</div>');
+			$this->addMsg('</body>');
 			return false;
+		} else {
+			$this->addMsg('<div class="alert alert-success">Доступ разрешен.</div>');
 		}
 
-		// Build the path for our category
-		$category->rebuildPath($category->id);
+		// Добавляем категорию в базу
+		Category::linkSynonymToCategory($synonymId, $categoryId);
+
+		// Закрываем XML
+		$this->addMsg('</body>');
+	}
+
+	public function linkSynonymToVendor($synonymId, $vendorId) {
+
+		// Подключаем библиотеки
+		require_once JPATH_COMPONENT.'/helpers/anodos.php';
+		require_once JPATH_COMPONENT.'/models/helpers/vendor.php';
+		$this->addMsg('<?xml version="1.0" encoding="UTF-8"?>');
+		$this->addMsg('<body>');
+
+		// Получаем объект текущего пользователя
+		$user = JFactory::getUser();
+
+		// Проверяем право доступа
+		$canDo = AnodosHelper::getActions();
+		if (!$canDo->get('core.admin')) {
+			$this->addMsg('<div class="alert alert-danger">Error #'.__LINE__.' - отказано в доступе.</div>');
+			$this->addMsg('</body>');
+			return false;
+		} else {
+			$this->addMsg('<div class="alert alert-success">Доступ разрешен.</div>');
+		}
+
+		// Добавляем категорию в базу
+		Vendor::linkSynonymToVendor($synonymId, $vendorId);
+
+		// Закрываем XML
+		$this->addMsg('</body>');
 	}
 }

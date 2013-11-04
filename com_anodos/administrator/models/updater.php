@@ -62,4 +62,14 @@ class AnodosModelUpdater extends JModelAdmin {
 			}
 		}
 	}
+
+	// Проверка на право удаления записи core.delete
+	protected function canDelete($record) {
+
+		if( !empty( $record->id ) ){
+			$user = JFactory::getUser();
+			return $user->authorise( "core.delete", "com_anodos.updater." . $record->id );
+		}
+	}
+
 }

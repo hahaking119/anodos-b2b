@@ -99,19 +99,22 @@ class AnodosHelper {
 		);
 	}
 
-	public static function getActions() {
+	// TODO test here
+	public static function getActions($type = NULL, $id = NULL) {
 
-		$user	= JFactory::getUser();
-		$result	= new JObject;
+		$user = JFactory::getUser();
+		$result = new JObject;
 
-		$assetName = 'com_anodos';
+		if (isset($id) && isset($type)) {
+			$assetName = 'com_anodos.'.$type.'.'.(int) $id;
+		} else {
+			$assetName = 'com_anodos';
+		}
 
-		$actions = array(
-			'core.admin', 'core.manage', 'core.create', 'core.edit', 'core.edit.own', 'core.edit.state', 'core.delete'
-		);
+		$actions = JAccess::getActions('com_anodos', 'component');
 
 		foreach ($actions as $action) {
-			$result->set($action, $user->authorise($action, $assetName));
+			$result->set($action->name, $user->authorise($action->name, $assetName));
 		}
 
 		return $result;

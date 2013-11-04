@@ -28,7 +28,7 @@ class AnodosControllerUpdater extends AnodosController {
 		JFactory::getApplication()->close();
 	}
 
-	public function addCategory() {
+	public function addProductCategory() {
 
 		$app = JFactory::getApplication();
 		$params = $app->getParams();
@@ -39,7 +39,69 @@ class AnodosControllerUpdater extends AnodosController {
 
 		// Передаем данные в модель
 		$model = parent::getModel('Updater', 'AnodosModel', array('ignore_request' => true));
-		$model->addCategory($name, $parent);
+		$model->addProductCategory($name, $parent);
+
+		// Выводим сообщения из модели
+		$msg = $model->getMsg();
+		echo $msg;
+
+		// Закрываем приложение
+		JFactory::getApplication()->close();
+	}
+
+	public function addVendor() {
+
+		$app = JFactory::getApplication();
+		$params = $app->getParams();
+
+		// Получаем данные
+		$name = JRequest::getVar('name', '');
+
+		// Передаем данные в модель
+		$model = parent::getModel('Updater', 'AnodosModel', array('ignore_request' => true));
+		$model->addVendor($name);
+
+		// Выводим сообщения из модели
+		$msg = $model->getMsg();
+		echo $msg;
+
+		// Закрываем приложение
+		JFactory::getApplication()->close();
+	}
+
+	public function linkSynonymToCategory() {
+
+		$app = JFactory::getApplication();
+		$params = $app->getParams();
+
+		// Получаем данные
+		$synonymId = JRequest::getVar('synonym');
+		$categoryId = JRequest::getVar('category', NULL);
+
+		// Передаем данные в модель
+		$model = parent::getModel('Updater', 'AnodosModel', array('ignore_request' => true));
+		$model->linkSynonymToCategory($synonymId, $categoryId);
+
+		// Выводим сообщения из модели
+		$msg = $model->getMsg();
+		echo $msg;
+
+		// Закрываем приложение
+		JFactory::getApplication()->close();
+	}
+
+	public function linkSynonymToVendor() {
+
+		$app = JFactory::getApplication();
+		$params = $app->getParams();
+
+		// Получаем данные
+		$synonymId = JRequest::getVar('synonym');
+		$vendorId = JRequest::getVar('vendor', NULL);
+
+		// Передаем данные в модель
+		$model = parent::getModel('Updater', 'AnodosModel', array('ignore_request' => true));
+		$model->linkSynonymToVendor($synonymId, $vendorId);
 
 		// Выводим сообщения из модели
 		$msg = $model->getMsg();

@@ -42,3 +42,12 @@ div#b2b-vendors span[onclick] {
 	text-align: center;
 	vertical-align: middle;
 }
+
+#b2b-products > tbody > tr > td.article {
+	white-space: nowrap;
+}
+
+#b2b-products > tbody > tr > td.name {
+	word-wrap: break-word;
+	max-width: 30%;
+}

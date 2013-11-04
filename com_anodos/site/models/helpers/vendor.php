@@ -23,10 +23,14 @@ class Vendor {
 	}
 
 	// TODO TEST Добавляет контрагента в базу, возвращает объект контрагента
-	public function addVendor($name, $alias, $createdBy = 0) {
+	public function addVendor($vendor) {
 
 		// Инициализируем переменные и готовим запрос
 		$db = JFactory::getDBO();
+
+		// Исключаем инъекцию
+		$vendor->name = $db->quote($vendor->name);
+		$vendor->alias = $db->quote($vendor->alias);
 
 		// Выполняем запрос добавления
 		$query = "
@@ -37,24 +41,13 @@ class Vendor {
 				created,
 				created_by)
 			VALUES (
-				'{$name}',
-				'{$alias}',
+				{$vendor->name},
+				{$vendor->alias},
 				'1',
 				NOW(),
-				'{$createdBy}');";
+				'{$vendor->created_by}');";
 		$db->setQuery($query);
 		$db->query();
-
-		// Выполняем запрос выборки
-		$query = "
-			SELECT *
-			FROM #__anodos_partner
-			WHERE alias = '{$alias}';";
-		$db->setQuery($query);
-		$vendor = $db->loadObject();
-
-		// Возвращаем результат
-		return $vendor;
 	}
 
 	// Определяем id производителя
@@ -108,5 +101,23 @@ class Vendor {
 
 		// Возвращаем результат
 		return $db->loadObject();
+	}
+
+	// Привязывает загрузчика к контрагенту
+	public function linkSynonymToVendor($synonymId, $vendorId) {
+
+		// Подколючаемся к базе
+		$db = JFactory::getDBO();
+
+		// Выполняем запрос
+		$query = "
+			UPDATE #__anodos_vendor_synonym
+			SET vendor_id = {$vendorId}
+			WHERE id = '{$synonymId}';";
+		$db->setQuery($query);
+		$db->query();
+
+		// Возвразщаем результат
+		return true;
 	}
 }

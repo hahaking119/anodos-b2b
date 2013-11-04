@@ -126,7 +126,7 @@ class AnodosModelProducts extends JModelList {
 		// Инициализируем переменные
 		$db = JFactory::getDBO();
 
-		$query = "SELECT * FROM #__anodos_partner WHERE vendor = 1;";
+		$query = "SELECT * FROM #__anodos_partner WHERE vendor = 1 ORDER BY name ASC;";
 		$db->setQuery($query);
 		return $db->loadObjectList();
 	}

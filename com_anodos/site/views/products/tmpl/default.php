@@ -92,10 +92,6 @@ echo $this->msg;
 					<a data-toggle="modal" href="#addCategoryModal" class="btn btn-default">Добавить категорию</a>
 					<a data-toggle="modal" href="#addVendorModal" class="btn btn-default">Добавить производителя</a>
 				</div>
-				<div class="btn-group">
-					<a data-toggle="modal" href="#categorySynonymsModal" class="btn btn-default">Синонимы категорий</a>
-					<a data-toggle="modal" href="#vendorSynonymsModal" class="btn btn-default">Синонимы производителей</a>
-				</div>
 			</div>
 		</div>
 	</div>
@@ -124,7 +120,34 @@ echo $this->msg;
 						</div>
 						<iframe class="well well-sm" id="addCategoryModalFrame" style="width:100%;"></iframe>
 						<input type="hidden" name="option" value="com_anodos" />
-						<input type="hidden" name="task" value="updater.addCategory" />
+						<input type="hidden" name="task" value="updater.addProductCategory" />
+						<?php echo JHtml::_('form.token'); ?>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary">Добавить</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal"><?php echo JText::_('JCANCEL') ?></button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="addVendorModal" tabindex="-1" role="dialog" aria-labelledby="addVendorModalLabel" aria-hidden="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Добавить производителя?</h4>
+				</div>
+				<form role="form" action="" method="post" id="add-vendor-form" target="addVendorModalFrame">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="name">Имя производителя</label>
+							<input type="text" class="form-control" name="name" placeholder="Имя производителя">
+						</div>
+						<iframe class="well well-sm" id="addVendorModalFrame" style="width:100%;"></iframe>
+						<input type="hidden" name="option" value="com_anodos" />
+						<input type="hidden" name="task" value="updater.addVendor" />
 						<?php echo JHtml::_('form.token'); ?>
 					</div>
 					<div class="modal-footer">
@@ -144,49 +167,51 @@ echo $this->msg;
 		if (0 < sizeof($this->products)) :
 	?>
 	<div class="row">
-		<div class="table-responsive">
-			<table id="b2b-products" class="table table-bordered">
-				<thead>
-					<tr>
-						<th><?php echo JText::_('COM_ANODOS_N'); $col++; ?></th>
-						<th><?php echo JText::_('COM_ANODOS_ARTICLE'); $col++; ?></th>
-						<th><?php echo JText::_('COM_ANODOS_NAME'); $col++; ?></th>
-						<th><?php echo JText::_('COM_ANODOS_VENDOR'); $col++; ?></th>
-						<th><?php echo JText::_('COM_ANODOS_PRICE_IN'); $col++; ?></th>
-						<th><?php echo JText::_('COM_ANODOS_PRICE_OUT'); $col++; ?></th>
-						<th><?php echo JText::_('COM_ANODOS_QUANTITY'); $col++; ?></th>
-						<th><?php echo JText::_('COM_ANODOS_DISTRIBUTOR'); $col++; ?></th>
-						<th><?php echo JText::_('COM_ANODOS_DELIVERY_TIME'); $col++; ?></th>
+		<table id="b2b-products" class="table table-bordered col-xs-12">
+			<thead>
+				<tr>
+					<th><?php echo JText::_('COM_ANODOS_N'); $col++; ?></th>
+					<th><?php echo JText::_('COM_ANODOS_NAME').' ['.JText::_('COM_ANODOS_ARTICLE').']'; $col++; ?></th>
+					<th><?php echo JText::_('COM_ANODOS_VENDOR'); $col++; ?></th>
+					<th><?php echo JText::_('COM_ANODOS_PRICE'); $col++; ?></th>
+					<th><?php echo JText::_('COM_ANODOS_QUANTITY'); $col++; ?></th>
+					<th><?php echo JText::_('COM_ANODOS_DELIVERY_TIME'); $col++; ?></th>
+					<th><?php $col++; ?><span class="glyphicon glyphicon-shopping-cart"></span></th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach($this->products as $i => $product): ?>
+				<?php if ($lastCategoryId != $product->category_id) : ?>
+				<tr class="active" >
+					<td colspan="<?php echo $col; ?>"><b><?php echo $product->category_name; ?></b></td>
+				</tr>
+				<?php endif; $lastCategoryId = $product->category_id; ?>
+				<tr data-product-id="<?php echo $product->product_id; ?>">
+					<td class="text-center"><?php echo $i+1; ?></td>
+					<td class="text-left name">
+						<?php echo $product->product_name.' ['.$product->product_article.']'; ?>
 						<?php if ($canDo->get('core.admin')) : ?>
-						<th><?php echo JText::_('COM_ANODOS_MANAGEMENT'); $col++; ?></th>
+						<a class="btn btn-default btn-xs">
+							<span class="glyphicon glyphicon-edit"></span>
+						</a>
+						<a class="btn btn-default btn-xs">
+							<span class="glyphicon glyphicon-transfer"></span>
+						</a>
 						<?php endif; ?>
-					</tr>
-				</thead>
-				<tbody>
-					<?php foreach($this->products as $i => $product): ?>
-					<?php if ($lastCategoryId != $product->category_id) : ?>
-					<tr class="active" >
-						<td colspan="<?php echo $col; ?>"><b><?php echo $product->category_name; ?></b></td>
-					</tr>
-					<?php endif; $lastCategoryId = $product->category_id; ?>
-					<tr data-product-id="<?php echo $product->product_id; ?>">
-						<td class="text-center"><?php echo $i+1; ?></td>
-						<td class="text-left"><?php echo $product->product_article; ?></td>
-						<td class="text-left"><?php echo $product->product_name; ?></td>
-						<td class="text-center"><?php echo $product->vendor_name; ?></td>
-						<td class="text-right">TODO&nbsp;TODO</td>
-						<td class="text-right">TODO&nbsp;TODO</td>
-						<td class="text-right">TODO</td>
-						<td class="text-center">TODO</td>
-						<td class="text-center">TODO</td>
-						<?php if ($canDo->get('core.admin')) : ?>
-						<td class="text-center">TODO</td>
-						<?php endif; ?>
-					</tr>
-				<?php endforeach; ?>
-				</tbody>
-			</table>
-		</div>
+					</td>
+					<td class="text-center"><?php echo $product->vendor_name; ?></td>
+					<td class="text-right">TODO&nbsp;TODO</td>
+					<td class="text-right">TODO</td>
+					<td class="text-center">TODO</td>
+					<td class="text-center">
+						<a class="btn btn-default btn-xs">
+							<span class="glyphicon glyphicon-plus-sign"></span>
+						</a>
+					</td>
+				</tr>
+			<?php endforeach; ?>
+			</tbody>
+		</table>
 	</div>
 	<?php endif; ?>
 </div>

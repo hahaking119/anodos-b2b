@@ -20,7 +20,7 @@ class Product {
 		$product = $db->loadObject();
 
 		//TODO Проверяем, является ли продукт дублем другого, если да, повторяем запрос по идентификатору, если нет - просто возвращаем результат
-		if (true == $product->duble_of) {
+		if (isset($product->duble_of)) {
 
 			// Выполняем запрос
 			$query = "
@@ -40,7 +40,7 @@ class Product {
 	}
 
 	// Добавляет продукт
-	public function addProduct($name, $alias, $categoryId, $vendorId, $article, $state = 0, $createdBy = 0) {
+	public function addProduct($name, $alias, $categoryId, $vendorId, $article, $state = 1, $createdBy = 0) {
 
 		// Подключаемся к базе
 		$db = JFactory::getDBO();

@@ -40,6 +40,11 @@ $document->addStyleSheet('components/com_anodos/assets/css/anodos.css');
 					</a>
 				</li>
 				<li>
+					<a href="#acl" data-toggle="tab">
+						<?php echo JText::_('COM_ANODOS_ACL');?>
+					</a>
+				</li>
+				<li>
 					<a href="#other" data-toggle="tab">
 						<?php echo JText::_('COM_ANODOS_OTHER');?>
 					</a>
@@ -84,6 +89,12 @@ $document->addStyleSheet('components/com_anodos/assets/css/anodos.css');
 							<div class="control-label"><?php echo $this->form->getLabel('metadata'); ?></div>
 							<div class="controls"><?php echo $this->form->getInput('metadata'); ?></div>
 						</div>
+					</fieldset>
+				</div>
+				<div class="tab-pane" id="acl">
+					<fieldset class="panelform">
+						<?php echo $this->form->getLabel('rules'); ?>
+						<?php echo $this->form->getInput('rules'); ?>
 					</fieldset>
 				</div>
 				<div class="tab-pane" id="other">

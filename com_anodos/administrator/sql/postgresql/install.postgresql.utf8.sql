@@ -13,6 +13,7 @@ DROP TABLE IF EXISTS "#__anodos_partner";
 
 CREATE TABLE IF NOT EXISTS "#__anodos_partner" (
 	"id" serial8 NOT NULL,
+	"asset_id" bigint DEFAULT 0 NOT NULL,
 	"name" varchar(255) NOT NULL DEFAULT '',
 	"alias" varchar(255) NOT NULL DEFAULT '',
 	"category_id" int REFERENCES "#__categories"("id"),
@@ -44,6 +45,7 @@ INSERT INTO "#__anodos_product_vat" VALUES (DEFAULT, 18.00), (DEFAULT, 0.00);
 
 CREATE TABLE IF NOT EXISTS "#__anodos_product" (
 	"id" serial8 NOT NULL,
+	"asset_id" bigint DEFAULT 0 NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"alias" varchar(255) NOT NULL DEFAULT '',
 	"article" varchar(225) NOT NULL DEFAULT '',
@@ -68,6 +70,7 @@ CREATE TABLE IF NOT EXISTS "#__anodos_product" (
 
 CREATE TABLE IF NOT EXISTS "#__anodos_updater" (
 	"id" serial NOT NULL,
+	"asset_id" bigint DEFAULT 0 NOT NULL,
 	"partner_id" int8 REFERENCES "#__anodos_partner"("id"),
 	"category_id" int REFERENCES "#__categories"("id"),
 	"name" varchar(255) NOT NULL DEFAULT '',
@@ -92,20 +95,6 @@ CREATE TABLE IF NOT EXISTS "#__anodos_updater" (
 	"key" varchar(255) NOT NULL DEFAULT '0',
 	PRIMARY KEY ("id")
 );
-
-INSERT INTO "#__anodos_updater" (
-  "id",
-  "name",
-  "alias",
-  "state",
-  "ordering",
-  "key" )
-VALUES
-(DEFAULT, 'Обновление курсов валют ЦБР', 'CBR', 1, 0, 'e33193701a19d5fe636be0880b34f649'),
-(DEFAULT, 'Обновление из конфигуратора Fujitsu', 'Fujitsu', 1, 3, '00d3600a2bdd09cd5450648581568976'),
-(DEFAULT, 'Обновление данных Treolan', 'Treolan', 1, 2, '174c6bbd46dc5fc516e126045dac4095'),
-(DEFAULT, 'Обновление данных Merlion (Москва)', 'MerlionMsk', 1, 1, '00d3600a2bdd09cd5450648581568976'),
-(DEFAULT, 'Обновление данных Merlion (Самара)', 'MerlionSmr', 1, 4, '589f5103767c025b8f2b48f549823fb1');
 
 CREATE TABLE IF NOT EXISTS "#__anodos_category_synonym" (
 	"id" serial8 NOT NULL,
@@ -135,6 +124,7 @@ CREATE TABLE IF NOT EXISTS "#__anodos_vendor_synonym" (
 
 CREATE TABLE IF NOT EXISTS "#__anodos_stock" (
 	"id" serial8 NOT NULL,
+	"asset_id" bigint DEFAULT 0 NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"alias" varchar(255) NOT NULL,
 	"delivery_time_min" interval NOT NULL DEFAULT '4 days',
@@ -152,6 +142,7 @@ CREATE TABLE IF NOT EXISTS "#__anodos_stock" (
 	"publish_down" timestamp NOT NULL DEFAULT '2100.001',
 	"metadata" text NOT NULL DEFAULT '',
 	"hits" int8 NOT NULL DEFAULT '0',
+	
 	PRIMARY KEY ("id")
 );
 
@@ -164,7 +155,7 @@ CREATE TABLE IF NOT EXISTS "#__anodos_product_quantity" (
 	"quantity" DECIMAL(13,2) NOT NULL,
 	"state" int NOT NULL DEFAULT '1',
 	"modified" timestamp NOT NULL DEFAULT '1980.001',
-	"modified_by" int8  NOT NULL,
+	"modified_by" int8  NOT NULL DEFAULT '0',
 	"publish_up" timestamp NOT NULL DEFAULT '1980.001',
 	"publish_down" timestamp NOT NULL DEFAULT '2100.001',
 	PRIMARY KEY ("product_id", "stock_id", "created", "version")

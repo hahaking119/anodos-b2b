@@ -22,7 +22,6 @@ class AnodosTableStock extends JTable {
 			$array['metadata'] = (string) $registry;
 		}
 
-		// Bind the rules for ACL where supported.
 		if (isset($array['rules']) && is_array($array['rules'])) {
 			$rules = new JRules($array['rules']);
 			$this->setRules($rules);
@@ -103,5 +102,33 @@ class AnodosTableStock extends JTable {
 
 		$this->setError('');
 		return true;
+	}
+
+	protected function _getAssetName() {
+		$k = $this->_tbl_key;
+		return 'com_anodos.stock.'.(int) $this->$k;
+	}
+
+	protected function _getAssetTitle() {
+		return $this->name;
+	}
+
+	protected function _getAssetParentId() {
+
+		$assetParent = JTable::getInstance('Asset');
+
+		$assetParentId = $assetParent->getRootId();
+
+		if (($this->category_id) && !empty($this->category_id)) {
+			$assetParent->loadByName('com_anodos.stock.category.' . (int) $this->category_id);
+		} else {
+			$assetParent->loadByName('com_anodos');
+		}
+
+		if ($assetParent->id) {
+			$assetParentId=$assetParent->id;
+		}
+
+	return $assetParentId;
 	}
 }

@@ -115,7 +115,7 @@ class Stock {
 				NOW(),
 				'{$createdBy}',
 				NOW(),
-				ADDDATE(now(), {$addDate}));";
+				NOW() + INTERVAL '{$addDate} days');";
 		$db->setQuery($query);
 		$db->query();
 

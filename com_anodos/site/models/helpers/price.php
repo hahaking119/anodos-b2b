@@ -36,7 +36,7 @@ class Price {
 				'{$priceTypeId}',
 				'{$createdBy}',
 				NOW(),
-				ADDDATE(NOW(), {$addDate})
+				NOW() + INTERVAL '{$addDate} days'
 			);
 		";
 		$db->setQuery($query);
