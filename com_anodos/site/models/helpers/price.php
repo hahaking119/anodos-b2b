@@ -15,8 +15,23 @@ class Price {
 		// Подключаемся к базе
 		$db = JFactory::getDBO();
 
+		// Исключаем инъекцию
+		$stockId = $db->quote($stockId);
+		$productId = $db->quote($productId);
+		$price = $db->quote($price);
+		$currencyId = $db->quote($currencyId);
+		$priceTypeId = $db->quote($priceTypeId);
+		$addDate = $db->quote($addDate.' days');
+		$createdBy = $db->quote($createdBy);
+
 		// Заносим информацию в базу
 		$query="
+			BEGIN;
+
+			UPDATE #__anodos_price
+			SET state = 0
+			WHERE stock_id = {$stockId} AND product_id = {$productId};
+
 			INSERT INTO #__anodos_price (
 				stock_id,
 				product_id,
@@ -28,16 +43,18 @@ class Price {
 				publish_up,
 				publish_down)
 			VALUES (
-				'{$stockId}',
-				'{$productId}',
+				{$stockId},
+				{$productId},
 				NOW(),
-				'{$price}',
-				'{$currencyId}',
-				'{$priceTypeId}',
-				'{$createdBy}',
+				{$price},
+				{$currencyId},
+				{$priceTypeId},
+				{$createdBy},
 				NOW(),
-				NOW() + INTERVAL '{$addDate} days'
+				NOW() + INTERVAL {$addDate}
 			);
+
+			COMMIT;
 		";
 		$db->setQuery($query);
 		$db->query();
@@ -50,12 +67,14 @@ class Price {
 		// Подключаемся к базе
 		$db = JFactory::getDBO();
 
+		// Исключаем инъекцию
+		$alias = $db->quote($alias);
+
 		// Выполняем запрос
 		$query = "
 			SELECT * 
 			FROM #__anodos_price_type
-			WHERE alias = '{$alias}'
-		;";
+			WHERE alias = {$alias};";
 		$db->setQuery($query);
 		$priceType = $db->loadObject();
 
@@ -69,21 +88,24 @@ class Price {
 		// Подключаемся к базе
 		$db = JFactory::getDBO();
 
+		// Исключаем инъекцию
+		$alias = $db->quote($alias);
+		$name = $db->quote($name);
+		$createdBy = $db->quote($createdBy);
+
 		// Выполняем запрос
 		$query = "
 			INSERT INTO #__anodos_price_type (
 				name,
 				alias,
-				state,
 				created,
 				created_by
 				)
 			VALUES (
-				'{$name}',
-				'{$alias}',
-				'1',
+				{$name},
+				{$alias},
 				NOW(),
-				'{$createdBy}');";
+				{$createdBy});";
 		$db->setQuery($query);
 		$db->query();
 
@@ -91,8 +113,7 @@ class Price {
 		$query = "
 			SELECT * 
 			FROM #__anodos_price_type
-			WHERE alias = '{$alias}'
-		;";
+			WHERE alias = {$alias};";
 		$db->setQuery($query);
 		$priceType = $db->loadObject();
 
@@ -106,11 +127,14 @@ class Price {
 		// Подключаемся к базе
 		$db = JFactory::getDBO();
 
+		// Исключаем инъекцию
+		$stockId = $db->quote($stockId);
+
 		// Выполняем запрос
 		$query = "
 			UPDATE #__anodos_price
-			SET state = '0'
-			WHERE stock_id = '{$stockId}';";
+			SET state = 0
+			WHERE stock_id = {$stockId} AND publish_down < NOW() AND state = 1;";
 		$db->setQuery($query);
 		$db->query();
 

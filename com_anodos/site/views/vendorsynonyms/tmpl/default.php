@@ -50,7 +50,7 @@ echo $this->msg;
 
 	<?php if ($canDo->get('core.admin')) : ?>
 	<div class="row">
-		<div class="col-md-12">
+		<div class="col-sm-offset-2 col-sm-10">
 			<div class="btn-toolbar">
 				<div class="btn-group">
 					<a data-toggle="modal" href="#addVendorModal" class="btn btn-default">Добавить производителя</a>

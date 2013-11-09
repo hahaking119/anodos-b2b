@@ -8,9 +8,15 @@ class AnodosViewProducts extends JViewLegacy {
 
 	protected $msg;
 
-	protected $categorySelected;
+	// Переменные из GET
+	protected $category;
+	protected $subcategories;
+	protected $vendor;
+
+	protected $categoryName;
+	protected $vendorName;
+
 	protected $categories;
-	protected $vendorSelected;
 	protected $vendors;
 
 	protected $products;
@@ -25,10 +31,16 @@ class AnodosViewProducts extends JViewLegacy {
 
 		$this->params  = $app->getParams('com_anodos');
 
-		$this->categorySelected = $this->get('CategorySelected');
+		$this->category = $this->get('Category');
+		$this->subcategories = $this->get('SubCategories');
+		$this->vendor = $this->get('Vendor');
+
+		$this->categoryName = $this->get('CategoryName');
+		$this->vendorName = $this->get('VendorName');
+
 		$this->categories = $this->get('Categories');
-		$this->vendorSelected = $this->get('VendorSelected');
 		$this->vendors = $this->get('Vendors');
+
 		$this->products = $this->get('Products');
 //		$this->orders = $this->get('Orders');
 //		$this->orderProducts = $this->get('OrderProducts');

@@ -131,17 +131,17 @@ class UpdaterTreolan {
 			return false;
 		}
 
-		// Помечаем неактуальными устаревшие данные в базе
-		Price::clearSQL($this->stock['treolan-msk-stock']->id);
-		Price::clearSQL($this->stock['treolan-transit-stock']->id);
-		Stock::clearSQL($this->stock['treolan-msk-stock']->id);
-		Stock::clearSQL($this->stock['treolan-transit-stock']->id);
-
 		// Загружаем данные в массив
 		if (true != $this->getData($file)) {
 			$this->addMsg('Error #'.__LINE__.' - Пожалуй, массив данных не удалось загрузить');
 			return false;
 		}
+
+		// Помечаем неактуальными устаревшие данные в базе
+		Price::clearSQL($this->stock['treolan-msk-stock']->id);
+		Price::clearSQL($this->stock['treolan-transit-stock']->id);
+		Stock::clearSQL($this->stock['treolan-msk-stock']->id);
+		Stock::clearSQL($this->stock['treolan-transit-stock']->id);
 
 		// Отмечаем время обновления
 		Updater::setUpdated($this->updater->id);
@@ -315,7 +315,7 @@ class UpdaterTreolan {
 
 		// Загружаем данные из файла в DOM
 		$dom = new DomDocument();
-		$dom->loadHtmlFile($file);
+		$dom->loadHtmlFile($file, LIBXML_NOERROR);
 		$xpath = new DOMXPath($dom);
 
 		// TODO Парсим и загружаем в массив

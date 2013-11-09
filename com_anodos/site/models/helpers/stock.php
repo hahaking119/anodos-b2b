@@ -1,5 +1,4 @@
 <?php
-
 defined('_JEXEC') or die;
 
 class Stock {
@@ -10,11 +9,14 @@ class Stock {
 		// Подключаемся к базе
 		$db = JFactory::getDBO();
 
+		// Исключаем инъекцию
+		$alias = $db->quote($alias);
+
 		// Выполняем запрос
 		$query = "
 			SELECT *
 			FROM #__anodos_stock
-			WHERE alias = '{$alias}';";
+			WHERE alias = {$alias};";
 		$db->setQuery($query);
 		$stock = $db->loadObject();
 
@@ -28,6 +30,12 @@ class Stock {
 		// Подключаемся к базе
 		$db = JFactory::getDBO();
 
+		// Исключаем инъекцию
+		$name = $db->quote($name);
+		$alias = $db->quote($alias);
+		$partnerId = $db->quote($partnerId);
+		$createdBy = $db->quote($createdBy);
+
 		// Выполняем запрос вставки
 		$query = "
 			INSERT INTO #__anodos_stock (
@@ -37,11 +45,11 @@ class Stock {
 				created,
 				created_by)
 			VALUES (
-				'{$name}',
-				'{$alias}',
-				'{$partnerId}',
+				{$name},
+				{$alias},
+				{$partnerId},
 				NOW(),
-				'{$createdBy}');";
+				{$createdBy});";
 		$db->setQuery($query);
 		$db->query();
 
@@ -62,11 +70,15 @@ class Stock {
 		// Подключаемся к базе
 		$db = JFactory::getDBO();
 
+		// Исключаем инъекцию
+		$stockId = $db->quote($stockId);
+		$partnerId = $db->quote($partnerId);
+
 		// Выполняем запрос
 		$query = "
 			UPDATE #__anodos_stock
 			SET partner_id = {$partnerId}
-			WHERE id = '{$stockId}';";
+			WHERE id = {$stockId};";
 		$db->setQuery($query);
 		$db->query();
 
@@ -80,11 +92,14 @@ class Stock {
 		// Подключаемся к базе
 		$db = JFactory::getDBO();
 
+		// Исключаем инъекцию
+		$stockId = $db->quote($stockId);
+
 		// Выполняем запрос
 		$query = "
 			UPDATE #__anodos_product_quantity
-			SET state = '0'
-			WHERE stock_id = '{$stockId}';";
+			SET state = 0
+			WHERE stock_id = {$stockId} AND publish_down < NOW() AND state = 1;";
 		$db->setQuery($query);
 		$db->query();
 
@@ -96,10 +111,23 @@ class Stock {
 	public function addQuantity($stockId, $productId, $quantity, $addDate = 3, $createdBy = 0) {
 
 		// Инициализируем переменные
-		$db =& JFactory::getDBO();
+		$db = JFactory::getDBO();
+
+		// Исключаем инъекцию
+		$stockId = $db->quote($stockId);
+		$productId = $db->quote($productId);
+		$quantity = $db->quote($quantity);
+		$addDate = $db->quote($addDate.' days');
+		$createdBy = $db->quote($createdBy);
 
 		// Заносим информацию в базу
 		$query="
+			BEGIN;
+
+			UPDATE #__anodos_product_quantity
+			SET state = '0'
+			WHERE stock_id = {$stockId} AND product_id = {$productId};
+
 			INSERT INTO #__anodos_product_quantity (
 				product_id,
 				stock_id,
@@ -109,13 +137,16 @@ class Stock {
 				publish_up,
 				publish_down)
 			VALUES (
-				'{$productId}',
-				'{$stockId}',
-				'{$quantity}',
+				{$productId},
+				{$stockId},
+				{$quantity},
 				NOW(),
-				'{$createdBy}',
+				{$createdBy},
 				NOW(),
-				NOW() + INTERVAL '{$addDate} days');";
+				NOW() + INTERVAL {$addDate});
+
+			COMMIT;
+		";
 		$db->setQuery($query);
 		$db->query();
 

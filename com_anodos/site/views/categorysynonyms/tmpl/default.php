@@ -47,6 +47,55 @@ echo $this->msg;
 			</form>
 		</div>
 	</div>
+
+	<div class="row">
+		<div class="col-sm-offset-2 col-sm-10">
+			<div class="btn-toolbar">
+				<div class="btn-group">
+					<a data-toggle="modal" href="#addCategoryModal" class="btn btn-default">Добавить категорию</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Добавить категорию?</h4>
+				</div>
+				<form role="form" action="" method="post" id="add-category-form" target="addCategoryModalFrame">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="name">Имя категории</label>
+							<input type="text" class="form-control" name="name" placeholder="Имя категории">
+						</div>
+						<div class="form-group">
+							<label for="parent">Родительская категория</label>
+							<select name="parent" class="inputbox">
+								<option value="1" selected> - В корень - </option>
+								<?php foreach($this->parentCategoryList as $j => $category):
+								echo "<option value=\"{$category->id}\">{$category->title}</option>";
+								endforeach; ?>
+							</select>
+						</div>
+						<iframe class="well well-sm" id="addCategoryModalFrame" style="width:100%;"></iframe>
+						<input type="hidden" name="option" value="com_anodos" />
+						<input type="hidden" name="task" value="updater.addProductCategory" />
+						<?php echo JHtml::_('form.token'); ?>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary">Добавить</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal"><?php echo JText::_('JCANCEL') ?></button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<hr />
+
 	<?php
 		$col = 0;
 		if (0 < sizeof($this->synonyms)) :

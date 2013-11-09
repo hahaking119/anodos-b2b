@@ -114,15 +114,15 @@ class UpdaterMerlionSmr {
 			return false;
 		}
 
+		// Загружаем данные в массив
+		if (!$this->getData($file)) {
+			$this->addMsg('Error #'.__LINE__.' - Пожалуй, массив данных не удалось загрузить');
+			return false;
+		}
+
 		// Помечаем неактуальными устаревшие данные в базе
 		Price::clearSQL($this->stock['merlion-smr-stock']->id);
 		Stock::clearSQL($this->stock['merlion-smr-stock']->id);
-
-		// Загружаем данные в массив
-		if (!$this->getData($file)) {
-			$this->addMsg('Error #'.__LINE__.' - Пожалуй, массив двнных не удалось загрузить');
-			return false;
-		}
 
 		// Отмечаем время обновления
 		Updater::setUpdated($this->updater->id);
@@ -428,7 +428,7 @@ class UpdaterMerlionSmr {
 
 		if (true == $quantity) {
 			Stock::addQuantity(
-				$this->stock['merlion-msk-stock']->id,
+				$this->stock['merlion-smr-stock']->id,
 				$productId,
 				$quantity,
 				3,
@@ -438,7 +438,7 @@ class UpdaterMerlionSmr {
 
 		if (true == $price) {
 			Price::addPrice(
-				$this->stock['merlion-msk-stock']->id,
+				$this->stock['merlion-smr-stock']->id,
 				$productId,
 				$price,
 				$this->currency['USD']->id,

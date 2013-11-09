@@ -12,28 +12,70 @@ class AnodosModelProducts extends JModelList {
 
 	protected $msg;
 
-	public function getCategorySelected() {
+	public function getCategory() {
+		return JRequest::getVar('category', 0);
+	}
 
-		// Инициализируем переменные
-		$categoryId = JRequest::getInt('category'); // Идентификатор категории
+	public function getSubCategories() {
+		return JRequest::getVar('subcategories', '');
+	}
 
-		// Запрашиваем имя и псевдоним категории
-		$db = JFactory::getDBO();
-		$query = "SELECT * FROM #__categories WHERE id = {$categoryId} AND extension = 'com_anodos.product';";
-		$db->setQuery($query);
-		return $db->loadObject();
+	public function getVendor() {
+		return JRequest::getVar('vendor', 'all');
+	}
+
+	public function getCategoryName() {
+
+		$id = JRequest::getVar('category', 0);
+
+		if (('all' !== $id) and (0 != $id)) {
+
+			// Подключаемся к базе
+			$db = JFactory::getDBO();
+
+			// Исключаем инъекцию
+			$id = $db->quote($id);
+
+			// Выполняем запрос
+			$query = "SELECT title FROM #__categories WHERE id = {$id} AND extension = 'com_anodos.product';";
+			$db->setQuery($query);
+			return $db->loadResult();
+		} else {
+			return NULL;
+		}
+	}
+
+	public function getVendorName() {
+
+		$id = JRequest::getVar('vendor', 'all');
+
+		if (('all' !== $id) and (0 != $id)) {
+
+			// Подключаемся к базе
+			$db = JFactory::getDBO();
+
+			// Исключаем инъекцию
+			$id = $db->quote($id);
+
+			// Выполняем запрос
+			$query = "SELECT name FROM #__anodos_partner WHERE id = {$id} AND vendor = 1;";
+			$db->setQuery($query);
+			return $db->loadResult();
+		} else {
+			return NULL;
+		}
 	}
 
 	// Возвращает дерево категорий (в виде вложенных списков)
 	public function getCategories() {
 
 		// Инициализируем переменные
-		$db =& JFactory::getDBO();
+		$db = JFactory::getDBO();
 		$dom = new DOMDocument('1.0');
 
 		// Добавляем div
 		$dom->appendChild($div = $dom->createElement('div'));
-		$div->setAttribute('id', 'categories-list');
+		$div->setAttribute('id', 'categories-tree');
 
 		// Рекурсивно заполняем вложенные списки категорий
 		$this->categorySQLtoDOM($dom, $div);
@@ -46,7 +88,7 @@ class AnodosModelProducts extends JModelList {
 	private function categorySQLtoDOM(&$dom, &$element) {
 
 		// Инициализируем переменные
-		$db =& JFactory::getDBO();
+		$db = JFactory::getDBO();
 
 		// Проверяем наличие параметра category_id - если его нет - мы имеем дело с родительским элементом
 		if (true != $parentId = $element->getAttribute('data-category-id')) {
@@ -75,8 +117,8 @@ class AnodosModelProducts extends JModelList {
 				$newUL->appendChild($newLI = $dom->createElement('li', ""));
 					$newLI->appendChild($span = $dom->createElement('span', "&nbsp;"));
 					$newLI->appendChild($span = $dom->createElement('span', JText::_('COM_ANODOS_ALL_CATEGORIES')));
-						$span->setAttribute('id', "category-text--1");
-						$span->setAttribute('onClick', "setCategorySelected(-1)");
+						$span->setAttribute('id', "category-text-all");
+						$span->setAttribute('onClick', "setCategorySelected(\"all\")");
 			}
 			for ($i=0; $i<sizeof($category); $i++) {
 				$newUL->appendChild($newLI = $dom->createElement('li', ""));
@@ -109,18 +151,6 @@ class AnodosModelProducts extends JModelList {
 		}
 	}
 
-	public function getVendorSelected() {
-
-		// Инициализируем переменные
-		$db = JFactory::getDBO();
-		$vendorId = JRequest::getInt('vendor'); // Идентификатор вендора
-
-		// Запрашиваем имя и псевдоним вендора
-		$query = "SELECT * FROM #__anodos_partner WHERE id = {$vendorId} AND vendor = 1;";
-		$db->setQuery($query);
-		return $db->loadObject();
-	}
-
 	public function getVendors() {
 
 		// Инициализируем переменные
@@ -135,156 +165,242 @@ class AnodosModelProducts extends JModelList {
 
 		// Инициализируем переменные
 		$categories = array();
-		$categoryId = JRequest::getInt('category'); // Идентификатор категории
-		$vendorId = JRequest::getInt('vendor'); // Идентификатор вендора
-		$sortBy = JRequest::getInt('sort'); // Идентификатор вендора
+		$category = $this->getCategory();
+		$subCategories = $this->getSubCategories();
+		$vendor = $this->getVendor();
+// TODO	$sortBy = JRequest::getInt('sort');
 
-		// Получаем дерево категорий (к выбранной категории добавляем подкатегории)
-		if (0 < $categoryId) { // Актуально, только если выбрана категория
-			$db =& JFactory::getDBO();
+		// Подключаемся к базе
+		$db = JFactory::getDBO();
+
+		// Если категория не выбрана - возвращаем NULL
+		if ('0' == $category) {
+			return NULL;
+		}
+
+		// Если категория выбрана
+		if ('all' !== $category) {
+
 			$query = "
 				SELECT *
 				FROM #__categories
-				WHERE #__categories.id = {$categoryId} AND extension = 'com_anodos.product'
+				WHERE #__categories.id = {$category} AND extension = 'com_anodos.product'
 				ORDER BY lft;";
 			$db->setQuery($query);
 			$categories = $db->loadObjectList();
-			$catid = $categoryId;
-			// Уходим в рекурсивную функцию
-			$this->getCategoriesArray($categories, $catid);
+
+			// Если закано "включать подкатегории"
+			if ('on' == $subCategories) {
+				$catid = $category;
+
+				// Уходим в рекурсивную функцию
+				$this->getCategoriesArray($categories, $catid);
+			}
 		}
 
-		// Запрашиваем список товара
-		$db = JFactory::getDBO();
+		// Готовим запрос выборки продуктов
+		$query = '';
 
-		// Лешина версия запроса
-//		$query = "
-//			SELECT
-//				tmp.id AS product_id,
-//				tmp.article AS product_article,
-//				product.title AS product_title,
-//				vendor.title AS vendor_title,
-//				tmp.stock_title AS stock_title,
-//				tmp.q AS product_quantity,
-//				tmp.price_rur AS price_rur,
-//				min(tmp.dtime) AS stock_delivery_time,
-//				tmp.price AS price,
-//				tmp.currency_alias AS currency_alias,
-//				currency.title_html AS currency_title,
-//				product.catid,
-//				category.title AS category_title
-//			FROM #__pricer_product AS product
-//			INNER JOIN #__pricer_vendor AS vendor ON product.vendor_id = vendor.id
-//			INNER JOIN #__categories AS category ON product.catid = category.id
-//			INNER JOIN (
-//				SELECT
-//					product.id,
-//					product.article,
-//					stock.title AS stock_title,
-//					product_quantity.quantity AS q,
-//					min(price_table.price*currency_rate.rate) AS price_rur,
-//					stock.delivery_time AS dtime,
-//					price_table.price,
-//					price_table.currency_alias
-//				FROM #__pricer_product AS product
-//				INNER JOIN #__pricer_product_quantity AS product_quantity ON product_quantity.product_id = product.id
-//				INNER JOIN #__pricer_stock AS stock ON product_quantity.stock_id = stock.id
-//				INNER JOIN #__pricer_contractor AS contractor ON contractor.id = stock.contractor_id
-//				INNER JOIN #__pricer_price AS price_table ON product.id = price_table.product_id
-//				INNER JOIN #__pricer_currency_rate AS currency_rate ON price_table.currency_alias = currency_rate.currency_alias
-//				WHERE stock.delivery_time <= date('0000-00-10')
-//					AND product_quantity.quantity > 0
-//					AND currency_rate.state = 1
-//					AND stock.state = 1
-//					AND product.state = 1
-//					AND price_table.state = 1
-//				GROUP BY product.id
-//
-//				UNION
-//
-//				SELECT
-//					product.id,
-//					product.article,
-//					stock.title AS stock_title,
-//					product_quantity.quantity AS q,
-//					min(price_table.price*currency_rate.rate) AS price_rur,
-//					stock.delivery_time AS dtime,
-//					price_table.price,
-//					price_table.currency_alias
-//				FROM #__pricer_product AS product
-//				INNER JOIN #__pricer_product_quantity AS product_quantity ON product_quantity.product_id = product.id
-//				INNER JOIN #__pricer_stock AS stock ON product_quantity.stock_id = stock.id
-//				INNER JOIN #__pricer_contractor AS contractor ON contractor.id = stock.contractor_id
-//				INNER JOIN #__pricer_price AS price_table ON product.id = price_table.product_id
-//				INNER JOIN #__pricer_currency_rate AS currency_rate ON price_table.currency_alias = currency_rate.currency_alias
-//				WHERE stock.delivery_time > date('0000-00-10')
-//					AND product_quantity.quantity > 0
-//					AND currency_rate.state = 1
-//					AND stock.state = 1
-//					AND product.state = 1
-//					AND price_table.state = 1
-//				GROUP BY product.id
-//			) AS tmp
-//			ON tmp.id = product.id
-//			INNER JOIN #__pricer_currency AS currency ON tmp.currency_alias = currency.alias
-//			";
+		/***********************************
+		// Пример работающего запроса
+		
+		SELECT
+	product.id AS product_id,
+	product.name AS product_name,
+	product.article AS product_article,
+	category.id AS category_id,
+	category.title AS category_name,
+	category.lft AS category_lft,
+	vendor.id AS vendor_id,
+	vendor.name AS vendor_name,
+	state.price_rub AS price_rub,
+	state.price AS price,
+	state.currency_id AS currency_id,
+	state.currency_name AS currency_name,
+	state.stock_id AS stock_id,
+	state.stock_name AS stock_name,
+	state.quantity AS quantity,
+	state.delivery_time_min AS delivery_time_min,
+	state.delivery_time_max AS delivery_time_max
+FROM #__anodos_product AS product
+INNER JOIN #__categories AS category ON product.category_id = category.id
+INNER JOIN #__anodos_partner AS vendor ON product.vendor_id = vendor.id
+INNER JOIN ( -- state DISTINCT ON (product_id)
+	SELECT DISTINCT ON (product_id)
+		product.id AS product_id,
+		price.price_rub AS price_rub,
+		price.price AS price,
+		price.currency_id AS currency_id,
+		price.currency_name AS currency_name,
+		quantity.stock_id AS stock_id,
+		quantity.stock_name AS stock_name,
+		quantity.quantity AS quantity,
+		quantity.delivery_time_min AS delivery_time_min,
+		quantity.delivery_time_max AS delivery_time_max
+	FROM #__anodos_product AS product
+	INNER JOIN ( -- price DISTINCT ON (product_id, stock_id)
+		SELECT DISTINCT ON (product_id, stock_id)
+			product.id AS product_id,
+			price.stock_id AS stock_id,
+			price.price*rate.rate AS price_rub,
+			price.price AS price,
+			price.created AS price_created,
+			currency.id AS currency_id,
+			currency.name_html AS currency_name,
+			rate.rate AS rate
+		FROM #__anodos_product AS product
+		INNER JOIN #__anodos_price AS price ON price.product_id = product.id
+		INNER JOIN #__anodos_currency AS currency ON currency.id = price.currency_id
+		INNER JOIN ( -- rate DISTINCT ON (currency_id)
+			SELECT DISTINCT ON (currency_id)
+				currency.id AS currency_id,
+				rate.rate::real/rate.quantity::real AS rate,
+				rate.created AS rate_created
+			FROM #__anodos_currency AS currency
+			INNER JOIN #__anodos_currency_rate AS rate ON rate.currency_id = currency.id
+			WHERE rate.state = 1
+			ORDER BY currency_id ASC, rate_created DESC
+			) AS rate ON rate.currency_id = currency.id
+		WHERE price.state = 1
+		ORDER BY product_id ASC, stock_id ASC, price_created DESC
+	) AS price ON price.product_id = product.id
+	INNER JOIN ( -- quantity DISTINCT ON (product_id, stock_id)
+		SELECT DISTINCT ON (product_id, stock_id)
+			product.id AS product_id,
+			quantity.stock_id AS stock_id,
+			quantity.quantity AS quantity,
+			quantity.created AS quantity_created,
+			stock.name AS stock_name,
+			stock.delivery_time_min AS delivery_time_min,
+			stock.delivery_time_max AS delivery_time_max
+		FROM #__anodos_product AS product
+		INNER JOIN #__anodos_product_quantity AS quantity ON quantity.product_id = product.id
+		INNER JOIN #__anodos_stock AS stock ON stock.id = quantity.stock_id
+		WHERE quantity.state = 1 AND quantity > 0
+		ORDER BY product_id ASC, stock_id ASC, quantity_created DESC
+	) AS quantity ON quantity.product_id = product.id
+	WHERE price.stock_id = quantity.stock_id
+	ORDER BY product_id ASC, price_rub DESC, quantity.delivery_time_min ASC
+) AS state ON state.product_id = product.id
+WHERE category.id = 138 AND vendor.id = 1
+ORDER BY category_lft ASC, vendor_name ASC;
+		
+		************************************/
 
-		$query = "
-			SELECT
+
+		$query .="
+		SELECT
+			product.id AS product_id,
+			product.name AS product_name,
+			product.article AS product_article,
+			category.id AS category_id,
+			category.title AS category_name,
+			category.lft AS category_lft,
+			vendor.id AS vendor_id,
+			vendor.name AS vendor_name,
+			state.price_rub AS price_rub,
+			state.price AS price,
+			state.currency_id AS currency_id,
+			state.currency_name AS currency_name,
+			state.stock_id AS stock_id,
+			state.stock_name AS stock_name,
+			state.quantity AS quantity,
+			state.delivery_time_min AS delivery_time_min,
+			state.delivery_time_max AS delivery_time_max
+		FROM #__anodos_product AS product
+		INNER JOIN #__categories AS category ON product.category_id = category.id
+		INNER JOIN #__anodos_partner AS vendor ON product.vendor_id = vendor.id
+		INNER JOIN ( -- state DISTINCT ON (product_id)
+			SELECT DISTINCT ON (product_id)
 				product.id AS product_id,
-				product.name AS product_name,
-				product.article AS product_article,
-				category.id AS category_id,
-				category.title AS category_name,
-				category.lft AS category_lft,
-				vendor.id AS vendor_id,
-				vendor.name AS vendor_name
+				price.price_rub AS price_rub,
+				price.price AS price,
+				price.currency_id AS currency_id,
+				price.currency_name AS currency_name,
+				quantity.stock_id AS stock_id,
+				quantity.stock_name AS stock_name,
+				quantity.quantity AS quantity,
+				quantity.delivery_time_min AS delivery_time_min,
+				quantity.delivery_time_max AS delivery_time_max
 			FROM #__anodos_product AS product
-			INNER JOIN #__categories AS category
-				ON product.category_id = category.id
-			INNER JOIN #__anodos_partner AS vendor
-				ON product.vendor_id = vendor.id
+			INNER JOIN ( -- price DISTINCT ON (product_id, stock_id)
+				SELECT DISTINCT ON (product_id, stock_id)
+					product.id AS product_id,
+					price.stock_id AS stock_id,
+					price.price*rate.rate AS price_rub,
+					price.price AS price,
+					price.created AS price_created,
+					currency.id AS currency_id,
+					currency.name_html AS currency_name,
+					rate.rate AS rate
+				FROM #__anodos_product AS product
+				INNER JOIN #__anodos_price AS price ON price.product_id = product.id
+				INNER JOIN #__anodos_currency AS currency ON currency.id = price.currency_id
+				INNER JOIN ( -- rate DISTINCT ON (currency_id)
+					SELECT DISTINCT ON (currency_id)
+						currency.id AS currency_id,
+						rate.rate::real/rate.quantity::real AS rate,
+						rate.created AS rate_created
+					FROM #__anodos_currency AS currency
+					INNER JOIN #__anodos_currency_rate AS rate ON rate.currency_id = currency.id
+					WHERE rate.state = 1
+					ORDER BY currency_id ASC, rate_created DESC
+					) AS rate ON rate.currency_id = currency.id
+				WHERE price.state = 1
+				ORDER BY product_id ASC, stock_id ASC, price_created DESC
+			) AS price ON price.product_id = product.id
+			INNER JOIN ( -- quantity DISTINCT ON (product_id, stock_id)
+				SELECT DISTINCT ON (product_id, stock_id)
+					product.id AS product_id,
+					quantity.stock_id AS stock_id,
+					quantity.quantity AS quantity,
+					quantity.created AS quantity_created,
+					stock.name AS stock_name,
+					stock.delivery_time_min AS delivery_time_min,
+					stock.delivery_time_max AS delivery_time_max
+				FROM #__anodos_product AS product
+				INNER JOIN #__anodos_product_quantity AS quantity ON quantity.product_id = product.id
+				INNER JOIN #__anodos_stock AS stock ON stock.id = quantity.stock_id
+				WHERE quantity.state = 1 AND quantity > 0
+				ORDER BY product_id ASC, stock_id ASC, quantity_created DESC
+			) AS quantity ON quantity.product_id = product.id
+			WHERE price.stock_id = quantity.stock_id
+			ORDER BY product_id ASC, price_rub DESC, quantity.delivery_time_min ASC
+		) AS state ON state.product_id = product.id
 		";
 
-		// Если есть хоть какие-то условия выборки
-		if ((-1 != $categoryId) or (true == $vendorId)) {
-			$query .= "WHERE ";
-			$i = 0;
+		// Условия выборки
+		$prefix = ' WHERE';
+		if (('all' !== $vendor) or (0 != $vendor)) {
+			$vendor = $db->quote($vendor);
+			$query .= "{$prefix} vendor.id = {$vendor} ";
+			$prefix = ' AND';
+		}
+
+		// Если категория выбрана
+		if ('all' !== $category) {
 			if (sizeof($categories) > 1) {
-				$query .= "( ";
+				$query .= "{$prefix} ( ";
+				$prefix = ' ';
 				for ($j=0; $j<sizeof($categories); $j++) {
-					if (0 != $j) {
-						$query .= "OR ";
+					if (0 < $j) {
+						$prefix = ' OR';
 					}
-					$query .= "product.category_id = {$categories[$j]->id} ";
+					$query .= "{$prefix} category.id = {$categories[$j]->id} ";
 				}
 				$query .= ") ";
-				$i++;
-			}
-			elseif ((-1 != $categoryId) and (true == $i)) { // Если указаны не все категории
-				$query .= "AND product.category_id = {$categoryId} ";
-				$i++;
-			}
-			elseif ((-1 != $categoryId) and (true != $i)) { // Если указаны не все категории
-				$query .= "product.category_id = {$categoryId} ";
-				$i++;
-			}
-			if ((true == $vendorId) and (true == $i)) { // Если указан вендор
-				$query .= "AND vendor.id = {$vendorId} ";
-				$i++;
-			}
-			if ((true == $vendorId) and (true != $i)) { // Если указан вендор
-				$query .= "vendor.id = {$vendorId} ";
-				$i++;
+			} else {
+				$query .= "{$prefix} category.id = {$category} ";
+				$prefix = ' AND';
 			}
 		}
 
 		// Сортируем
-		if (true != $sortBy) {
-			$query .= "ORDER BY category_lft, vendor_name, product_name ";
-		} else {
+//		if (true != $sortBy) {
+			$query .= " ORDER BY category_lft, vendor_name, product_name";
+//		} else {
 			// TODO: В зависимости от условий сортировки
-		}
+//		}
 
 		// Закрываем запрос
 		$query .=";";
@@ -294,8 +410,8 @@ class AnodosModelProducts extends JModelList {
 		$products = $db->loadObjectList();
 		
 		foreach($products as $i => $product) {
-//			$products[$i]->price_rub = number_format (round($product->price_rub, 0, PHP_ROUND_HALF_UP), 2, ',', ' ');
-//			$products[$i]->price = number_format (round($product->price, 2, PHP_ROUND_HALF_UP), 2, ',', ' ');
+			$products[$i]->price_rub = number_format (round($product->price_rub, 0, PHP_ROUND_HALF_UP), 2, ',', ' ');
+			$products[$i]->price = number_format (round($product->price, 2, PHP_ROUND_HALF_UP), 2, ',', ' ');
 		}
 
 		return $products;

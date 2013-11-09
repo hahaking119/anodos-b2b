@@ -6,48 +6,49 @@
 	display: none;
 }
 
-div#b2b-categories span[onclick] {
+#categories-tree span[onclick] {
 	cursor: pointer;
 }
 
-div#b2b-vendors li[onclick] {
-	cursor: pointer;
-}
-
-div#b2b-vendors span[onclick] {
-	cursor: pointer;
-}
-
-#b2b-categories ul {
+#categories-tree ul {
 	list-style: none;
 	padding: 0;
 	margin: 0;
 }
 
-#b2b-categories li {
+#categories-tree li {
 	margin: 2px 2px 2px 10px;
 }
 
-#b2b-vendors ul {
-	list-style: none;
-	padding: 0;
-	margin: 0;
+#vendors-list{
+	text-align: center;
 }
 
-#b2b-vendors li {
-	margin: 2px 2px 2px 10px;
+#vendors-list button{
+	width:30%;
+	margin: 2px;
 }
 
-#b2b-products > thead > tr > th {
+#products-list > thead > tr > th {
 	text-align: center;
 	vertical-align: middle;
 }
 
-#b2b-products > tbody > tr > td.article {
+#products-list > tbody > tr > td {
+	font-size: 12px;
+}
+
+#products-list > tbody > tr > td.article {
 	white-space: nowrap;
 }
 
-#b2b-products > tbody > tr > td.name {
+#products-list > tbody > tr > td.name {
 	word-wrap: break-word;
 	max-width: 30%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.td-price {
+	white-space: nowrap;
 }

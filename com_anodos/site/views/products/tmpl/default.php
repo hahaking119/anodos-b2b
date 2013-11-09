@@ -10,164 +10,125 @@ $doc->addStyleSheet($this->baseurl.'/components/com_anodos/css/style.css');
 require_once JPATH_COMPONENT.'/helpers/anodos.php';
 $canDo = AnodosHelper::getActions();
 
-echo $this->msg;
+// echo $this->msg;
 ?>
 <div class="container">
 	<div class="row">
-		<div class="col-sm-4 col-md-2">
-			<p>Категория:</p>
-		</div>
-		<div class="col-sm-8 col-md-10 closed" id="b2b-categories" >
-			<?php
-				if (true == $this->categorySelected) {
-					echo "<span id=\"category-selected-square\" onClick=\"openCategories()\">&#8862;</span>";
-					echo "<span>&nbsp;</span>";
-					echo "<span id=\"category-selected-text\" onClick=\"openCategories()\">
-						{$this->categorySelected->title}
-						</span>";
-				} else {
-					echo "<span id=\"category-selected-square\" onClick=\"openCategories()\">&#8862;</span>";
-					echo "<span>&nbsp;</span>";
-					echo "<span id=\"category-selected-text\" onClick=\"openCategories()\">";
-					echo JText::_('COM_ANODOS_SELECT_CATEGORY');
-					echo "</span>";
-				}
-				echo $this->categories;
-			?>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-sm-4 col-md-2">
-			<p>Производитель:</p>
-		</div>
-		<div class="col-sm-8 col-md-10 closed" id="b2b-vendors">
-			<?php
-				if (true == $this->vendorSelected) {
-					echo "<span id=\"vendor-selected-square\" onClick=\"openVendors()\">&#8862;</span>&nbsp;";
-					echo "<span id=\"vendor-selected-text\" onClick=\"openVendors()\">{$this->vendorSelected->name}</span>";
-				} else {
-					echo "<span id=\"vendor-selected-square\" onClick=\"openVendors()\">&#8862;</span>&nbsp;";
-					echo "<span id=\"vendor-selected-text\" onClick=\"openVendors()\">";
-					echo JText::_('COM_ANODOS_ALL_VENDORS');
-					echo "</span>";
-				}
-			?>
-			<ul>
-				<li id="vendor-0" onClick="setVendorSelected(0)"><?php echo JText::_('COM_ANODOS_ALL_VENDORS'); ?></li>
-				<?php foreach($this->vendors as $i => $vendor): ?>
-				<li id="vendor-<?php echo $vendor->id; ?>" onClick="setVendorSelected(<?php echo $vendor->id; ?>)">
-					<?php echo $vendor->name; ?>
-				</li>
-				<?php endforeach; ?>
-			</ul>
-		</div>
-	</div>
-	<div class="row">
 		<div class="col-md-12">
-			<form  role="form" action="" method="get" name="form">
+			<form class="form-horizontal" role="form" action="" method="get" name="form">
 				<div class="form-group">
-					<input
-						id="form-category-selected"
-						type="hidden"
-						name="category"
-						value="<?php if (true == $this->categorySelected) {echo $this->categorySelected->id;} else {echo 0;} ?>"
-					/>
-					<input
-						id="form-vendor-selected"
-						type="hidden"
-						name="vendor"
-						value="<?php if (true == $this->vendorSelected) {echo $this->vendorSelected->id;} else {echo 0;} ?>"
-					/>
-					<button type="submit" class="btn btn-default"><?php echo JText::_('COM_ANODOS_SHOW'); ?></button>
+					<label for="category" class="col-sm-2 control-label"><?php echo JText::_('COM_ANODOS_CATEGORY'); ?></label>
+					<div class="col-sm-10">
+						<input id="form-category-selected" name="category" type="hidden" value="<?php echo $this->category; ?>"/>
+
+						<!-- TODO выбор категории -->
+						<div class="btn-group">
+							<a data-toggle="modal" href="#selectCategoryModal" class="btn btn-default">
+								<span class="glyphicon glyphicon-folder-close"></span>&nbsp;
+								<span id="category-selected-text"><?php
+								if ('0' == $this->category) {
+									echo JText::_('COM_ANODOS_SELECT_CATEGORY');
+								} elseif ('all' === $this->category) {
+									echo JText::_('COM_ANODOS_ALL_CATEGORIES');
+								} else {
+									echo $this->categoryName;
+								}
+								?></span></a>
+						</div>
+						<div class="modal fade" id="selectCategoryModal" tabindex="-1" role="dialog" aria-labelledby="selectCategoryModalLabel" aria-hidden="false">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+										<h4 class="modal-title">Какую категорию показать?</h4>
+									</div>
+									<div class="modal-body">
+										<?php echo $this->categories; ?>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-10">
+						<div class="checkbox">
+							<label>
+								<input id="form-subcategories" name="subcategories" type="checkbox"<?php
+									if ('0' == $this->category) {
+										echo ' disabled';
+									} elseif ('on' == $this->subcategories) {
+										echo ' checked="checked"';
+									}
+									?>> Включая подкатегории
+							</label>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="vendor" class="col-sm-2 control-label"><?php echo JText::_('COM_ANODOS_VENDOR'); ?></label>
+					<div class="col-sm-10">
+						<input id="form-vendor-selected" name="vendor" type="hidden" value="<?php echo $this->vendor; ?>"/>
+
+						<!-- TODO выбор производителя -->
+						<div class="btn-group">
+							<a data-toggle="modal" href="#selectVendorModal" class="btn btn-default">
+								<span class="glyphicon glyphicon-wrench"></span>&nbsp;
+								<span id="vendor-selected-text"><?php
+								if (('all' === $this->vendor) or (0 == $this->vendor)) {
+									echo JText::_('COM_ANODOS_ALL_VENDORS');
+								} else {
+									echo $this->vendorName;
+								}
+								?></span></a>
+						</div>
+
+						<!-- TODO Модальное окно выбора категории -->
+						<div class="modal fade" id="selectVendorModal" tabindex="-1" role="dialog" aria-labelledby="selectVendorModalLabel" aria-hidden="false">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+										<h4 class="modal-title">Какого производителя предпочитаете?</h4>
+									</div>
+									<div id="vendors-list" class="modal-body">
+										<button
+											id="vendor-all"
+											onclick="setVendorSelected('all')"
+											type="button"
+											class="btn btn-default">
+											<?php echo JText::_('COM_ANODOS_ALL_VENDORS'); ?></button>
+										<hr />
+										<?php foreach($this->vendors as $i => $vendor): ?>
+										<button
+											id="vendor-<?php echo $vendor->id; ?>"
+											onclick="setVendorSelected('<?php echo $vendor->id; ?>')"
+											type="button"
+											class="btn btn-default">
+											<?php echo $vendor->name; ?></button>
+										<?php endforeach; ?>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-10">
+						<button type="submit" class="btn btn-default"><?php echo JText::_('COM_ANODOS_SHOW'); ?></button>
+					</div>
 				</div>
 			</form>
 		</div>
 	</div>
 
-	<?php if ($canDo->get('core.admin')) : ?>
-	<div class="row">
-		<div class="col-md-12">
-			<div class="btn-toolbar">
-				<div class="btn-group">
-					<a data-toggle="modal" href="#addCategoryModal" class="btn btn-default">Добавить категорию</a>
-					<a data-toggle="modal" href="#addVendorModal" class="btn btn-default">Добавить производителя</a>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="false">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title">Добавить категорию?</h4>
-				</div>
-				<form role="form" action="" method="post" id="add-category-form" target="addCategoryModalFrame">
-					<div class="modal-body">
-						<div class="form-group">
-							<label for="name">Имя категории</label>
-							<input type="text" class="form-control" name="name" placeholder="Имя категории">
-						</div>
-						<div class="form-group">
-							<label for="parent">Родительская категория</label>
-							<select name="parent" class="inputbox">
-								<option value="1" selected> - В корень - </option>
-								<?php foreach($this->parentCategoryList as $j => $category):
-								echo "<option value=\"{$category->id}\">{$category->title}</option>";
-								endforeach; ?>
-							</select>
-						</div>
-						<iframe class="well well-sm" id="addCategoryModalFrame" style="width:100%;"></iframe>
-						<input type="hidden" name="option" value="com_anodos" />
-						<input type="hidden" name="task" value="updater.addProductCategory" />
-						<?php echo JHtml::_('form.token'); ?>
-					</div>
-					<div class="modal-footer">
-						<button type="submit" class="btn btn-primary">Добавить</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal"><?php echo JText::_('JCANCEL') ?></button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-
-	<div class="modal fade" id="addVendorModal" tabindex="-1" role="dialog" aria-labelledby="addVendorModalLabel" aria-hidden="false">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title">Добавить производителя?</h4>
-				</div>
-				<form role="form" action="" method="post" id="add-vendor-form" target="addVendorModalFrame">
-					<div class="modal-body">
-						<div class="form-group">
-							<label for="name">Имя производителя</label>
-							<input type="text" class="form-control" name="name" placeholder="Имя производителя">
-						</div>
-						<iframe class="well well-sm" id="addVendorModalFrame" style="width:100%;"></iframe>
-						<input type="hidden" name="option" value="com_anodos" />
-						<input type="hidden" name="task" value="updater.addVendor" />
-						<?php echo JHtml::_('form.token'); ?>
-					</div>
-					<div class="modal-footer">
-						<button type="submit" class="btn btn-primary">Добавить</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal"><?php echo JText::_('JCANCEL') ?></button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-
-	<hr />
-	<?php endif; ?>
 	<?php
 		$col = 0;
 		$lastCategoryId = 0;
-		if (0 < sizeof($this->products)) :
+		if (isset($this->products)) :
 	?>
 	<div class="row">
-		<table id="b2b-products" class="table table-bordered col-xs-12">
+		<table id="products-list" class="table table-bordered col-xs-12">
 			<thead>
 				<tr>
 					<th><?php echo JText::_('COM_ANODOS_N'); $col++; ?></th>
@@ -175,8 +136,6 @@ echo $this->msg;
 					<th><?php echo JText::_('COM_ANODOS_VENDOR'); $col++; ?></th>
 					<th><?php echo JText::_('COM_ANODOS_PRICE'); $col++; ?></th>
 					<th><?php echo JText::_('COM_ANODOS_QUANTITY'); $col++; ?></th>
-					<th><?php echo JText::_('COM_ANODOS_DELIVERY_TIME'); $col++; ?></th>
-					<th><?php $col++; ?><span class="glyphicon glyphicon-shopping-cart"></span></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -200,14 +159,8 @@ echo $this->msg;
 						<?php endif; ?>
 					</td>
 					<td class="text-center"><?php echo $product->vendor_name; ?></td>
-					<td class="text-right">TODO&nbsp;TODO</td>
-					<td class="text-right">TODO</td>
-					<td class="text-center">TODO</td>
-					<td class="text-center">
-						<a class="btn btn-default btn-xs">
-							<span class="glyphicon glyphicon-plus-sign"></span>
-						</a>
-					</td>
+					<td class="text-right td-price"><?php echo $product->price_rub; ?> р.</td>
+					<td class="text-right"><?php echo $product->quantity; ?> <a class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus-sign"></span></a></td>
 				</tr>
 			<?php endforeach; ?>
 			</tbody>

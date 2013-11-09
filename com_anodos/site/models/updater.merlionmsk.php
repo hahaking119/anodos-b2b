@@ -114,15 +114,15 @@ class UpdaterMerlionMsk {
 			return false;
 		}
 
-		// Помечаем неактуальными устаревшие данные в базе
-		Price::clearSQL($this->stock['merlion-msk-stock']->id);
-		Stock::clearSQL($this->stock['merlion-msk-stock']->id);
-
 		// Загружаем данные в массив
 		if (!$this->getData($file)) {
 			$this->addMsg('Error #'.__LINE__.' - Пожалуй, массив данных не удалось загрузить');
 			return false;
 		}
+
+		// Помечаем неактуальными устаревшие данные в базе
+		Price::clearSQL($this->stock['merlion-msk-stock']->id);
+		Stock::clearSQL($this->stock['merlion-msk-stock']->id);
 
 		// Отмечаем время обновления
 		Updater::setUpdated($this->updater->id);
