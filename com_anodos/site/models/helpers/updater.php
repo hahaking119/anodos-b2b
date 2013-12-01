@@ -4,6 +4,20 @@ defined('_JEXEC') or die;
 
 class Updater {
 
+	public function getStartTime() {
+
+		// Подключаемся к базе
+		$db = JFactory::getDBO();
+
+		// Выполняем запрос
+		$query = "SELECT NOW();";
+		$db->setQuery($query);
+		$result = $db->loadResult();
+
+		// Возвращаем результат
+		return $result;
+	}
+
 	public function getUpdater($id) {
 
 		// Подключаемся к базе

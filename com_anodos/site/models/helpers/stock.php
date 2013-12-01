@@ -3,7 +3,7 @@ defined('_JEXEC') or die;
 
 class Stock {
 
-	// Возвращает объект склада (по alias из базы), если его нет - добавляет
+	// Возвращает объект склада (по alias из базы)
 	public function getStockFromAlias($alias) {
 
 		// Подключаемся к базе
@@ -57,7 +57,7 @@ class Stock {
 		$query = "
 			SELECT *
 			FROM #__anodos_stock
-			WHERE alias = '{$alias}';";
+			WHERE alias = {$alias};";
 		$db->setQuery($query);
 		$stock = $db->loadObject();
 
@@ -86,67 +86,109 @@ class Stock {
 		return true;
 	}
 
+	// Заносим количество в базу
+	public function addQuantity($stockId, $productId, $quantity, $addDate = 3, $createdBy = 0) {
+
+		// Инициализируем переменные
+		$db = JFactory::getDBO();
+		$stockId = $db->quote($stockId);
+		$productId = $db->quote($productId);
+		$unixtime = $db->quote(microtime());
+		$quantity = $db->quote($quantity);
+		$addDate = $db->quote($addDate);
+		$createdBy = $db->quote($createdBy);
+
+		// Заносим информацию в базу
+//		$query="
+//			UPDATE #__anodos_product_quantity_history
+//			SET state = 0
+//			WHERE stock_id = {$stockId} AND product_id = {$productId};
+//		";
+//		$db->setQuery($query);
+//		$db->query();
+
+//		$query="
+//			INSERT INTO #__anodos_product_quantity_history (
+//				product_id,
+//				stock_id,
+//				unixtime,
+//				quantity,
+//				created,
+//				created_by,
+//				modified_by,
+//				publish_up,
+//				publish_down)
+//			VALUES (
+//				{$productId},
+//				{$stockId},
+//				{$unixtime},
+//				{$quantity},
+//				NOW(),
+//				{$createdBy},
+//				{$createdBy},
+//				NOW(),
+//				DATE_ADD(NOW(), INTERVAL {$addDate} DAY));
+//		";
+//		$db->setQuery($query);
+//		$db->query();
+
+		// TODO есть цена есть - изменяем, если цены нет - добавляем
+		$query="SELECT quantity FROM #__anodos_product_quantity WHERE stock_id = {$stockId} AND product_id = {$productId};";
+		$db->setQuery($query);
+
+		if (true == $db->loadResult()) {
+			$query="
+				UPDATE #__anodos_product_quantity SET
+					quantity = {$quantity},
+					publish_up = NOW(),
+					publish_down = DATE_ADD(NOW(), INTERVAL {$addDate} DAY)
+				WHERE stock_id = {$stockId} AND product_id = {$productId};
+			";
+			$db->setQuery($query);
+			$db->query();
+		} else {
+			$query="
+				INSERT INTO #__anodos_product_quantity (
+					product_id,
+					stock_id,
+					quantity,
+					publish_up,
+					publish_down)
+				VALUES (
+					{$productId},
+					{$stockId},
+					{$quantity},
+					NOW(),
+					DATE_ADD(NOW(), INTERVAL {$addDate} DAY));
+				";
+			$db->setQuery($query);
+			$db->query();
+		}
+		return true;
+	}
+
 	// Снятие с публикации устаревшей информации о количествах товара на складах
-	public function clearSQL($stockId) {
+	public function clearSQL($stockId, $deadTime) {
 
 		// Подключаемся к базе
 		$db = JFactory::getDBO();
 
 		// Исключаем инъекцию
 		$stockId = $db->quote($stockId);
+		$deadTime = $db->quote($deadTime);
 
-		// Выполняем запрос
+		// Помечаем неактуальную информацию о наличии в истории неактуальными
+//		$query = "
+//			UPDATE #__anodos_product_quantity_history
+//			SET state = 0
+//			WHERE stock_id = {$stockId} AND publish_up < NOW() AND state = 1;";
+//		$db->setQuery($query);
+//		$db->query();
+
+		// Удаляем неактуальную информацию о наличии  из основной таблицы
 		$query = "
-			UPDATE #__anodos_product_quantity
-			SET state = 0
-			WHERE stock_id = {$stockId} AND publish_down < NOW() AND state = 1;";
-		$db->setQuery($query);
-		$db->query();
-
-		// Возвращаем результат
-		return true;
-	}
-
-	// Заносим количество в базу
-	public function addQuantity($stockId, $productId, $quantity, $addDate = 3, $createdBy = 0) {
-
-		// Инициализируем переменные
-		$db = JFactory::getDBO();
-
-		// Исключаем инъекцию
-		$stockId = $db->quote($stockId);
-		$productId = $db->quote($productId);
-		$quantity = $db->quote($quantity);
-		$addDate = $db->quote($addDate.' days');
-		$createdBy = $db->quote($createdBy);
-
-		// Заносим информацию в базу
-		$query="
-			BEGIN;
-
-			UPDATE #__anodos_product_quantity
-			SET state = '0'
-			WHERE stock_id = {$stockId} AND product_id = {$productId};
-
-			INSERT INTO #__anodos_product_quantity (
-				product_id,
-				stock_id,
-				quantity,
-				created,
-				created_by,
-				publish_up,
-				publish_down)
-			VALUES (
-				{$productId},
-				{$stockId},
-				{$quantity},
-				NOW(),
-				{$createdBy},
-				NOW(),
-				NOW() + INTERVAL {$addDate});
-
-			COMMIT;
-		";
+			DELETE FROM #__anodos_product_quantity
+			WHERE stock_id = {$stockId} AND publish_up < {$deadTime};";
 		$db->setQuery($query);
 		$db->query();
 

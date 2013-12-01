@@ -205,7 +205,7 @@ class UpdaterCBR {
 
 			// Проверяем, есть ли курс на текущую дату
 			if (true == Currency::getRate($id, $this->date)) { // Курс есть
-				$this->addMsg("Курс валюты {$alias} на текущую дату есть: ".Currency::getRate($id, $this->date).'.');
+				// $this->addMsg("Курс валюты {$alias} на текущую дату есть: ".Currency::getRate($id, $this->date).'.');
 			} else { // Курса нет
 
 				// Получаем курс

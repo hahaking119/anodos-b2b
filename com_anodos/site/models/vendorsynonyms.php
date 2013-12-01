@@ -102,7 +102,7 @@ class AnodosModelVendorsynonyms extends JModelList {
 
 		// Сортируем
 		if (true != $sortBy) {
-			$query .= "ORDER BY partner_name, synonym_name ";
+			$query .= "ORDER BY synonym_name, partner_name ";
 		} else {
 			// TODO: В зависимости от условий сортировки
 		}

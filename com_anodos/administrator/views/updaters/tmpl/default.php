@@ -150,7 +150,7 @@ if (!empty($this->extra_sidebar)) {
 						<?php echo JHtml::_('grid.id', $i, $item->id); ?>
 					</td>
 					<td class="center">
-						<?php echo JHtml::_('jgrid.published', $item->state, $i, 'robots.', $canChange, 'cb'); ?>
+						<?php echo JHtml::_('jgrid.published', $item->state, $i, 'updaters.', $canChange, 'cb'); ?>
 					</td>
 					<td class="left">
 					<?php if ($canEdit) : ?>

@@ -4,27 +4,12 @@ defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
 
-class AnodosViewProducts extends JViewLegacy {
+class AnodosViewCategories extends JViewLegacy {
 
 	protected $msg;
 
-	// Переменные из GET
-	protected $category;
-	protected $subcategories;
-	protected $vendor;
-	protected $search;
-
-	protected $categoryName;
-	protected $vendorName;
-
-	protected $categories;
-	protected $vendors;
-
-	protected $products;
-	protected $orders;
-	protected $orderProducts;
-
-	protected $params;
+	protected $categories; // Список категорий
+	protected $parentCategoryList; // 
 
 	public function display($tpl = null) {
 
@@ -32,23 +17,7 @@ class AnodosViewProducts extends JViewLegacy {
 
 		$this->params  = $app->getParams('com_anodos');
 
-		$this->category = $this->get('Category');
-		$this->subcategories = $this->get('SubCategories');
-		$this->vendor = $this->get('Vendor');
-		$this->search = $this->get('Search');
-
-		$this->categoryName = $this->get('CategoryName');
-		$this->vendorName = $this->get('VendorName');
-
 		$this->categories = $this->get('Categories');
-		$this->vendors = $this->get('Vendors');
-
-		$this->products = $this->get('Products');
-//		$this->orders = $this->get('Orders');
-//		$this->orderProducts = $this->get('OrderProducts');
-//		$this->parameters = $this->get('Parameters');
-//		$this->msg = $this->get('Msg');
-
 		$this->parentCategoryList = $this->get('ParentCategoryList');
 
 		if (count($errors = $this->get('Errors'))) {;
@@ -98,15 +67,6 @@ class AnodosViewProducts extends JViewLegacy {
 		if ($this->params->get('robots'))
 		{
 			$this->document->setMetadata('robots', $this->params->get('robots'));
-		}
-	}
-
-	// TODO исправить формат
-	protected function getDeliveryTime($dtime) {
-		switch($dtime) {
-			case '0000-00-10 00:00:00' : return "10 дней";
-			case '0000-02-00 00:00:00' : return "2 месяца";
-			default : return $dtime;
 		}
 	}
 }

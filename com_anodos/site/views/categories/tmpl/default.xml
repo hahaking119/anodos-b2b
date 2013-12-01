@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <metadata>
-	<layout title="COM_ANODOS_VIEW_CATEGORY_SYNONYMS_TITLE">
-		<message>COM_ANODOS_VIEW_CATEGORY_SYNONYMS_DESC</message>
+	<layout title="COM_ANODOS_VIEW_CATEGORIES_TITLE">
+		<message>COM_ANODOS_VIEW_CATEGORIES_DESC</message>
 	</layout>
 	<fields name="reguest">
 		<fieldset

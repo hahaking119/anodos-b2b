@@ -10,11 +10,14 @@ class Vendor {
 		// Подколючаемся к базе
 		$db = JFactory::getDBO();
 
+		// Исключаем инъекцию
+		$alias = $db->quote($alias);
+
 		// Выполняем запрос
 		$query = "
 			SELECT *
 			FROM #__anodos_partner
-			WHERE alias = '{$alias}';";
+			WHERE alias = {$alias};";
 		$db->setQuery($query);
 		$vendor = $db->loadObject();
 
@@ -31,6 +34,7 @@ class Vendor {
 		// Исключаем инъекцию
 		$vendor->name = $db->quote($vendor->name);
 		$vendor->alias = $db->quote($vendor->alias);
+		$vendor->created_by = $db->quote($vendor->created_by);
 
 		// Выполняем запрос добавления
 		$query = "
@@ -43,9 +47,9 @@ class Vendor {
 			VALUES (
 				{$vendor->name},
 				{$vendor->alias},
-				'1',
+				1,
 				NOW(),
-				'{$vendor->created_by}');";
+				{$vendor->created_by});";
 		$db->setQuery($query);
 		$db->query();
 	}
@@ -56,12 +60,16 @@ class Vendor {
 		// Подключаемся к базе
 		$db = JFactory::getDBO();
 
+		// Исключаем инъекцию
+		$synonym = $db->quote($synonym);
+		$partnerId = $db->quote($partnerId);
+
 		// Выполняем запрос
 		$query = "
 			SELECT *
 			FROM #__anodos_vendor_synonym
-			WHERE '{$synonym}' = name
-			AND '{$partnerId}' = partner_id;";
+			WHERE {$synonym} = name
+			AND {$partnerId} = partner_id;";
 		$db->setQuery($query);
 
 		// Возвращаем результат
@@ -74,6 +82,11 @@ class Vendor {
 		// Подключаемся к базе
 		$db = JFactory::getDBO();
 
+		// Исключаем инъекцию
+		$synonym = $db->quote($synonym);
+		$partnerId = $db->quote($partnerId);
+		$createdBy = $db->quote($createdBy);
+
 		// TODO Провести проверку на уникальность перед добавлением
 
 		// Выполняем запрос вставки
@@ -84,10 +97,10 @@ class Vendor {
 				created,
 				created_by)
 			VALUES (
-				'{$synonym}',
-				'{$partnerId}',
+				{$synonym},
+				{$partnerId},
 				NOW(),
-				'{$createdBy}');";
+				{$createdBy});";
 		$db->setQuery($query);
 		$db->query();
 
@@ -95,8 +108,8 @@ class Vendor {
 		$query = "
 			SELECT *
 			FROM #__anodos_vendor_synonym
-			WHERE '{$synonym}' = name
-			AND '{$partnerId}' = partner_id;";
+			WHERE {$synonym} = name
+			AND {$partnerId} = partner_id;";
 		$db->setQuery($query);
 
 		// Возвращаем результат
@@ -109,11 +122,15 @@ class Vendor {
 		// Подколючаемся к базе
 		$db = JFactory::getDBO();
 
+		// Исключаем инъекцию
+		$synonymId = $db->quote($synonymId);
+		$vendorId = $db->quote($vendorId);
+
 		// Выполняем запрос
 		$query = "
 			UPDATE #__anodos_vendor_synonym
 			SET vendor_id = {$vendorId}
-			WHERE id = '{$synonymId}';";
+			WHERE id = {$synonymId};";
 		$db->setQuery($query);
 		$db->query();
 

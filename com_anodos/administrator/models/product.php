@@ -18,7 +18,7 @@ class AnodosModelProduct extends JModelAdmin {
 		$app = JFactory::getApplication();
 
 		// Get the form
-		$form = $this->loadForm('com_anodos.product', 'product', array('control' => 'jform', 'load_data' => $loadData));
+		$form = $this->loadForm('com_anodos', 'product', array('control' => 'jform', 'load_data' => $loadData));
 		if (empty($form)) {
 			return false;
 		}
@@ -68,7 +68,7 @@ class AnodosModelProduct extends JModelAdmin {
 
 		if( !empty( $record->id ) ){
 			$user = JFactory::getUser();
-			return $user->authorise( "core.delete", "com_anodos.product." . $record->id );
+			return $user->authorise( "core.delete", "com_anodos." . $record->id );
 		}
 	}
 

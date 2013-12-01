@@ -23,31 +23,4 @@ window.addEvent('domready', function() {
 			}
 		}).send();
 	});
-
-	// Привязываем синоним к производителю
-	$$('.select-category').addEvent('change', function(event){
-		var synonym = this.get("data-synonym-id");
-		var category = this.get('value');
-		var element = this;
-		var synonymHTMLRequest = new Request({
-			url:'/index.php',
-			method:'get',
-			data: 'option=com_anodos&task=updater.linkSynonymToCategory&category=' + category + '&synonym=' + synonym,
-			onProgress: function(event, xhr){
-			},
-			onSuccess: function(responseText) {
-				if ("ok\n" == responseText) {
-					element.addClass('uk-form-success');
-				} else {
-					element.addClass('uk-form-danger');
-				}
-			},
-			onFailure: function() {
-				element.addClass('uk-form-danger');
-			},
-			onCancel: function() {
-				element.addClass('uk-form-danger');
-			}
-		}).send();
-	});
 });

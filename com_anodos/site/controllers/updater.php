@@ -21,8 +21,8 @@ class AnodosControllerUpdater extends AnodosController {
 
 		// Выводим сообщения из модели
 		$msg = $model->getMsg();
-		echo $msg;
 		$model->reportToMail();
+//		echo "<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>Updater</title><link rel=\"stylesheet\" href=\"/components/com_anodos/css/uikit.min.css\" /><script src=\"//code.jquery.com/jquery-1.10.2.min.js\"></script><script src=\"/components/com_anodos/js/uikit.min.js\"></script></head><body>$msg</body></html>";
 
 		// Закрываем приложение
 		JFactory::getApplication()->close();

@@ -30,7 +30,7 @@ class AnodosModelCategorysynonyms extends JModelList {
 		$query = $db->getQuery(true);
 		$query->select('id, lft, level, path, extension, title, alias, published');
 		$query->from('#__categories');
-		$query->where("extension = 'com_anodos.product'");
+		$query->where("extension = 'com_anodos'");
 		$query->order('lft');
 		$db->setQuery($query);
 		$categories = $db->loadObjectList();
@@ -138,7 +138,7 @@ class AnodosModelCategorysynonyms extends JModelList {
 		$query = $db->getQuery(true);
 		$query->select('id, lft, level, path, extension, title, alias, published');
 		$query->from('#__categories');
-		$query->where("extension = 'com_anodos.product'");
+		$query->where("extension = 'com_anodos'");
 		$query->order('lft');
 		$db->setQuery($query);
 		$categories = $db->loadObjectList();

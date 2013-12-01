@@ -56,17 +56,6 @@
 			<option value="-2">JTRASHED</option>
 		</field>
 
-		<field name="ordering" type="ordering" class="inputbox"
-			label="COM_ANODOS_FORM_ORDERING" description="COM_ANODOS_FORM_ORDERING_DESC" />
-
-		<field name="description" type="textarea" class="inputbox"
-			rows="3" cols="30"
-			label="COM_ANODOS_FORM_DESCRIPTION" description="COM_ANODOS_FORM_DESCRIPTION_DESC" />
-
-		<field name="checked_out" type="hidden" filter="unset" />
-
-		<field name="checked_out_time" type="hidden" filter="unset" />
-
 		<field name="created" type="calendar"
 			class="inputbox" size="22" format="%Y-%m-%d %H:%M:%S" filter="user_utc"
 			label="COM_ANODOS_FORM_CREATED" description="COM_ANODOS_CREATED_DESC" />
@@ -89,34 +78,6 @@
 		<field name="publish_down" type="calendar"
 			class="inputbox" format="%Y-%m-%d %H:%M:%S" size="22" filter="user_utc"
 			label="COM_ANODOS_FORM_PUBLISH_DOWN" description="COM_ANODOS_FORM_PUBLISH_DOWN_DESC" />
-
-		<field name="metadata" type="textarea"
-			class="inputbox" rows="3" cols="30"
-			label="COM_ANODOS_FORM_METADATA" description="COM_ANODOS_FORM_METADATA_DESC" />
-
-		<field name="hits" type="text" default="0"
-			class="readonly" readonly="true"
-			label="COM_ANODOS_FORM_HITS" description="COM_ANODOS_FORM_HITS_DESC" />
-
-	</fieldset>
-
-	<fieldset name="accesscontrol">
-
-		<field
-			name="asset_id"
-			type="hidden"
-			filter="unset" />
-
-		<field
-			name="rules"
-			type="rules"
-			label="JFIELD_RULES_LABEL"
-			translate_label="false"
-			filter="rules"
-			validate="rules"
-			class="inputbox"
-			component="com_anodos"
-			section="unit" />
 
 	</fieldset>
 

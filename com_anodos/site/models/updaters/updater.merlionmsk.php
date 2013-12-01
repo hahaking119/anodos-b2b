@@ -21,6 +21,7 @@ class UpdaterMerlionMsk {
 	protected $partnerAlias = 'merlion';
 	protected $partnerName = 'Merlion';
 	protected $updater;
+	protected $startTime;
 	protected $partner;
 	protected $stock = array();
 	protected $priceType = array();
@@ -38,8 +39,9 @@ class UpdaterMerlionMsk {
 	// Точка входа
 	public function update($id) {
 
-		// Получаем объект загрузчика
+		// Получаем объект загрузчика и время из базы
 		$this->updater = Updater::getUpdater($id);
+		$this->startTime = Updater::getStartTime();
 
 		// Получаем объект партнера
 		$this->partner = Partner::getPartnerFromAlias($this->partnerAlias);
@@ -121,14 +123,14 @@ class UpdaterMerlionMsk {
 		}
 
 		// Помечаем неактуальными устаревшие данные в базе
-		Price::clearSQL($this->stock['merlion-msk-stock']->id);
-		Stock::clearSQL($this->stock['merlion-msk-stock']->id);
+		Price::clearSQL($this->stock['merlion-msk-stock']->id, $this->startTime);
+		Stock::clearSQL($this->stock['merlion-msk-stock']->id, $this->startTime);
 
 		// Отмечаем время обновления
 		Updater::setUpdated($this->updater->id);
 
 		// Выводим сообщение о завершении обработки
-		$this->addMsg("Обработка завершена.");
+		$this->addMsg('<div class="uk-alert uk-alert-success">Обработка завершена.</div>');
 		return true;
 	}
 
@@ -426,7 +428,7 @@ class UpdaterMerlionMsk {
 		$price = $this->getCorrectedPrice($product['Price']);
 		$quantity = $this->getCorrectedQuantity($product['Avail']);
 
-		if (true == $quantity) {
+		if (0 < $quantity) {
 			Stock::addQuantity(
 				$this->stock['merlion-msk-stock']->id,
 				$productId,
@@ -434,9 +436,11 @@ class UpdaterMerlionMsk {
 				3,
 				0
 			);
+		} else {
+			return true;
 		}
 
-		if (true == $price) {
+		if (0 < $price) {
 			Price::addPrice(
 				$this->stock['merlion-msk-stock']->id,
 				$productId,

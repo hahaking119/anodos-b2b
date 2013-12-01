@@ -7,13 +7,13 @@ defined('_JEXEC') or die;
 <?php $show = false; ?>
         <?php foreach ($this->items as $item) : ?>
 				<?php
-					if($item->state == 1 || ($item->state == 0 && JFactory::getUser()->authorise('core.edit.own',' com_anodos.product.'.$item->id))):
+					if($item->state == 1 || ($item->state == 0 && JFactory::getUser()->authorise('core.edit.own',' com_anodos.'.$item->id))):
 						$show = true;
 						?>
 							<li>
 								<a href="<?php echo JRoute::_('index.php?option=com_anodos&view=product&id=' . (int)$item->id); ?>"><?php echo $item->name; ?></a>
 								<?php
-									if(JFactory::getUser()->authorise('core.edit.state','com_anodos.product.'.$item->id)):
+									if(JFactory::getUser()->authorise('core.edit.state','com_anodos.'.$item->id)):
 									?>
 										<a href="javascript:document.getElementById('form-product-state-<?php echo $item->id; ?>').submit()"><?php if($item->state == 1): echo JText::_("COM_ANODOS_UNPUBLISH_ITEM"); else: echo JText::_("COM_ANODOS_PUBLISH_ITEM"); endif; ?></a>
 										<form id="form-product-state-<?php echo $item->id ?>" style="display:inline" action="<?php echo JRoute::_('index.php?option=com_anodos&task=product.save'); ?>" method="post" class="form-validate" enctype="multipart/form-data">
@@ -30,7 +30,7 @@ defined('_JEXEC') or die;
 										</form>
 									<?php
 									endif;
-									if(JFactory::getUser()->authorise('core.delete','com_anodos.product.'.$item->id)):
+									if(JFactory::getUser()->authorise('core.delete','com_anodos.'.$item->id)):
 									?>
 										<a href="javascript:deleteItem(<?php echo $item->id; ?>);"><?php echo JText::_("COM_ANODOS_DELETE_ITEM"); ?></a>
 										<form id="form-product-delete-<?php echo $item->id; ?>" style="display:inline" action="<?php echo JRoute::_('index.php?option=com_anodos&task=product.remove'); ?>" method="post" class="form-validate" enctype="multipart/form-data">

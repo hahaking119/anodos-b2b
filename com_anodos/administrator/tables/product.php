@@ -121,7 +121,7 @@ class AnodosTableProduct extends JTable {
 		$assetParentId = $assetParent->getRootId();
 
 		if (($this->category_id) && !empty($this->category_id)) {
-			$assetParent->loadByName('com_anodos.product.category.' . (int) $this->category_id);
+			$assetParent->loadByName('com_anodos.category.' . (int) $this->category_id);
 		} else {
 			$assetParent->loadByName('com_anodos');
 		}

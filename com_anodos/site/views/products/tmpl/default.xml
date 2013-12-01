@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <metadata>
-	<layout title="COM_PRICER_VIEW_CATALOG_TITLE">
-		<message>COM_PRICER_VIEW_CATALOG_DESC</message>
+	<layout title="COM_ANODOS_VIEW_CATALOG_TITLE">
+		<message>COM_ANODOS_VIEW_CATALOG_DESC</message>
 	</layout>
 	<fields name="reguest">
 		<fieldset

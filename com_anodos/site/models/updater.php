@@ -25,9 +25,9 @@ class AnodosModelUpdater extends JModelList {
 
 	public function reportToMail() {
 		if (mail("abezpalov@ya.ru", $this->subject, $this->msg, "From: bot@anodos.ru \r\n")) {
-			echo "Message acepted for delivery.";
+			$this->addMsg('<div class="uk-alert-success">'.__LINE__.' - Отчет отправлен на почту.</div>');
 		} else {
-			echo "Some error happen.";
+			$this->addMsg('<div class="uk-alert-danger">'.__LINE__.' - Не удалось отправить отчет на почту.</div>');
 		}
 	}
 
@@ -36,12 +36,12 @@ class AnodosModelUpdater extends JModelList {
 		// Получаем данные загрузчика
 		$updater = $this->getUpdater($id);
 		if (!isset($updater->id)) {
-			$this->addMsg('<div class="alert alert-danger">Error #'.__LINE__.' - обращение к несуществующему загрузчику.</div>');
+			$this->addMsg('<div class="uk-alert-danger">Error #'.__LINE__.' - Обращение к несуществующему загрузчику.</div>');
 			return false;
 		}
 
 		if (md5($key) != $updater->key) {
-			$this->addMsg('<div class="alert alert-danger">Ключ загрузчика не подошел.</div>');
+			$this->addMsg('<div class="uk-alert-danger">'.__LINE__.' - Ключ загрузчика не подошел.</div>');
 			$this->addMsg("\$key = $key");
 			$this->addMsg("md5(\$key) = ".md5($key));
 			$this->addMsg("\$updater->key = {$updater->key}");
@@ -49,12 +49,11 @@ class AnodosModelUpdater extends JModelList {
 		}
 
 		// Определяем имя файла загрузчика
-		$file = JPATH_COMPONENT.'/models/updater.'.strtolower($updater->alias).'.php';
+		$file = JPATH_COMPONENT.'/models/updaters/updater.'.strtolower($updater->alias).'.php';
 		if (true == JFile::exists($file)) {
 			require_once $file;
 		} else {
-			$this->addMsg('Файл загрузчика не существует.');
-			$this->addMsg('$file = '.$file);
+			$this->addMsg('<div class="uk-alert-danger">Error #'.__LINE__." - Файл загрузчика $file не существует.</div>");
 			return false;
 		}
 
@@ -91,66 +90,59 @@ class AnodosModelUpdater extends JModelList {
 	}
 
 	public function addProductCategory($categoryName, $parentId) {
+	// https://gist.github.com/mbabker/3211464
 
 		// Подключаем библиотеки
 		require_once JPATH_COMPONENT.'/helpers/anodos.php';
 		require_once JPATH_COMPONENT.'/models/helpers/category.php';
 
-		// Получаем объект текущего пользователя
-		$user = JFactory::getUser();
-
 		// Проверяем право доступа
+		$user = JFactory::getUser();
 		$canDo = AnodosHelper::getActions();
 		if (!$canDo->get('core.admin')) {
-			$this->addMsg('<div class="alert alert-danger">Error #'.__LINE__.' - отказано в доступе.</div>');
+			$this->addMsg('Error #'.__LINE__.' - отказано в доступе.');
 			return false;
-		} else {
-			$this->addMsg('<div class="alert alert-success">Доступ разрешен.</div>');
 		}
 
-		// TODO test
-		$this->addMsg('<div class="alert alert-success">$categoryName = '.$categoryName.'</div>');
-		$this->addMsg('<div class="alert alert-success">$parentId = '.$parentId.'</div>');
+		// Get the database object
+		$db = JFactory::getDbo();
 
-		// TODO Получаем объект родительской категории
-		$parent = Category::getCategory($parentId);
-		$this->addMsg('<div class="alert alert-success">$parent->title = '.$parent->title.'</div>');
-
-		// Копируем объект родительской категории
-		$category = $parent;
-
-		// Вносим необходимые правки
-		$category->asset_id = 0;
-		$category->parent_id = $parentId;
-		$category->lft = Category::getNextLFT($parent);
-		$category->rgt = 0;
-		$category->level++;
-		$category->title = $categoryName;
-		$category->alias = JFilterOutput::stringURLSafe($category->title);
-		if (true == $category->path) {
-			$category->path .= '/'.$category->alias;
-		} else {
-			$category->path = $category->alias;
+		// JTableCategory is autoloaded in J! 3.0, so...
+		if (version_compare(JVERSION, '3.0', 'lt')) {
+			JTable::addIncludePath(JPATH_PLATFORM . 'joomla/database/table');
 		}
-		$category->extension = 'com_anodos.product';
-		$category->note = '';
-		$category->description = ' ';
-		$category->published = 1;
-		$category->params = '{}';
-		$category->metadesc = ' ';
-		$category->metakey = ' ';
-		$category->metadata = '{}';
-		$category->created_user_id = $user->id;
-		$category->language = '*';
-		$category->version = 1;
 
-		// Добавляем категорию в базу
-		$result = Category::addCategory($category);
-
-		// Перестраиваем дерево категорий
-		$id = $category->id;
+		// Initialize a new category
 		$category = JTable::getInstance('Category');
-		$category->rebuild();
+		$category->extension = 'com_anodos';
+		$category->title = $categoryName;
+		$category->description = '';
+		$category->published = 1;
+		$category->access = 1;
+		$category->params = '{"target":"","image":""}';
+		$category->metadata = '{"page_title":"","author":"","robots":""}';
+		$category->language = '*';
+
+		// Set the location in the tree
+		$category->setLocation($parentId, 'last-child');
+
+		// Check to make sure our data is valid
+		if (!$category->check()) {
+			JError::raiseNotice(500, $category->getError());
+			return false;
+		}
+
+		// Now store the category
+		if (!$category->store(true)) {
+			JError::raiseNotice(500, $category->getError());
+			return false;
+		}
+
+		// Build the path for our category
+		$category->rebuildPath($category->id);
+
+		$this->addMsg("Добавлена категория: {$category->title}.");
+		return true;
 	}
 
 	public function addVendor($name) {
@@ -165,14 +157,9 @@ class AnodosModelUpdater extends JModelList {
 		// Проверяем право доступа
 		$canDo = AnodosHelper::getActions();
 		if (!$canDo->get('core.admin')) {
-			$this->addMsg('<div class="alert alert-danger">Error #'.__LINE__.' - отказано в доступе.</div>');
+			$this->addMsg('Error #'.__LINE__.' - отказано в доступе.');
 			return false;
-		} else {
-			$this->addMsg('<div class="alert alert-success">Доступ разрешен.</div>');
 		}
-
-		// TODO test
-		$this->addMsg('<div class="alert alert-success">$name = '.$name.'</div>');
 
 		// Вносим необходимые правки
 		$vendor->asset_id = 0;
@@ -181,8 +168,16 @@ class AnodosModelUpdater extends JModelList {
 		$vendor->published = 1;
 		$vendor->created_by = $user->id;
 
-		// Добавляем категорию в базу
-		$result = Vendor::addVendor($vendor);
+		// Проверяем наличие такого производителя в базе
+		if (isset(Vendor::getVendorFromAlias($vendor->alias)->id)) {
+			$this->addMsg('Error #'.__LINE__." - Производитель {$vendor->name} [{$vendor->alias}] уже есть в базе.");
+			return false;
+		}
+
+		// Добавляем производителя в базу
+		Vendor::addVendor($vendor);
+		$this->addMsg("Добавлен производитель: {$name}.");
+	 	return true;
 	}
 
 	public function linkSynonymToCategory($synonymId, $categoryId) {
@@ -190,8 +185,6 @@ class AnodosModelUpdater extends JModelList {
 		// Подключаем библиотеки
 		require_once JPATH_COMPONENT.'/helpers/anodos.php';
 		require_once JPATH_COMPONENT.'/models/helpers/category.php';
-		$this->addMsg('<?xml version="1.0" encoding="UTF-8"?>');
-		$this->addMsg('<body>');
 
 		// Получаем объект текущего пользователя
 		$user = JFactory::getUser();
@@ -199,18 +192,14 @@ class AnodosModelUpdater extends JModelList {
 		// Проверяем право доступа
 		$canDo = AnodosHelper::getActions();
 		if (!$canDo->get('core.admin')) {
-			$this->addMsg('<div class="alert alert-danger">Error #'.__LINE__.' - отказано в доступе.</div>');
-			$this->addMsg('</body>');
+			$this->addMsg('Error #'.__LINE__.' - отказано в доступе.</div>');
 			return false;
-		} else {
-			$this->addMsg('<div class="alert alert-success">Доступ разрешен.</div>');
 		}
 
-		// Добавляем категорию в базу
+		// Привязываем синоним к категории
 		Category::linkSynonymToCategory($synonymId, $categoryId);
-
-		// Закрываем XML
-		$this->addMsg('</body>');
+		$this->addMsg('ok');
+	 	return true;
 	}
 
 	public function linkSynonymToVendor($synonymId, $vendorId) {
@@ -218,8 +207,6 @@ class AnodosModelUpdater extends JModelList {
 		// Подключаем библиотеки
 		require_once JPATH_COMPONENT.'/helpers/anodos.php';
 		require_once JPATH_COMPONENT.'/models/helpers/vendor.php';
-		$this->addMsg('<?xml version="1.0" encoding="UTF-8"?>');
-		$this->addMsg('<body>');
 
 		// Получаем объект текущего пользователя
 		$user = JFactory::getUser();
@@ -227,17 +214,13 @@ class AnodosModelUpdater extends JModelList {
 		// Проверяем право доступа
 		$canDo = AnodosHelper::getActions();
 		if (!$canDo->get('core.admin')) {
-			$this->addMsg('<div class="alert alert-danger">Error #'.__LINE__.' - отказано в доступе.</div>');
-			$this->addMsg('</body>');
+			$this->addMsg('Error #'.__LINE__.' - отказано в доступе.</div>');
 			return false;
-		} else {
-			$this->addMsg('<div class="alert alert-success">Доступ разрешен.</div>');
 		}
 
-		// Добавляем категорию в базу
+		// Привязываем синоним к производителю
 		Vendor::linkSynonymToVendor($synonymId, $vendorId);
-
-		// Закрываем XML
-		$this->addMsg('</body>');
+		$this->addMsg('ok');
+	 	return true;
 	}
 }

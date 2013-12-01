@@ -10,26 +10,30 @@ class Product {
 		// Подключаемся к базе
 		$db = JFactory::getDBO();
 
+		// Исключаем инъекцию
+		$article = $db->quote($article);
+		$vendorId = $db->quote($vendorId);
+
 		// Выполняем запрос
 		$query = "
 			SELECT *
 			FROM #__anodos_product
-			WHERE '{$article}' = article
-			AND '{$vendorId}' = vendor_id;";
+			WHERE {$article} = article
+			AND {$vendorId} = vendor_id;";
 		$db->setQuery($query);
 		$product = $db->loadObject();
 
 		//TODO Проверяем, является ли продукт дублем другого, если да, повторяем запрос по идентификатору, если нет - просто возвращаем результат
-		if (isset($product->duble_of)) {
+//		if (isset($product->duble_of)) {
 
 			// Выполняем запрос
-			$query = "
-				SELECT *
-				FROM #__anodos_product
-				WHERE '{$id}' = {$product->duble_of};";
-			$db->setQuery($query);
-			$product = $db->loadObject();
-		}
+//			$query = "
+//				SELECT *
+//				FROM #__anodos_product
+//				WHERE id = {$product->duble_of};";
+//			$db->setQuery($query);
+//			$product = $db->loadObject();
+//		}
 
 		// Возвращаем результат
 		if (isset($product->id)) {
@@ -45,7 +49,15 @@ class Product {
 		// Подключаемся к базе
 		$db = JFactory::getDBO();
 
-		// TODO перед добавлением провести проверку на уникальность
+		// Исключаем инъекцию
+		$fullName = $db->quote("{$name} [{$article}]");
+		$name = $db->quote($name);
+		$alias = $db->quote($alias);
+		$categoryId = $db->quote($categoryId);
+		$vendorId = $db->quote($vendorId);
+		$article = $db->quote($article);
+		$state = $db->quote($state);
+		$createdBy = $db->quote($createdBy);
 
 		// Выполняем запрос вставки
 		$query = "
@@ -60,15 +72,15 @@ class Product {
 				created_by,
 				state)
 			VALUES (
-				'{$name}',
-				'{$alias}',
-				'{$name} [{$article}]',
-				'{$categoryId}',
-				'{$vendorId}',
-				'{$article}',
+				{$name},
+				{$alias},
+				{$fullName},
+				{$categoryId},
+				{$vendorId},
+				{$article},
 				NOW(),
-				'{$createdBy}',
-				'{$state}');";
+				{$createdBy},
+				{$state});";
 		$db->setQuery($query);
 		$db->query();
 
@@ -76,8 +88,8 @@ class Product {
 		$query = "
 			SELECT *
 			FROM #__anodos_product
-			WHERE '{$article}' = article
-			AND '{$vendorId}' = vendor_id;";
+			WHERE {$article} = article
+			AND {$vendorId} = vendor_id;";
 		$db->setQuery($query);
 		$product = $db->loadObject();
 

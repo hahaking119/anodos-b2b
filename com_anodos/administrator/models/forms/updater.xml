@@ -7,7 +7,7 @@
 			label="COM_ANODOS_FORM_ID" description="COM_ANODOS_FORM_ID_DESC" />
 
 		<field name="partner_id" type="sql"
-			query="SELECT NULL AS id, '- Please select -' AS name UNION SELECT id, name FROM #__anodos_partner"
+			query="SELECT 0 AS id, '- Please select -' AS name UNION SELECT id, name FROM #__anodos_partner"
 			key_field="id" value_field="name"
 			label="COM_ANODOS_FORM_PARTNER" description="COM_ANODOS_FORM_PARTNER_DESC" />
 
@@ -32,17 +32,6 @@
 			<option value="-2">JTRASHED</option>
 		</field>
 
-		<field name="ordering" type="ordering" class="inputbox"
-			label="COM_ANODOS_FORM_ORDERING" description="COM_ANODOS_FORM_ORDERING_DESC" />
-
-		<field name="description" type="textarea" class="inputbox"
-			rows="3" cols="30"
-			label="COM_ANODOS_FORM_DESCRIPTION" description="COM_ANODOS_FORM_DESCRIPTION_DESC" />
-
-		<field name="checked_out" type="hidden" filter="unset" />
-
-		<field name="checked_out_time" type="hidden" filter="unset" />
-
 		<field name="created" type="calendar"
 			class="inputbox" size="22" format="%Y-%m-%d %H:%M:%S" filter="user_utc"
 			label="COM_ANODOS_CREATED_LABEL" description="COM_ANODOS_CREATED_DESC" />
@@ -66,14 +55,6 @@
 			class="inputbox" format="%Y-%m-%d %H:%M:%S" size="22" filter="user_utc"
 			label="COM_ANODOS_FORM_PUBLISH_DOWN" description="COM_ANODOS_FORM_PUBLISH_DOWN_DESC" />
 
-		<field name="metadata" type="textarea"
-			class="inputbox" rows="3" cols="30"
-			label="COM_ANODOS_FORM_METADATA" description="COM_ANODOS_FORM_METADATA_DESC" />
-
-		<field name="hits" type="text" default="0"
-			class="readonly" readonly="true"
-			label="COM_ANODOS_FORM_HITS" description="COM_ANODOS_FORM_HITS_DESC" />
-
 		<field name="updated" type="calendar"
 			class="readonly" size="22" readonly="true" format="%Y-%m-%d %H:%M:%S" filter="user_utc"
 			label="COM_ANODOS_FORM_UPDATED" description="COM_ANODOS_FORM_UPDATED_DESC" />
@@ -94,34 +75,9 @@
 			size="40"
 			label="COM_ANODOS_FORM_PASS" description="COM_ANODOS_FORM_PASS_DESC" />
 
-		<field name="cookie" type="text" default=""
-			size="40"
-			label="COM_ANODOS_FORM_COOKIE" description="COM_ANODOS_FORM_COOKIE_DESC" />
-
 		<field name="key" type="text" default=""
 			size="40"
 			label="COM_ANODOS_FORM_KEY" description="COM_ANODOS_FORM_KEY_DESC" />
 
 	</fieldset>
-
-	<fieldset name="accesscontrol">
-
-		<field
-			name="asset_id"
-			type="hidden"
-			filter="unset" />
-
-		<field
-			name="rules"
-			type="rules"
-			label="JFIELD_RULES_LABEL"
-			translate_label="false"
-			filter="rules"
-			validate="rules"
-			class="inputbox"
-			component="com_anodos"
-			section="unit" />
-
-	</fieldset>
-
 </form>

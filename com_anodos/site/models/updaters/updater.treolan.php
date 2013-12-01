@@ -21,6 +21,7 @@ class UpdaterTreolan {
 	protected $partnerAlias = 'treolan';
 	protected $partnerName = 'Treolan';
 	protected $updater;
+	protected $startTime;
 	protected $partner;
 	protected $stock = array();
 	protected $priceType = array();
@@ -38,18 +39,19 @@ class UpdaterTreolan {
 	// Точка входа
 	public function update($id) {
 
-		// Получаем объект загрузчика
+		// Получаем объект загрузчика и время из базы
 		$this->updater = Updater::getUpdater($id);
+		$this->startTime = Updater::getStartTime();
 
 		// Получаем объект партнера
 		$this->partner = Partner::getPartnerFromAlias($this->partnerAlias);
 		if (!isset($this->partner->id)) {
 			$this->partner = Partner::addPartner($this->partnerName, $this->partnerAlias, 0);
 			if (!isset($this->partner->id)) {
-				$this->addMsg('Error #'.__LINE__." - Не возможно добавить партнера.");
+				$this->addMsg('<div class="uk-alert uk-alert-danger">'.__LINE__." - Не возможно добавить партнера.</div>");
 				return false;
 			} else {
-				$this->addMsg("Добавлен партнер: {$this->partnerName}.");
+				$this->addMsg("<div class=\"uk-alert uk-alert-succes\">Добавлен партнер: {$this->partnerName}.</div>");
 			}
 		}
 
@@ -65,10 +67,10 @@ class UpdaterTreolan {
 		if (!isset($this->stock[$alias]->id)) {
 			$this->stock[$alias] = Stock::addStock($name, $alias, $this->partner->id, 0);
 			if (!isset($this->stock[$alias]->id)) {
-				$this->addMsg('Error #'.__LINE__." - Не возможно добавить склад: {$name}.");
+				$this->addMsg('<div class="uk-alert uk-alert-danger">'.__LINE__." - Не возможно добавить склад: {$name}.</div>");
 				return false;
 			} else {
-				$this->addMsg("Добавлен склад: {$this->stock[$alias]->name}.");
+				$this->addMsg("<div class=\"uk-alert uk-alert-succes\">Добавлен склад: {$this->stock[$alias]->name}.</div>");
 			}
 		}
 
@@ -80,10 +82,10 @@ class UpdaterTreolan {
 		if (!isset($this->stock[$alias]->id)) {
 			$this->stock[$alias] = Stock::addStock($name, $alias, $this->partner->id, 0);
 			if (!isset($this->stock[$alias]->id)) {
-				$this->addMsg('Error #'.__LINE__." - Не возможно добавить склад: {$name}.");
+				$this->addMsg('<div class="uk-alert uk-alert-danger">'.__LINE__." - Не возможно добавить склад: {$name}.</div>");
 				return false;
 			} else {
-				$this->addMsg("Добавлен склад: {$this->stock[$alias]->name}.");
+				$this->addMsg("<div class=\"uk-alert uk-alert-succes\">Добавлен склад: {$this->stock[$alias]->name}.</div>");
 			}
 		}
 
@@ -94,10 +96,10 @@ class UpdaterTreolan {
 		if (!isset($this->priceType[$alias]->id)) {
 			$this->priceType[$alias] = Price::addPriceType($name, $alias, 1, 0, 0);
 			if (!isset($this->priceType[$alias]->id)) {
-				$this->addMsg('Error #'.__LINE__." - Не возможно добавить тип цены: {$name}.");
+				$this->addMsg('<div class="uk-alert uk-alert-danger">'.__LINE__." - Не возможно добавить тип цены: {$name}.</div>");
 				return false;
 			} else {
-				$this->addMsg("Добавлен тип цены: {$this->priceType[$alias]->name}.");
+				$this->addMsg("<div class=\"uk-alert uk-alert-success\">Добавлен тип цены: {$this->priceType[$alias]->name}.</div>");
 			}
 		}
 
@@ -105,7 +107,7 @@ class UpdaterTreolan {
 		$alias = 'USD';
 		$this->currency[$alias] = Currency::getCurrencyFromAlias($alias);
 		if (!isset($this->currency[$alias])) {
-			$this->addMsg('Error #'.__LINE__." - Нет валюты: {$alias}.");
+			$this->addMsg('<div class="uk-alert uk-alert-danger">'.__LINE__." - Нет валюты: {$alias}.</div>");
 			return false;
 		}
 
@@ -113,46 +115,47 @@ class UpdaterTreolan {
 		$alias = 'RUB';
 		$this->currency[$alias] = Currency::getCurrencyFromAlias($alias);
 		if (!isset($this->currency[$alias])) {
-			$this->addMsg('Error #'.__LINE__." - Нет валюты: {$alias}.");
+			$this->addMsg('<div class="uk-alert uk-alert-danger">'.__LINE__." - Нет валюты: {$alias}.</div>");
 			return false;
 		}
 
 		// Получаем имя папки для загрузки
 		$dir = $this->getDir();
 		if (!$dir) {
-			$this->addMsg('Error #'.__LINE__.' - Не задана папка загрузки.');
+			$this->addMsg('<div class="uk-alert uk-alert-danger">'.__LINE__.' - Не задана папка загрузки.</div>');
 			return false;
 		}
 
 		// Загружаем файл
 		$file = $this->getFile($dir);
 		if (!$file) {
-			$this->addMsg('Error #'.__LINE__.' - Не найден загруженный файл.');
+			$this->addMsg('<div class="uk-alert uk-alert-danger">'.__LINE__.' - Не найден загруженный файл.</div>');
 			return false;
 		}
 
 		// Загружаем данные в массив
 		if (true != $this->getData($file)) {
-			$this->addMsg('Error #'.__LINE__.' - Пожалуй, массив данных не удалось загрузить');
+			$this->addMsg('<div class="uk-alert uk-alert-danger">'.__LINE__.' - Массив данных не загружен.</div>');
 			return false;
 		}
 
 		// Помечаем неактуальными устаревшие данные в базе
-		Price::clearSQL($this->stock['treolan-msk-stock']->id);
-		Price::clearSQL($this->stock['treolan-transit-stock']->id);
-		Stock::clearSQL($this->stock['treolan-msk-stock']->id);
-		Stock::clearSQL($this->stock['treolan-transit-stock']->id);
+		Price::clearSQL($this->stock['treolan-msk-stock']->id, $this->startTime);
+		Price::clearSQL($this->stock['treolan-transit-stock']->id, $this->startTime);
+		Stock::clearSQL($this->stock['treolan-msk-stock']->id, $this->startTime);
+		Stock::clearSQL($this->stock['treolan-transit-stock']->id, $this->startTime);
 
 		// Отмечаем время обновления
 		Updater::setUpdated($this->updater->id);
 
 		// Выводим сообщение о завершении обработки
-		$this->addMsg("Обработка завершена.");
+		$this->addMsg('<div class="uk-alert uk-alert-success">Обработка завершена.</div>');
 		return true;
 	}
 
 	// Создает папку для загрузки, возвращает ее имя
 	protected function getDir() {
+
 		$dir = JFactory::getApplication()->getCfg('tmp_path').'/'.$this->updater->alias.'/';
 		if (!JFolder::exists($dir)) {
 			JFolder::create($dir);
@@ -256,6 +259,9 @@ class UpdaterTreolan {
 	// Возвращает массив данных
 	protected function getData($file) {
 
+		// TODO TEST
+		$this->addMsg('<div class="uk-alert uk-alert-success">Step #'.__LINE__." - getData($file)</div>");
+
 		// Получаемые данные
 
 //		<html
@@ -315,7 +321,8 @@ class UpdaterTreolan {
 
 		// Загружаем данные из файла в DOM
 		$dom = new DomDocument();
-		$dom->loadHtmlFile($file, LIBXML_NOERROR);
+//		$dom->load($file);
+		$dom->loadHtmlFile($file);//, LIBXML_NOERROR
 		$xpath = new DOMXPath($dom);
 
 		// TODO Парсим и загружаем в массив
@@ -332,12 +339,12 @@ class UpdaterTreolan {
 				$col++;
 			}
 
-			if (0 == $row) { // Первая страка таблицы
+			if (0 == $row) { // Первая строка таблицы
 
 				// Получаем значения столбцов
 				$numbers = $this->getNumbers($data);
 				if (true != $numbers) {
-					$this->addMsg('Error #'.__LINE__." - Необходима доработка загрузчика.");
+					$this->addMsg('<div class="uk-alert uk-alert-danger">'.__LINE__." - Не найдена часть столбцов.</div>");
 					return false;
 				}
 
@@ -366,6 +373,13 @@ class UpdaterTreolan {
 			}
 			$row++;
 		}
+
+		if (0 == $row) {
+			$this->addMsg('<div class="uk-alert uk-alert-danger">'.__LINE__." - Обработано $row строк, ошибка загрузчика.</div>");
+			$this->addMsg('<div class="uk-alert uk-alert-warning">'.__LINE__." - Файл $file сохранен для анализа.</div>");
+			return false;
+		}
+
 		JFile::delete($file);
 		return true;
 	}
@@ -396,6 +410,7 @@ class UpdaterTreolan {
 		and (isset($numbers['warranty']))) { // Все колонки на месте
 			return $numbers;
 		} else { // Не хватает обязательных колонок
+			$this->addMsg('<div class="uk-alert uk-alert-danger">Step #'.__LINE__.': - Не хватает обязательных колонок.</div>');
 			return false;
 		}
 	}
@@ -419,9 +434,9 @@ class UpdaterTreolan {
 		if (!isset($synonym->id)) {
 			$synonym = Vendor::addSynonym($product['vendor'], $this->partner->id);
 			if (!isset($synonym->id)) {
-				$this->addMsg("Не удалось добавить синоним производителя: {$product['vendor']}");
+				$this->addMsg("<div class=\"uk-alert uk-alert-danger\">Не удалось добавить синоним производителя: {$product['vendor']}.</div>");
 			} else {
-				$this->addMsg("Добавлен синоним производителя: {$product['vendor']}");
+				$this->addMsg("<div class=\"uk-alert uk-alert-succes\">Добавлен синоним производителя: {$product['vendor']}.</div>");
 			}
 		}
 
@@ -435,9 +450,9 @@ class UpdaterTreolan {
 		if (!isset($synonym->id)) {
 			$synonym = Category::addSynonym($product['category'], $this->partner->id);
 			if (!isset($synonym->id)) { // Нет синонима в базе
-				$this->addMsg("Не удалось добавить синоним категории: {$product['category']}");
+				$this->addMsg("<div class=\"uk-alert uk-alert-danger\">Не удалось добавить синоним категории: {$product['category']}.</div>");
 			} else {
-				$this->addMsg("Добавлен синоним категории: {$synonym->name}");
+				$this->addMsg("<div class=\"uk-alert uk-alert-succes\">Добавлен синоним категории: {$synonym->name}.</div>");
 			}
 		}
 
@@ -456,10 +471,10 @@ class UpdaterTreolan {
 		} else {
 			$productFromDB = Product::addProduct($product['name'], $product['name'], $categoryId, $vendorId, $product['article']);
 			if (isset($productFromDB->id)) {
-				$this->addMsg("Добавлен продукт: [{$product['article']}] {$product['name']}.");
+				$this->addMsg("<div class=\"uk-alert uk-alert-succes\">Добавлен продукт: [{$product['article']}] {$product['name']}.</div>");
 				$productId = $productFromDB->id;
 			} else {
-				$this->addMsg("Не удалось добавить продукт: [{$product['article']}] {$product['name']}.");
+				$this->addMsg("<div class=\"uk-alert uk-alert-danger\">Не удалось добавить продукт: [{$product['article']}] {$product['name']}.</div>");
 				return false;
 			}
 		}
@@ -541,6 +556,7 @@ class UpdaterTreolan {
 
 	// Правим цену (удаляем вредные символы)
 	protected function getCorrectedPrice($price) {
+
 		$price = ereg_replace('[,]', '.', $price);
 		$price = ereg_replace('[ ]', '', $price);
 		return doubleval($price);
@@ -548,6 +564,7 @@ class UpdaterTreolan {
 
 	// Правим количество (удаляем вредные символы)
 	protected function getCorrectedQuantity($string) {
+
 		$int = ereg_replace('[^0-9]*', '', $string); // убираем из строки все, что не цифра
 		if (true == $int) {
 			return $int;
@@ -560,7 +577,7 @@ class UpdaterTreolan {
 				case 'транзит' : return 1;
 				case 'много' : return 10;
 				case 'мало' : return 5;
-				default : $this->addMsg("Необходим новый кейс обработки количества: '$string'"); return 0;
+				default : $this->addMsg("<div class=\"uk-alert uk-alert-danger\">Необходим новый кейс обработки количества: '$string'.</div>"); return 0;
 			}
 		}
 	}

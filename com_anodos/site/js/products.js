@@ -1,29 +1,88 @@
-function openCategory(id) {
-	$('#category-'+id).removeClass('closed');
-	$('#category-square-'+id).attr('onClick', 'closeCategory('+id+')');
-	$('#category-square-'+id).text('⊟');
-}
+window.addEvent('domready', function() {
 
-function closeCategory(id) {
-	$('#category-'+id).addClass('closed');
-	$('#category-square-'+id).attr('onClick', 'openCategory('+id+')');
-	$('#category-square-'+id).text('⊞');
-}
+	// Обновить список производителей после загрузки страницы
+	var getVendorsFromCategoryHTMLRequest = new Request.JSON({
+		url:'/index.php?option=com_anodos&task=products.getVendorsFromCategory',
+		onSuccess: function(r) {
 
-function setCategorySelected(id) {
-	$('#category-selected-text').text($('#category-text-'+id).text());
-	$('#form-category-selected').attr('value', id);
-	if ("all" == id) {
-		$('#form-subcategories').prop('checked', true);
-		$('#form-subcategories').prop('disabled', true);
-	} else {
-		$('#form-subcategories').prop('disabled', false);
-	}
-	$('#selectCategoryModal').modal('hide');
-}
+			// Прячем производителей
+			$$("button.vendor-name").addClass('hide');
+			$('vendor-all').removeClass('hide');
 
-function setVendorSelected(id) {
-	$('#vendor-selected-text').text($('#vendor-'+id).text());
-	$('#form-vendor-selected').attr('value', id);
-	$('#selectVendorModal').modal('hide');
-}
+			if (r.data) {
+				// Показываем нужных производителей
+				for (var i = 0; i < r.data.length; i++) {
+					$('vendor-' + r.data[i].vendor_id).removeClass('hide');
+				}
+			}
+		}.bind(this),
+	}).get({'category': $('form-category-selected').getProperty('value')});
+
+	// Выбираем категорию
+	$$('.category-name').addEvent('click', function(event){
+		var id = this.get("data-category-id");
+		var name = this.get('text');
+		$('category-selected').set('text', name);
+		$('form-category-selected').setProperty('value', id);
+		if ('all' == id) {
+			$('subcategories-checkbox').setProperty('checked', true);
+			$('subcategories-checkbox').setProperty('disabled', true);
+			$('form-subcategories').setProperty('value', 1);
+		} else {
+			$('subcategories-checkbox').removeProperty('disabled');
+		}
+
+		// Обновить список производителей
+		var getVendorsFromCategoryHTMLRequest = new Request.JSON({
+			url:'/index.php?option=com_anodos&task=products.getVendorsFromCategory',
+			onSuccess: function(r) {
+
+				// Прячем производителей
+				$$("button.vendor-name").addClass('hide');
+				$('vendor-all').removeClass('hide');
+
+				if (r.data) {
+					// Показываем нужных производителей
+					for (var i = 0; i < r.data.length; i++) {
+						$('vendor-' + r.data[i].vendor_id).removeClass('hide');
+					}
+				}
+			}.bind(this),
+		}).get({'category': id});
+	});
+
+	// Открываем категрию в дереве
+	$$('.category-square').addEvent('click', function(event){
+		var id = this.get("data-category-id");
+		var text = this.get('text');
+		if ('⊞' == text) {
+			$('category-'+id).removeClass('closed');
+			$('category-square-'+id).set('text', '⊟');
+		} else {
+			$('category-'+id).addClass('closed');
+			$('category-square-'+id).set('text', '⊞');
+		}
+	});
+
+	// Выбираем категорию
+	$$('.vendor-name').addEvent('click', function(event){
+		var id = this.get("data-vendor-id");
+		var name = this.get('text');
+		$('vendor-selected').set('text', name);
+		$('form-vendor-selected').setProperty('value', id);
+	});
+
+	// Выбираем подкатегорию
+	$('subcategories-checkbox').addEvent('change', function(event){
+		if (true == $('subcategories-checkbox').getProperty('checked')) {
+			$('form-subcategories').setProperty('value', 1);
+		} else {
+			$('form-subcategories').setProperty('value', 0);
+		}
+	});
+
+	// Нажатие на кнопке "показать"
+	$('show-product-button').addEvent('click', function(event){
+		$('form-show-product').submit();
+	});
+});

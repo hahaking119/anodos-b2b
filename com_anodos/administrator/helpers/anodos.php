@@ -9,6 +9,18 @@ class AnodosHelper {
 	public static function addSubmenu($vName = '') {
 
 		JHtmlSidebar::addEntry(
+			JText::_('COM_ANODOS_PRODUCTS'),
+			'index.php?option=com_anodos&view=products',
+			$vName == 'products'
+		);
+
+		JHtmlSidebar::addEntry(
+			JText::_('COM_ANODOS_PRODUCT_CATEGORIES'),
+			'index.php?option=com_categories&view=categories&extension=com_anodos',
+			$vName == 'categories'
+		);
+
+		JHtmlSidebar::addEntry(
 			JText::_('COM_ANODOS_PARTNERS'),
 			'index.php?option=com_anodos&view=partners',
 			$vName == 'partners'
@@ -18,18 +30,6 @@ class AnodosHelper {
 			JText::_('COM_ANODOS_PARTNER_CATEGORIES'),
 			'index.php?option=com_categories&view=categories&extension=com_anodos.partner',
 			$vName == 'categories.partner'
-		);
-
-		JHtmlSidebar::addEntry(
-			JText::_('COM_ANODOS_PRODUCTS'),
-			'index.php?option=com_anodos&view=products',
-			$vName == 'products'
-		);
-
-		JHtmlSidebar::addEntry(
-			JText::_('COM_ANODOS_PRODUCT_CATEGORIES'),
-			'index.php?option=com_categories&view=categories&extension=com_anodos.product',
-			$vName == 'categories.product'
 		);
 
 		JHtmlSidebar::addEntry(
