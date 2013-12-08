@@ -94,24 +94,14 @@ class Currency {
 		// TODO курс есть - изменяем, если курса нет - добавляем
 		$query="SELECT rate FROM #__anodos_currency_rate WHERE currency_id = {$id};";
 		$db->setQuery($query);
-		if (isset($db->loadResult)) {
+		if (true == $db->loadResult()) {
 			$query="
-				UPDATE #__anodos_currency_rate (
-					currency_id,
-					date,
-					rate,
-					quantity,
-					publish_up,
-					publish_down)
-				VALUES (
-					{$id},
-					{$date},
-					{$rate},
-					{$quantity},
-					{$currencyId},
-					{$priceTypeId},
-					NOW(),
-					DATE_ADD(NOW(), INTERVAL {$addDate} DAY))
+				UPDATE #__anodos_currency_rate SET
+					date = {$date},
+					rate = {$rate},
+					quantity = {$quantity},
+					publish_up = NOW(),
+					publish_down = DATE_ADD(NOW(), INTERVAL {$addDate} DAY)
 				WHERE currency_id = {$id};
 			";
 			$db->setQuery($query);

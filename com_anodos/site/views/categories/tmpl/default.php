@@ -30,7 +30,7 @@ echo $this->msg;
 		<thead>
 			<tr>
 				<th class="uk-text-center"><?php echo JText::_('COM_ANODOS_N'); $col++; ?></th>
-				<th class="uk-text-left"><?php echo JText::_('COM_ANODOS_MANAGE'); $col++; ?></th>
+				<th class="uk-text-center"><i class="uk-icon-edit"></i><?php $col++; ?></th>
 				<th class="uk-text-left"><?php echo JText::_('COM_ANODOS_NAME'); $col++; ?></th>
 				<th class="uk-text-left"><?php echo JText::_('COM_ANODOS_PARENT'); $col++; ?></th>
 			</tr>
@@ -39,7 +39,12 @@ echo $this->msg;
 			<?php foreach($this->categories as $i => $category): ?>
 			<tr data-category-id="<?php echo $category->id; ?>">
 				<td class="uk-text-center"><?php echo $i+1; ?></td>
-				<td class="uk-text-left">TODO</td>
+				<td class="uk-form">
+					<button
+						class="uk-button uk-button-mini"
+						data-uk-modal="{target:'#removeCategoryModal'}"
+						data-category-id="<?php echo $category->id; ?>">
+						<i class="uk-icon-remove"></i></button></td>
 				<td class="uk-text-left"><?php echo $category->name; ?></td>
 				<td class="uk-text-left">
 					<select
@@ -82,3 +87,22 @@ echo $this->msg;
 		</div>
 	</div>
 </div>
+
+<div id="removeCategoryModal" class="uk-modal">
+	<div class="uk-modal-dialog">
+		<a class="uk-modal-close uk-close"></a>
+		<h1>Удалить категорию?</h1>
+		<div class="uk-form">
+			<fieldset>
+				<button id="delete-category-button" class="uk-button uk-button-danger uk-modal-close">Удалить</button>
+				<button class="uk-button uk-modal-close">Отменить</button>
+			</fieldset>
+		</div>
+		<hr />
+		<div id="edit-product-messages">
+			<div class="uk-alert" data-uk-alert><a href="" class="uk-alert-close uk-close"></a>AJAX готов.</div>
+		</div>
+	</div>
+</div>
+
+

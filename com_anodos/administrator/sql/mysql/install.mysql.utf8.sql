@@ -192,7 +192,7 @@ CREATE TABLE IF NOT EXISTS `#__anodos_category_synonym` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `partner_id` BIGINT UNSIGNED NOT NULL,
   `category_id` INT(11) NULL,
-  `name` VARCHAR(255) NOT NULL,
+  `name` VARCHAR(512) NOT NULL,
   `state` TINYINT(3) NOT NULL DEFAULT '1',
   `created` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
   `created_by` BIGINT UNSIGNED NOT NULL DEFAULT '0',
@@ -485,3 +485,6 @@ CREATE TABLE IF NOT EXISTS `#__anodos_order_line` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
+
+ALTER TABLE `#__anodos_category_synonym` ADD COLUMN `original_id` VARCHAR(45) NULL AFTER `category_id`;
+ALTER TABLE `#__anodos_vendor_synonym` ADD COLUMN `original_id` VARCHAR(45) NULL AFTER `vendor_id`;

@@ -11,6 +11,7 @@ class AnodosControllerProducts extends AnodosController {
 		return $model;
 	}
 
+	// TODO перенести в AnodosControllerAjax
 	public function getVendorsFromCategory() {
 
 		$app = JFactory::getApplication();

@@ -404,7 +404,7 @@ class AnodosModelProducts extends JModelList {
 			$query = "
 				SELECT *
 				FROM #__categories
-				WHERE LOCATE('{$category->path}', #__categories.path) != 0 AND extension = 'com_anodos'
+				WHERE LOCATE('{$category->path}', #__categories.path) = 1 AND extension = 'com_anodos'
 				ORDER BY lft;";
 			$db->setQuery($query);
 			$categories = $db->loadObjectList();
@@ -416,7 +416,8 @@ class AnodosModelProducts extends JModelList {
 					vendor.name AS vendor_name
 				FROM #__anodos_partner AS vendor
 				INNER JOIN #__anodos_product AS product ON product.vendor_id = vendor.id
-				WHERE vendor.vendor = 1 ";
+				INNER JOIN #__anodos_product_quantity AS quantity ON quantity.product_id = product.id
+				WHERE vendor.vendor = 1 AND quantity.quantity != 0 ";
 			$prefix = "AND (";
 			$sufix = ' ';
 
