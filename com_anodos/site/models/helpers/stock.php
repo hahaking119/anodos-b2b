@@ -167,6 +167,24 @@ class Stock {
 		return true;
 	}
 
+	// Удаляет состояние склада указанного товара
+	public function removeQuantityOfProduct($productId) {
+
+		// Подключаемся к базе
+		$db = JFactory::getDBO();
+
+		// Исключаем инъекцию
+		$productId = $db->quote($productId);
+
+		// Выполняем запрос
+		$query = "DELETE FROM #__anodos_product_quantity WHERE product_id = {$productId};";
+		$db->setQuery($query);
+		$db->query();
+
+		// Возвращаем результат
+		return true;
+	}
+
 	// Снятие с публикации устаревшей информации о количествах товара на складах
 	public function clearSQL($stockId, $deadTime) {
 

@@ -4,6 +4,28 @@ defined('_JEXEC') or die;
 
 class Product {
 
+	// Возвращает список объектов продуктов из указанной категории
+	public function getProductsFromCategory($categoryId) {
+
+		// Инициализируем переменные
+		$db = JFactory::getDBO();
+
+		// Исключаем инъекцию
+		$categoryId = $db->quote($categoryId);
+
+		// Выполняем запрос
+		$query = "
+			SELECT *
+			FROM #__anodos_product
+			WHERE category_id = {$categoryId};
+		";
+		$db->setQuery($query);
+		$result = $db->loadObjectList();
+
+		// Возвращяем результат
+		return $result;
+	}
+
 	// Возвращает id продукта по артикулу и id производителя
 	public function getProductFromArticle($article, $vendorId) {
 
@@ -95,5 +117,23 @@ class Product {
 
 		// Возвращаем результат
 		return $product;
+	}
+
+	// Удаляет товар
+	public function removeProduct($productId) {
+
+		// Подключаемся к базе
+		$db = JFactory::getDBO();
+
+		// Исключаем инъекцию
+		$productId = $db->quote($productId);
+
+		// Выполняем запрос
+		$query = "DELETE FROM #__anodos_product WHERE id = {$productId};";
+		$db->setQuery($query);
+		$db->query();
+
+		// Возвращаем результат
+		return true;
 	}
 }

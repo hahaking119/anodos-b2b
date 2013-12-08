@@ -147,7 +147,59 @@ class Category {
 		return false;
 	}
 
-	// Привязывает загрузчика к контрагенту
+	// Удаляет категорию
+	public function removeCategory($categoryId) {
+
+		// Подключаемся к базе
+		$db = JFactory::getDBO();
+
+		// Исключаем инъекцию
+		$categoryId = $db->quote($categoryId);
+
+		// Выполняем запрос
+		$query = "DELETE FROM #__categories WHERE id = {$categoryId};";
+		$db->setQuery($query);
+		$db->query();
+
+		// Возвращаем результат
+		return true;
+	}
+
+	public function getTreeFromCategory($categoryId) {
+
+		// Инициализируем переменные
+		$db = JFactory::getDBO();
+
+		// Исключаем инъекцию
+		$categoryId = $db->quote($categoryId);
+
+		// Получаем указанную категорию
+		$query = "
+			SELECT id, path
+			FROM #__categories
+			WHERE id = {$categoryId} AND extension = 'com_anodos'
+			ORDER BY lft;";
+		$db->setQuery($query);
+		$category = $db->loadObject();
+
+		if(!isset($category->id)) {
+			return false;
+		}
+
+		// Получаем массив категорий (указанная и все потомки)
+		$query = "
+			SELECT id, title
+			FROM #__categories
+			WHERE LOCATE('{$category->path}', path) = 1 AND extension = 'com_anodos'
+			ORDER BY lft;";
+		$db->setQuery($query);
+		$result = $db->loadObjectList();
+
+		// Возвращаем результат
+		return $result;
+	}
+
+	// Привязывает синоним к категории
 	public function linkSynonymToCategory($synonymId, $categoryId) {
 
 		// Подколючаемся к базе
@@ -162,6 +214,28 @@ class Category {
 			UPDATE #__anodos_category_synonym
 			SET category_id = {$categoryId}
 			WHERE id = {$synonymId};";
+		$db->setQuery($query);
+		$db->query();
+
+		// Возвразщаем результат
+		return true;
+	}
+
+	// Отвязывает синоним от категории
+	public function unlinkSynonymOfCategory($categoryId) {
+
+		// Подколючаемся к базе
+		$db = JFactory::getDBO();
+
+		// Исключаем инъекцию
+		$categoryId = $db->quote($categoryId);
+
+		// Выполняем запрос
+		$query = "
+			UPDATE #__anodos_category_synonym SET
+			category_id = NULL
+			WHERE category_id = {$categoryId};
+		";
 		$db->setQuery($query);
 		$db->query();
 

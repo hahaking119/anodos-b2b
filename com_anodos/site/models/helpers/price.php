@@ -102,6 +102,24 @@ class Price {
 		return true;
 	}
 
+	// Удаляет цены указанного товара
+	public function removePriceOfProduct($productId) {
+
+		// Подключаемся к базе
+		$db = JFactory::getDBO();
+
+		// Исключаем инъекцию
+		$productId = $db->quote($productId);
+
+		// Выполняем запрос
+		$query = "DELETE FROM #__anodos_price WHERE product_id = {$productId};";
+		$db->setQuery($query);
+		$db->query();
+
+		// Возвращаем результат
+		return true;
+	}
+
 	// Возвращает id типа цены по псевдониму
 	public function getPriceTypeFromAlias($alias) {
 

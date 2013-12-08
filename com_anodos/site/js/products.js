@@ -1,7 +1,7 @@
 window.addEvent('domready', function() {
 
 	// Обновить список производителей после загрузки страницы
-	var getVendorsFromCategoryHTMLRequest = new Request.JSON({
+	new Request.JSON({
 		url:'/index.php?option=com_anodos&task=products.getVendorsFromCategory',
 		onSuccess: function(r) {
 
@@ -33,7 +33,7 @@ window.addEvent('domready', function() {
 		}
 
 		// Обновить список производителей
-		var getVendorsFromCategoryHTMLRequest = new Request.JSON({
+		new Request.JSON({
 			url:'/index.php?option=com_anodos&task=products.getVendorsFromCategory',
 			onSuccess: function(r) {
 

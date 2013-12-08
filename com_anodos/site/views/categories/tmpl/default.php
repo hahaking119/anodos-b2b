@@ -39,12 +39,19 @@ echo $this->msg;
 			<?php foreach($this->categories as $i => $category): ?>
 			<tr data-category-id="<?php echo $category->id; ?>">
 				<td class="uk-text-center"><?php echo $i+1; ?></td>
-				<td class="uk-form">
+				<td class="uk-text-center uk-form">
 					<button
-						class="uk-button uk-button-mini"
+						class="uk-button uk-button-mini rename-category"
+						data-uk-modal="{target:'#renameCategoryModal'}"
+						data-category-id="<?php echo $category->id; ?>"
+						data-category-name="<?php echo $category->title; ?>">
+						<i class="uk-icon-edit"></i></button>
+					<button
+						class="uk-button uk-button-mini remove-category"
 						data-uk-modal="{target:'#removeCategoryModal'}"
 						data-category-id="<?php echo $category->id; ?>">
-						<i class="uk-icon-remove"></i></button></td>
+						<i class="uk-icon-remove"></i></button>
+				</td>
 				<td class="uk-text-left"><?php echo $category->name; ?></td>
 				<td class="uk-text-left">
 					<select
@@ -83,7 +90,23 @@ echo $this->msg;
 		</div>
 		<hr />
 		<div id="add-category-messages">
-			<div class="uk-alert" data-uk-alert><a href="" class="uk-alert-close uk-close"></a><p>AJAX готов.</p></div>
+			<div class="uk-alert" data-uk-alert><a href="" class="uk-alert-close uk-close"></a>AJAX готов.</div>
+		</div>
+	</div>
+</div>
+
+
+<div id="editCategoryModal" class="uk-modal">
+	<div class="uk-modal-dialog">
+		<a class="uk-modal-close uk-close"></a>
+		<h1>Редактировать категорию?</h1>
+		<div class="uk-form">
+			<input id="edit-category-name" type="text" name="name" placeholder="Имя категории">
+			<button id="edit-category-button" class="uk-button uk-modal-close">Изменить</button>
+		</div>
+		<hr />
+		<div id="edit-category-messages">
+			<div class="uk-alert" data-uk-alert><a href="" class="uk-alert-close uk-close"></a>AJAX готов.</div>
 		</div>
 	</div>
 </div>
@@ -94,12 +117,12 @@ echo $this->msg;
 		<h1>Удалить категорию?</h1>
 		<div class="uk-form">
 			<fieldset>
-				<button id="delete-category-button" class="uk-button uk-button-danger uk-modal-close">Удалить</button>
+				<button id="remove-category-button" class="uk-button uk-button-danger" data-category-id="0">Удалить</button>
 				<button class="uk-button uk-modal-close">Отменить</button>
 			</fieldset>
 		</div>
 		<hr />
-		<div id="edit-product-messages">
+		<div id="remove-category-messages">
 			<div class="uk-alert" data-uk-alert><a href="" class="uk-alert-close uk-close"></a>AJAX готов.</div>
 		</div>
 	</div>

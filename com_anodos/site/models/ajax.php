@@ -90,12 +90,14 @@ class AnodosModelAjax extends JModelList {
 	}
 
 	// Выводит список id, name производителей из указанной категории
-	public function deleteProductCategory($id) {
+	public function removeProductCategory($categoryId) {
 
 		// Подключаем библиотеки
 		require_once JPATH_COMPONENT.'/helpers/anodos.php';
-//		require_once JPATH_COMPONENT.'/models/helpers/category.php';
-//		require_once JPATH_COMPONENT.'/models/helpers/vendor.php';
+		require_once JPATH_COMPONENT.'/models/helpers/category.php';
+		require_once JPATH_COMPONENT.'/models/helpers/product.php';
+		require_once JPATH_COMPONENT.'/models/helpers/price.php';
+		require_once JPATH_COMPONENT.'/models/helpers/stock.php';
 
 		// Проверяем право доступа
 		$user = JFactory::getUser();
@@ -105,40 +107,43 @@ class AnodosModelAjax extends JModelList {
 			return false;
 		}
 
-		// Инициализируем переменные
-		$db = JFactory::getDBO();
+		// Получаем список категорий (указанная и все дочерние)
+		$categories = Category::getTreeFromCategory($categoryId);
+		if (false == $categories) {
+			return false;
+		}
 
-		// Получаем указанную категорию
-		$query = "
-			SELECT *
-			FROM #__categories
-			WHERE #__categories.id = {$categoryId} AND extension = 'com_anodos'
-			ORDER BY lft;";
-		$db->setQuery($query);
-		$category = $db->loadObject();
+		// Проходим по каждой категории
+		foreach($categories as $i => $c) {
 
-		// Получаем массив категорий (указанная и все потомки)
-		$query = "
-			SELECT *
-			FROM #__categories
-			WHERE LOCATE('{$category->path}', #__categories.path) = 1 AND extension = 'com_anodos'
-			ORDER BY lft;";
-		$db->setQuery($query);
-		$categories = $db->loadObjectList();
+			// Отвязываем все синонимы
+			Category::unlinkSynonymOfCategory($c->id);
 
+			// Получаем полный список продуктов в категории
+			$products = Product::getProductsFromCategory($c->id);
+
+			// Проходим по каждому продукту
+			foreach($products as $j => $p) {
+
+				// Удаляем цены
+				Price::removePriceOfProduct($p->id);
+
+				// Удаляем состояние складов
+				Stock::removeQuantityOfProduct($p->id);
+
+				// Удаляем продукт
+				Product::removeProduct($p->id);
+			}
+
+			// Удаляем категорию
+			Category::removeCategory($c->id);
+		}
+
+		// Перестраиваем дерево категорий
+		$category = JTable::getInstance('Category');
+		$category->rebuildPath(1);
+
+		// Возвращаем список удаленных категорий
 		return $categories;
-
-		// TODO Отвязываем все синонимы
-
-		// TODO Получаем полный список товаров в категориях
-
-		// TODO Удаляем цены
-
-		// TODO Удаляем состояние складов
-
-		// TODO Удаляем товары
-
-		// TODO Удаляем категории
-
 	}
 }
