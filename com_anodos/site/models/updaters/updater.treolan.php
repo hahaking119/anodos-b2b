@@ -368,7 +368,7 @@ class UpdaterTreolan {
 				$product['comment'] = $data[$numbers['comment']];
 				$product['warranty'] = $data[$numbers['warranty']];
 
-				// Заносим данные в массив
+				// Заносим данные в базу
 				$this->toSQL($product);
 			}
 			$row++;
@@ -488,7 +488,7 @@ class UpdaterTreolan {
 		// Есть ли наличие хотя бы на одном из складов?
 		if ((true == $quantityStock) or (true == $quantityTransit)) { // Наличие есть
 
-			// Заносим информацию о наличие в базу
+			// Заносим информацию о наличии в базу
 			Stock::addQuantity(
 				$this->stock['treolan-msk-stock']->id,
 				$productId,

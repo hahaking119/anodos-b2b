@@ -100,7 +100,7 @@ class AnodosHelper {
 	}
 
 	// TODO test here
-	public static function getActions($type = NULL, $id = NULL) {
+/*	public static function getActions($type = NULL, $id = NULL) {
 
 		$user = JFactory::getUser();
 		$result = new JObject;
@@ -118,5 +118,28 @@ class AnodosHelper {
 		}
 
 		return $result;
+	}*/
+
+	public static function getActions($id = 0) {       
+
+		jimport('joomla.access.access');
+		$user = JFactory::getUser();
+		$result = new JObject;
+
+		if (empty($id)) {
+			$assetName = 'com_anodos';
+		}
+		else {
+			$assetName = 'com_anodos.product.'.(int) $id;
+		}
+
+		$actions = JAccess::getActions('com_anodos', 'component');
+
+		foreach ($actions as $action) {
+			$result->set($action->name, $user->authorise($action->name, $assetName));
+		}
+
+		return $result;
 	}
+
 }

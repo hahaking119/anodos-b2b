@@ -26,8 +26,30 @@ class Category {
 		return $db->loadObject();
 	}
 
+	// Определяем id категории
+	public function getSynonymFromOriginalId($originalId, $partnerId) {
+
+		// Подключаемся к базе
+		$db = JFactory::getDBO();
+
+		// Исключаем инъекцию
+		$originalId = $db->quote($originalId);
+		$partnerId = $db->quote($partnerId);
+
+		// Выполняем запрос выборки
+		$query = "
+			SELECT *
+			FROM #__anodos_category_synonym
+			WHERE {$originalId} = original_id
+			AND {$partnerId} = partner_id;";
+		$db->setQuery($query);
+
+		// Возвращаем результат
+		return $db->loadObject();
+	}
+
 	// Добавляет синоним категории в базу
-	public function addSynonym($synonym, $partnerId, $createdBy = 0) {
+	public function addSynonym($synonym, $partnerId, $originalId = 'NULL', $createdBy = 0) {
 
 		// Инициализируем переменные
 		$db = JFactory::getDBO();
@@ -36,19 +58,22 @@ class Category {
 		$synonym = $db->quote($synonym);
 		$partnerId = $db->quote($partnerId);
 		$createdBy = $db->quote($createdBy);
-
-		// TODO перед добавлением провести проверку на уникальность
+		if ('NULL' !== $originalId) {
+			$originalId = $db->quote($originalId);
+		}
 
 		// Выполняем запрос вставки
 		$query = "
 			INSERT INTO #__anodos_category_synonym (
 				name,
 				partner_id,
+				original_id,
 				created,
 				created_by)
 			VALUES (
 				{$synonym},
 				{$partnerId},
+				{$originalId},
 				NOW(),
 				{$createdBy});";
 		$db->setQuery($query);
@@ -60,6 +85,37 @@ class Category {
 			FROM #__anodos_category_synonym
 			WHERE {$synonym} = name
 			AND {$partnerId} = partner_id;";
+		$db->setQuery($query);
+
+		// Возвращаем результат
+		return $db->loadObject();
+	}
+
+	// Добавляет синоним категории в базу
+	public function setOriginalIdToSynonym($synonymId, $originalId = '') {
+
+		// Инициализируем переменные
+		$db = JFactory::getDBO();
+
+		// Исключаем инъекцию
+		$synonymId = $db->quote($synonymId);
+		if ('' !== $originalId) {
+			$originalId = $db->quote($originalId);
+		}
+
+		// Выполняем запрос вставки
+		$query = "
+			UPDATE #__anodos_category_synonym
+			SET original_id = {$originalId}
+			WHERE id = {$synonymId};";
+		$db->setQuery($query);
+		$db->query();
+
+		// Выполняем запрос выборки
+		$query = "
+			SELECT *
+			FROM #__anodos_category_synonym
+			WHERE {$synonymId} = id;";
 		$db->setQuery($query);
 
 		// Возвращаем результат
@@ -88,86 +144,8 @@ class Category {
 
 	// TODO
 	public function addCategory($category) {
-
-		// Инициализируем переменные
-//		$db = JFactory::getDBO();
-
-		// TODO перед добавлением провести проверку на уникальность
-
-		// Выполняем запрос вставки
-//		$query = "
-//			INSERT INTO #__categories (
-//				asset_id,
-//				parent_id,
-//				lft,
-//				rgt,
-//				level,
-//				path,
-//				extension,
-//				title,
-//				alias,
-//				note,
-//				description,
-//				published,
-//				checked_out,
-//				checked_out_time,
-//				access,
-//				params,
-//				metadesc,
-//				metakey,
-//				metadata,
-//				created_user_id,
-//				created_time,
-//				language,
-//				version
-//			)
-//			VALUES (
-//				'{$category->asset_id}',
-//				'{$category->parent_id}',
-//				'{$category->lft}',
-//				'{$category->rgt}',
-//				'{$category->level}',
-//				'{$category->path}',
-//				'{$category->extension}',
-//				'{$category->title}',
-//				'{$category->alias}',
-//				'{$category->note}',
-//				'{$category->description}',
-//				1,
-//				0,
-//				'1970-01-01 00:00:00',
-//				1,
-//				'{$category->params}',
-//				'{$category->metadesc}',
-//				'{$category->metakey}',
-//				'{$category->metadata}',
-//				'{$category->created_user_id}',
-//				NOW(),
-//				'{$category->language}',
-//				'{$category->version}'
-//			);";
-//		$db->setQuery($query);
-//		$db->query();
-
-		return true;
+		return false;
 	}
-
-//	public function getNextLFT($parent) {
-
-		// Подключаемся к базе
-//		$db = JFactory::getDBO();
-
-		// Выполняем запрос выборки
-//		$query = "
-//			SELECT MAX(lft)
-//			FROM #__categories
-//			WHERE '{$parent->id}' = parent_id
-//			OR '{$parent->id}' = id;";
-//		$db->setQuery($query);
-
-		// Возвращаем результат
-//		return $db->loadResult() + 1;
-//	}
 
 	// Привязывает загрузчика к контрагенту
 	public function linkSynonymToCategory($synonymId, $categoryId) {

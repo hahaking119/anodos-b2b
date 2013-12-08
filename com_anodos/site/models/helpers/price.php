@@ -62,7 +62,7 @@ class Price {
 //		$db->setQuery($query);
 //		$db->query();
 
-		// TODO цена есть - изменяем, если цены нет - добавляем
+		// если цена есть - изменяем, если цены нет - добавляем
 		$query="SELECT price FROM #__anodos_price WHERE stock_id = {$stockId} AND product_id = {$productId};";
 		$db->setQuery($query);
 		if (true == $db->loadResult()) {
