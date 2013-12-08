@@ -90,6 +90,28 @@ class AnodosModelAjax extends JModelList {
 	}
 
 	// Выводит список id, name производителей из указанной категории
+	public function renameCategory($categoryId, $categoryName) {
+
+		// Подключаем библиотеки
+		require_once JPATH_COMPONENT.'/helpers/anodos.php';
+		require_once JPATH_COMPONENT.'/models/helpers/category.php';
+
+		// Проверяем право доступа
+		$user = JFactory::getUser();
+		$canDo = AnodosHelper::getActions();
+		if (!$canDo->get('core.admin')) {
+			$this->addMsg('Error #'.__LINE__.' - отказано в доступе.');
+			return false;
+		}
+
+		// Переименовываем категорию
+		$result = Category::renameCategory($categoryId, $categoryName);
+
+		// Возвращаем список удаленных категорий
+		return $result;
+	}
+
+	// Выводит список id, name производителей из указанной категории
 	public function removeProductCategory($categoryId) {
 
 		// Подключаем библиотеки

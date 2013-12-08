@@ -28,7 +28,7 @@ class AnodosControllerAjax extends AnodosController {
 	}
 
 	// Редактирование категории продуктов
-	public function editProductCategory() {
+	public function renameCategory() {
 
 		$app = JFactory::getApplication();
 		$params = $app->getParams();
@@ -39,7 +39,7 @@ class AnodosControllerAjax extends AnodosController {
 
 		// Передаем данные в модель
 		$model = parent::getModel('Ajax', 'AnodosModel', array('ignore_request' => true));
-		$result = $model->editProductCategory($id, $name);
+		$result = $model->renameCategory($id, $name);
 
 		// Выводим сообщения из модели
 		echo new JResponseJson($result, JText::_('COM_COMPONENT_MY_TASK_ERROR'), true);

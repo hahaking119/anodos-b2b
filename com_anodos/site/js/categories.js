@@ -24,29 +24,30 @@ window.addEvent('domready', function() {
 		}).send();
 	});
 
-	// Вызов окна редактировани категории
-	$$('.edit-category').addEvent('click', function(event){
-		$('edit-category-button').set("data-category-id", this.get("data-category-id"));
-		$('edit-category-messages').set('value', this.get("data-category-name"));
+	// Вызов окна переименования категории
+	$$('.rename-category').addEvent('click', function(event){
+		$('rename-category-button').set("data-category-id", this.get("data-category-id"));
+		$('rename-category-name').set('value', this.get("data-category-name"));
 	});
 
 	// Редактирование категории
-	$('edit-category-button').addEvent('click', function(event) {
+	$('rename-category-button').addEvent('click', function(event) {
 		var id = this.get("data-category-id");
-		var name = $('edit-category-messages').get('value');
-		var container = $('edit-category-messages');
+		var name = $('rename-category-name').get('value');
+		var container = $('rename-category-messages');
 
 		// Обновить список производителей
 		new Request.JSON({
-			url:'/index.php?option=com_anodos&task=ajax.editProductCategory',
+			url:'/index.php?option=com_anodos&task=ajax.renameCategory',
 			onSuccess: function(r) {
 
 				if (r.data) {
-					// Показываем нужных производителей
-					for (var i = 0; i < r.data.length; i++) {
-						var Msg = new Element('div', {'class': 'uk-alert', 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>Категория изменена: [' + r.data[i].id + '] '+ r.data[i].title + '.'});
-						container.grab(Msg);
-					}
+					// Показываем переименованную категорию
+					var Msg = new Element('div', {'class': 'uk-alert', 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>Категория переименована: [' + r.data.id + '] '+ r.data.title + '.'});
+					container.grab(Msg);
+				} else {
+					var Msg = new Element('div', {'class': 'uk-alert uk-alert-danger', 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>Не получилось переименовать категорию.'});
+					container.grab(Msg);
 				}
 			}
 		}).get({'id': id, 'name': name});
@@ -68,7 +69,7 @@ window.addEvent('domready', function() {
 			onSuccess: function(r) {
 
 				if (r.data) {
-					// Показываем нужных производителей
+					// Показываем удаленные категории
 					for (var i = 0; i < r.data.length; i++) {
 						var Msg = new Element('div', {'class': 'uk-alert', 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>Удалена категория: [' + r.data[i].id + '] '+ r.data[i].title + '.'});
 						container.grab(Msg);

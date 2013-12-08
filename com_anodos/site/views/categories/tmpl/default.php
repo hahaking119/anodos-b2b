@@ -96,16 +96,16 @@ echo $this->msg;
 </div>
 
 
-<div id="editCategoryModal" class="uk-modal">
+<div id="renameCategoryModal" class="uk-modal">
 	<div class="uk-modal-dialog">
 		<a class="uk-modal-close uk-close"></a>
 		<h1>Редактировать категорию?</h1>
 		<div class="uk-form">
-			<input id="edit-category-name" type="text" name="name" placeholder="Имя категории">
-			<button id="edit-category-button" class="uk-button uk-modal-close">Изменить</button>
+			<input id="rename-category-name" type="text" name="name" placeholder="Имя категории">
+			<button id="rename-category-button" class="uk-button">Изменить</button>
 		</div>
 		<hr />
-		<div id="edit-category-messages">
+		<div id="rename-category-messages">
 			<div class="uk-alert" data-uk-alert><a href="" class="uk-alert-close uk-close"></a>AJAX готов.</div>
 		</div>
 	</div>

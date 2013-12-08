@@ -94,9 +94,16 @@ $canDo = AnodosHelper::getActions();
 				<td class="uk-form">
 					<button
 						class="uk-button uk-button-mini"
-						data-uk-modal="{target:'#editProductModal'}"
+						data-uk-modal="{target:'#renameProductModal'}"
+						data-product-id="<?php echo $product->product_id; ?>"
+						data-product-name="<?php echo $category->product_name; ?>">
+						<i class="uk-icon-edit"></i></button>
+					<button
+						class="uk-button uk-button-mini"
+						data-uk-modal="{target:'#moveProductModal'}"
 						data-product-id="<?php echo $product->product_id; ?>">
-						<i class="uk-icon-pencil"></i></button></td>
+						<i class="uk-icon-folder-open-alt"></i></button>
+				</td>
 				<?php endif; ?>
 				<td class="text-center">
 					<button
@@ -163,28 +170,39 @@ $canDo = AnodosHelper::getActions();
 
 
 <?php if ($canDo->get('core.admin')) : ?>
-<div id="editProductModal" class="uk-modal">
+<div id="renameProductModal" class="uk-modal">
 	<div class="uk-modal-dialog">
 		<a class="uk-modal-close uk-close"></a>
-		<h1>Отредактировать продукт?</h1>
+		<h1>Переименовать продукт?</h1>
 		<div class="uk-form">
 			<fieldset>
-				<select id="edit-product-category" name="category" class="inputbox">
+				<input id="rename-product-name" type="text" name="name" placeholder="Имя продукта">
+				<button id="rename-product-button" class="uk-button">Готово</button>
+			</fieldset>
+		</div>
+		<hr />
+		<div id="rename-product-messages">
+			<div class="uk-alert" data-uk-alert><a href="" class="uk-alert-close uk-close"></a><p>AJAX готов.</p></div>
+		</div>
+	</div>
+</div>
+<div id="moveProductModal" class="uk-modal">
+	<div class="uk-modal-dialog">
+		<a class="uk-modal-close uk-close"></a>
+		<h1>Перенести продукт?</h1>
+		<div class="uk-form">
+			<fieldset>
+				<select id="move-product-category" name="category" class="inputbox">
 					<option value="1" selected> - В корень - </option>
 					<?php foreach($this->parentCategoryList as $j => $category):
 					echo "<option value=\"{$category->id}\">{$category->title}</option>";
 					endforeach; ?>
 				</select>
-			</fieldset>
-			<fieldset>
-				<input id="edit-product-name" type="text" name="name" placeholder="Имя продукта">
-			</fieldset>
-			<fieldset>
-				<button id="edit-product-button" class="uk-button uk-modal-close">Готово</button>
+				<button id="move-product-button" class="uk-button">Готово</button>
 			</fieldset>
 		</div>
 		<hr />
-		<div id="edit-product-messages">
+		<div id="move-product-messages">
 			<div class="uk-alert" data-uk-alert><a href="" class="uk-alert-close uk-close"></a><p>AJAX готов.</p></div>
 		</div>
 	</div>

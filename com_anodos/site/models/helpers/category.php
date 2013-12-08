@@ -165,6 +165,40 @@ class Category {
 		return true;
 	}
 
+	// Переименовывает категорию
+	public function renameCategory($categoryId, $categoryName) {
+
+		// Подколючаемся к базе
+		$db = JFactory::getDBO();
+
+		// Исключаем инъекцию
+		$categoryId = $db->quote($categoryId);
+		$categoryName = $db->quote($categoryName);
+
+		// Выполняем запрос
+		$query = "
+			UPDATE #__categories
+			SET title = {$categoryName}
+			WHERE id = {$categoryId};";
+		$db->setQuery($query);
+		$db->query();
+
+		// Выполняем запрос выборки
+		$query = "
+			SELECT *
+			FROM #__categories
+			WHERE {$categoryId} = id;";
+		$db->setQuery($query);
+		$category = $db->loadObject();
+
+		// Возвращаем результат
+		if(!isset($category->id)) {
+			return false;
+		} else {
+			return $category;
+		}
+	}
+
 	public function getTreeFromCategory($categoryId) {
 
 		// Инициализируем переменные
