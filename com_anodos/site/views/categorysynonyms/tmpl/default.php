@@ -32,7 +32,7 @@ echo $this->msg;
 
 <div class="uk-grid">
 	<div class="uk-width-1-1">
-		<button class="uk-button" data-uk-modal="{target:'#addCategoryModal'}"><i class="uk-icon-building"></i>&nbsp;<span id="vendor-selected">Добавить категорию</button>
+		<button class="uk-button" data-uk-modal="{target:'#createCategoryModal'}"><i class="uk-icon-building"></i>&nbsp;<span id="vendor-selected">Добавить категорию</button>
 	</div>
 </div>
 
@@ -80,22 +80,29 @@ echo $this->msg;
 </div>
 <?php endif; ?>
 
-<div id="addCategoryModal" class="uk-modal">
+<div id="createCategoryModal" class="uk-modal">
 	<div class="uk-modal-dialog">
 		<a class="uk-modal-close uk-close"></a>
-		<h1>Добавить категорию?</h1>
+		<h1>Создать категорию?</h1>
 		<div class="uk-form">
-			<select id="add-category-parent" name="parent" class="inputbox">
-				<option value="1" selected> - В корень - </option>
-				<?php foreach($this->parentCategoryList as $j => $category):
-				echo "<option value=\"{$category->id}\">{$category->title}</option>";
-				endforeach; ?>
-			</select>
-			<input id="add-category-name" type="text" name="name" placeholder="Имя категории">
-			<button id="add-category-button" class="uk-button uk-modal-close">Добавить</button>
+			<fieldset>
+				<select id="create-category-parent" class="uk-width-1-1 inputbox" name="parent">
+					<option value="1" selected> - В корень - </option>
+					<?php foreach($this->parentCategoryList as $j => $category):
+					echo "<option value=\"{$category->id}\">{$category->title}</option>";
+					endforeach; ?>
+				</select>
+			</fieldset>
+			<fieldset>
+				<input id="create-category-name" class="uk-width-1-1"  type="text" name="name" placeholder="Имя категории">
+			</fieldset>
+			<fieldset>
+				<button id="create-category-button" class="uk-button uk-button-primary">Создать</button>
+				<button class="uk-button uk-modal-close">Отменить</button>
+			</fieldset>
 		</div>
 		<hr />
-		<div id="add-category-messages">
+		<div id="create-category-messages">
 			<div class="uk-alert" data-uk-alert><a href="" class="uk-alert-close uk-close"></a><p>AJAX готов.</p></div>
 		</div>
 	</div>

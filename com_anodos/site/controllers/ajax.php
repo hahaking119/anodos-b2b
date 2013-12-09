@@ -7,7 +7,7 @@ require_once JPATH_COMPONENT.'/controller.php';
 class AnodosControllerAjax extends AnodosController {
 
 	// TODO функция представлена в другой модели
-	public function addProductCategory() {
+	public function createProductCategory() {
 
 		$app = JFactory::getApplication();
 		$params = $app->getParams();
@@ -18,10 +18,31 @@ class AnodosControllerAjax extends AnodosController {
 
 		// Передаем данные в модель
 		$model = parent::getModel('Ajax', 'AnodosModel', array('ignore_request' => true));
-		$model->addProductCategory($name, $parent);
+		$result = $model->createProductCategory($name, $parent);
 
 		// Выводим сообщения из модели
-		echo json_encode($model->getMsg());
+		echo new JResponseJson($result, JText::_('COM_COMPONENT_MY_TASK_ERROR'), true);
+
+		// Закрываем приложение
+		JFactory::getApplication()->close();
+	}
+
+	// TODO функция представлена в другой модели
+	public function linkSynonymToCategory() {
+
+		$app = JFactory::getApplication();
+		$params = $app->getParams();
+
+		// Получаем данные
+		$synonym = JRequest::getVar('synonym');
+		$category = JRequest::getVar('category', NULL);
+
+		// Передаем данные в модель
+		$model = parent::getModel('Ajax', 'AnodosModel', array('ignore_request' => true));
+		$result = $model->linkSynonymToCategory($synonym, $category);
+
+		// Выводим сообщения из модели
+		echo new JResponseJson($result, JText::_('COM_COMPONENT_MY_TASK_ERROR'), true);
 
 		// Закрываем приложение
 		JFactory::getApplication()->close();
@@ -89,6 +110,27 @@ class AnodosControllerAjax extends AnodosController {
 		JFactory::getApplication()->close();
 	}
 
+	// Перемещение продукта
+	public function moveProduct() {
+
+		$app = JFactory::getApplication();
+		$params = $app->getParams();
+
+		// Получаем данные
+		$id = JRequest::getVar('id', false);
+		$category = JRequest::getVar('category', false);
+
+		// Передаем данные в модель
+		$model = parent::getModel('Ajax', 'AnodosModel', array('ignore_request' => true));
+		$result = $model->moveProduct($id, $category);
+
+		// Выводим сообщения из модели
+		echo new JResponseJson($result, JText::_('COM_COMPONENT_MY_TASK_ERROR'), true);
+
+		// Закрываем приложение
+		JFactory::getApplication()->close();
+	}
+
 	// TODO функция представлена в другой модели
 	public function addVendor() {
 
@@ -101,27 +143,6 @@ class AnodosControllerAjax extends AnodosController {
 		// Передаем данные в модель
 		$model = parent::getModel('Ajax', 'AnodosModel', array('ignore_request' => true));
 		$model->addVendor($name);
-
-		// Выводим сообщения из модели
-		echo json_encode($model->getMsg());
-
-		// Закрываем приложение
-		JFactory::getApplication()->close();
-	}
-
-	// TODO функция представлена в другой модели
-	public function linkSynonymToCategory() {
-
-		$app = JFactory::getApplication();
-		$params = $app->getParams();
-
-		// Получаем данные
-		$synonymId = JRequest::getVar('synonym');
-		$categoryId = JRequest::getVar('category', NULL);
-
-		// Передаем данные в модель
-		$model = parent::getModel('Ajax', 'AnodosModel', array('ignore_request' => true));
-		$model->linkSynonymToCategory($synonymId, $categoryId);
 
 		// Выводим сообщения из модели
 		echo json_encode($model->getMsg());

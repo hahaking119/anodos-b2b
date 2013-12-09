@@ -142,9 +142,60 @@ class Category {
 		return $db->loadObject();
 	}
 
-	// TODO
-	public function addCategory($category) {
-		return false;
+	public function createProductCategory($categoryName, $parentId) {
+	// https://gist.github.com/mbabker/3211464
+
+		// Подключаемся к базе
+		$db = JFactory::getDbo();
+
+		// JTableCategory is autoloaded in J! 3.0, so...
+		if (version_compare(JVERSION, '3.0', 'lt')) {
+			JTable::addIncludePath(JPATH_PLATFORM . 'joomla/database/table');
+		}
+
+		// Инициализируем категорию
+		$category = JTable::getInstance('Category');
+		$category->extension = 'com_anodos';
+		$category->title = $categoryName;
+		$category->description = '';
+		$category->published = 1;
+		$category->access = 1;
+		$category->params = '{"target":"","image":""}';
+		$category->metadata = '{"page_title":"","author":"","robots":""}';
+		$category->language = '*';
+
+		// Set the location in the tree
+		$category->setLocation($parentId, 'last-child');
+
+		// Check to make sure our data is valid
+		if (!$category->check()) {
+			JError::raiseNotice(500, $category->getError());
+			return false;
+		}
+
+		// Now store the category
+		if (!$category->store(true)) {
+			JError::raiseNotice(500, $category->getError());
+			return false;
+		}
+
+		// Перестраиваем дерево категоий
+		$category->rebuildPath($category->id);
+
+		// Выполняем запрос выборки
+		$query = "
+			SELECT *
+			FROM #__categories
+			WHERE {$category->id} = id;";
+		$db->setQuery($query);
+		$category = $db->loadObject();
+
+		// Возвращаем результат
+		if(!isset($category->id)) {
+			return false;
+		} else {
+			return $category;
+		}
 	}
 
 	// Удаляет категорию

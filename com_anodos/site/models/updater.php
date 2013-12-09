@@ -89,62 +89,6 @@ class AnodosModelUpdater extends JModelList {
 		return $updater;
 	}
 
-	public function addProductCategory($categoryName, $parentId) {
-	// https://gist.github.com/mbabker/3211464
-
-		// Подключаем библиотеки
-		require_once JPATH_COMPONENT.'/helpers/anodos.php';
-		require_once JPATH_COMPONENT.'/models/helpers/category.php';
-
-		// Проверяем право доступа
-		$user = JFactory::getUser();
-		$canDo = AnodosHelper::getActions();
-		if (!$canDo->get('core.admin')) {
-			$this->addMsg('Error #'.__LINE__.' - отказано в доступе.');
-			return false;
-		}
-
-		// Get the database object
-		$db = JFactory::getDbo();
-
-		// JTableCategory is autoloaded in J! 3.0, so...
-		if (version_compare(JVERSION, '3.0', 'lt')) {
-			JTable::addIncludePath(JPATH_PLATFORM . 'joomla/database/table');
-		}
-
-		// Initialize a new category
-		$category = JTable::getInstance('Category');
-		$category->extension = 'com_anodos';
-		$category->title = $categoryName;
-		$category->description = '';
-		$category->published = 1;
-		$category->access = 1;
-		$category->params = '{"target":"","image":""}';
-		$category->metadata = '{"page_title":"","author":"","robots":""}';
-		$category->language = '*';
-
-		// Set the location in the tree
-		$category->setLocation($parentId, 'last-child');
-
-		// Check to make sure our data is valid
-		if (!$category->check()) {
-			JError::raiseNotice(500, $category->getError());
-			return false;
-		}
-
-		// Now store the category
-		if (!$category->store(true)) {
-			JError::raiseNotice(500, $category->getError());
-			return false;
-		}
-
-		// Build the path for our category
-		$category->rebuildPath($category->id);
-
-		$this->addMsg("Добавлена категория: {$category->title}.");
-		return true;
-	}
-
 	public function addVendor($name) {
 
 		// Подключаем библиотеки
@@ -177,28 +121,6 @@ class AnodosModelUpdater extends JModelList {
 		// Добавляем производителя в базу
 		Vendor::addVendor($vendor);
 		$this->addMsg("Добавлен производитель: {$name}.");
-	 	return true;
-	}
-
-	public function linkSynonymToCategory($synonymId, $categoryId) {
-
-		// Подключаем библиотеки
-		require_once JPATH_COMPONENT.'/helpers/anodos.php';
-		require_once JPATH_COMPONENT.'/models/helpers/category.php';
-
-		// Получаем объект текущего пользователя
-		$user = JFactory::getUser();
-
-		// Проверяем право доступа
-		$canDo = AnodosHelper::getActions();
-		if (!$canDo->get('core.admin')) {
-			$this->addMsg('Error #'.__LINE__.' - отказано в доступе.</div>');
-			return false;
-		}
-
-		// Привязываем синоним к категории
-		Category::linkSynonymToCategory($synonymId, $categoryId);
-		$this->addMsg('ok');
 	 	return true;
 	}
 

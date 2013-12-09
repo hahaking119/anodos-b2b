@@ -28,27 +28,6 @@ class AnodosControllerUpdater extends AnodosController {
 		JFactory::getApplication()->close();
 	}
 
-	public function addProductCategory() {
-
-		$app = JFactory::getApplication();
-		$params = $app->getParams();
-
-		// Получаем данные
-		$name = JRequest::getVar('name', '');
-		$parent = JRequest::getVar('parent', 1);
-
-		// Передаем данные в модель
-		$model = parent::getModel('Updater', 'AnodosModel', array('ignore_request' => true));
-		$model->addProductCategory($name, $parent);
-
-		// Выводим сообщения из модели
-		$msg = $model->getMsg();
-		echo $msg;
-
-		// Закрываем приложение
-		JFactory::getApplication()->close();
-	}
-
 	public function addVendor() {
 
 		$app = JFactory::getApplication();
@@ -60,27 +39,6 @@ class AnodosControllerUpdater extends AnodosController {
 		// Передаем данные в модель
 		$model = parent::getModel('Updater', 'AnodosModel', array('ignore_request' => true));
 		$model->addVendor($name);
-
-		// Выводим сообщения из модели
-		$msg = $model->getMsg();
-		echo $msg;
-
-		// Закрываем приложение
-		JFactory::getApplication()->close();
-	}
-
-	public function linkSynonymToCategory() {
-
-		$app = JFactory::getApplication();
-		$params = $app->getParams();
-
-		// Получаем данные
-		$synonymId = JRequest::getVar('synonym');
-		$categoryId = JRequest::getVar('category', NULL);
-
-		// Передаем данные в модель
-		$model = parent::getModel('Updater', 'AnodosModel', array('ignore_request' => true));
-		$model->linkSynonymToCategory($synonymId, $categoryId);
 
 		// Выводим сообщения из модели
 		$msg = $model->getMsg();

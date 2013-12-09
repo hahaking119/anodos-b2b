@@ -99,10 +99,10 @@ $canDo = AnodosHelper::getActions();
 						data-product-id="<?php echo $product->product_id; ?>">
 						<i class="uk-icon-edit"></i></button>
 					<button
-						class="uk-button uk-button-mini "
+						class="uk-button uk-button-mini move-product"
 						data-uk-modal="{target:'#moveProductModal'}"
 						data-product-id="<?php echo $product->product_id; ?>"
-						date-product-category="<?php echo $product->category_id; ?>">
+						data-category-id="<?php echo $product->category_id; ?>">
 						<i class="uk-icon-folder-open-alt"></i></button>
 					</div>
 				</td>
@@ -198,7 +198,6 @@ $canDo = AnodosHelper::getActions();
 		<div class="uk-form">
 			<fieldset>
 				<select id="move-product-category" name="category" class="inputbox">
-					<option value="1" selected> - В корень - </option>
 					<?php foreach($this->parentCategoryList as $j => $category):
 					echo "<option value=\"{$category->id}\">{$category->title}</option>";
 					endforeach; ?>

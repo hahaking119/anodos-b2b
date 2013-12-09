@@ -1,27 +1,22 @@
 window.addEvent('domready', function() {
 
 	// Добавляем категории в базу
-	$('add-category-button').addEvent('click', function(event) {
-		var container = $('add-category-messages');
-		var name = $('add-category-name').get('value');
-		var parent = $('add-category-parent').get('value');
-		var categoryHTMLRequest = new Request({
-			url:'/index.php',
-			method:'get',
-			data: 'option=com_anodos&task=updater.addProductCategory&name=' + name + '&parent=' + parent,
-			onProgress: function(event, xhr) {
-				// Действия во время выполнения запроса
-			},
-			onSuccess: function(responseText) {
-				container.set('text', responseText);
-			},
-			onFailure: function() {
-				container.set('html', 'The request failed.');
-			},
-			onCancel: function() {
-				container.set('html', 'The request calcelled.');
+	$('create-category-button').addEvent('click', function(event) {
+		var name = $('create-category-name').get('value');
+		var parent = $('create-category-parent').get('value');
+		var container = $('create-category-messages');
+		new Request.JSON({
+			url:'/index.php?option=com_anodos&task=ajax.createProductCategory',
+			onSuccess: function(r) {
+				if (r.data) {
+					var Msg = new Element('div', {'class': 'uk-alert uk-alert-success', 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>Создана категория: [' + r.data.id + '] '+ r.data.title + '.'});
+					container.grab(Msg);
+				} else {
+					var Msg = new Element('div', {'class': 'uk-alert uk-alert-danger', 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>Не удалось создать категорию.'});
+					container.grab(Msg);
+				}
 			}
-		}).send();
+		}).post({'name': name, 'parent': parent});
 	});
 
 	// Привязываем синоним к производителю
@@ -29,25 +24,15 @@ window.addEvent('domready', function() {
 		var synonym = this.get("data-synonym-id");
 		var category = this.get('value');
 		var element = this;
-		var synonymHTMLRequest = new Request({
-			url:'/index.php',
-			method:'get',
-			data: 'option=com_anodos&task=updater.linkSynonymToCategory&category=' + category + '&synonym=' + synonym,
-			onProgress: function(event, xhr){
-			},
-			onSuccess: function(responseText) {
-				if ("ok\n" == responseText) {
+		new Request.JSON({
+			url:'/index.php?option=com_anodos&task=ajax.linkSynonymToCategory',
+			onSuccess: function(r) {
+				if (r.data) {
 					element.addClass('uk-form-success');
 				} else {
 					element.addClass('uk-form-danger');
 				}
-			},
-			onFailure: function() {
-				element.addClass('uk-form-danger');
-			},
-			onCancel: function() {
-				element.addClass('uk-form-danger');
 			}
-		}).send();
+		}).post({'category': category, 'synonym': synonym});
 	});
 });
