@@ -6,7 +6,6 @@ require_once JPATH_COMPONENT.'/controller.php';
 
 class AnodosControllerAjax extends AnodosController {
 
-	// TODO функция представлена в другой модели
 	public function createProductCategory() {
 
 		$app = JFactory::getApplication();
@@ -22,12 +21,9 @@ class AnodosControllerAjax extends AnodosController {
 
 		// Выводим сообщения из модели
 		echo new JResponseJson($result, JText::_('COM_COMPONENT_MY_TASK_ERROR'), true);
-
-		// Закрываем приложение
 		JFactory::getApplication()->close();
 	}
 
-	// TODO функция представлена в другой модели
 	public function linkSynonymToCategory() {
 
 		$app = JFactory::getApplication();
@@ -43,12 +39,9 @@ class AnodosControllerAjax extends AnodosController {
 
 		// Выводим сообщения из модели
 		echo new JResponseJson($result, JText::_('COM_COMPONENT_MY_TASK_ERROR'), true);
-
-		// Закрываем приложение
 		JFactory::getApplication()->close();
 	}
 
-	// Редактирование категории продуктов
 	public function renameCategory() {
 
 		$app = JFactory::getApplication();
@@ -64,12 +57,9 @@ class AnodosControllerAjax extends AnodosController {
 
 		// Выводим сообщения из модели
 		echo new JResponseJson($result, JText::_('COM_COMPONENT_MY_TASK_ERROR'), true);
-
-		// Закрываем приложение
 		JFactory::getApplication()->close();
 	}
 
-	// Удаление категории продуктов
 	public function removeProductCategory() {
 
 		$app = JFactory::getApplication();
@@ -84,12 +74,9 @@ class AnodosControllerAjax extends AnodosController {
 
 		// Выводим сообщения из модели
 		echo new JResponseJson($result, JText::_('COM_COMPONENT_MY_TASK_ERROR'), true);
-
-		// Закрываем приложение
 		JFactory::getApplication()->close();
 	}
 
-	// Переименование продукта
 	public function renameProduct() {
 
 		$app = JFactory::getApplication();
@@ -105,12 +92,9 @@ class AnodosControllerAjax extends AnodosController {
 
 		// Выводим сообщения из модели
 		echo new JResponseJson($result, JText::_('COM_COMPONENT_MY_TASK_ERROR'), true);
-
-		// Закрываем приложение
 		JFactory::getApplication()->close();
 	}
 
-	// Перемещение продукта
 	public function moveProduct() {
 
 		$app = JFactory::getApplication();
@@ -126,13 +110,10 @@ class AnodosControllerAjax extends AnodosController {
 
 		// Выводим сообщения из модели
 		echo new JResponseJson($result, JText::_('COM_COMPONENT_MY_TASK_ERROR'), true);
-
-		// Закрываем приложение
 		JFactory::getApplication()->close();
 	}
 
-	// TODO функция представлена в другой модели
-	public function addVendor() {
+	public function createVendor() {
 
 		$app = JFactory::getApplication();
 		$params = $app->getParams();
@@ -142,16 +123,13 @@ class AnodosControllerAjax extends AnodosController {
 
 		// Передаем данные в модель
 		$model = parent::getModel('Ajax', 'AnodosModel', array('ignore_request' => true));
-		$model->addVendor($name);
+		$result = $model->createVendor($name);
 
 		// Выводим сообщения из модели
-		echo json_encode($model->getMsg());
-
-		// Закрываем приложение
+		echo new JResponseJson($result, JText::_('COM_COMPONENT_MY_TASK_ERROR'), true);
 		JFactory::getApplication()->close();
 	}
 
-	// TODO функция представлена в другой модели
 	public function linkSynonymToVendor() {
 
 		$app = JFactory::getApplication();
@@ -163,22 +141,20 @@ class AnodosControllerAjax extends AnodosController {
 
 		// Передаем данные в модель
 		$model = parent::getModel('Ajax', 'AnodosModel', array('ignore_request' => true));
-		$model->linkSynonymToVendor($synonymId, $vendorId);
+		$result = $model->linkSynonymToVendor($synonymId, $vendorId);
 
 		// Выводим сообщения из модели
-		echo json_encode($model->getMsg());
-
-		// Закрываем приложение
+		echo new JResponseJson($result, JText::_('COM_COMPONENT_MY_TASK_ERROR'), true);
 		JFactory::getApplication()->close();
 	}
 
-	// Возвращает список производителей, товар которых есть в указанной категории
 	public function getVendorsFromCategory() {
 
 		$app = JFactory::getApplication();
 		$params = $app->getParams();
 
-		JFactory::getDocument()->setMimeEncoding( 'application/json' );
+		// TODO ??
+		JFactory::getDocument()->setMimeEncoding('application/json');
 		JResponse::setHeader('Content-Disposition','attachment;filename="progress-report-results.json"');
 
 		// Получаем данные
@@ -190,9 +166,6 @@ class AnodosControllerAjax extends AnodosController {
 
 		// Выводим сообщения из модели
 		echo new JResponseJson($result, JText::_('COM_COMPONENT_MY_TASK_ERROR'), true);
-
-		// Закрываем приложение
 		JFactory::getApplication()->close();
 	}
-
 }

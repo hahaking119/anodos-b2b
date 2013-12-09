@@ -94,7 +94,7 @@ echo $this->msg;
 				</select>
 			</fieldset>
 			<fieldset>
-				<input id="create-category-name" class="uk-width-1-1"  type="text" name="name" placeholder="Имя категории">
+				<input id="create-category-name" class="uk-width-1-1" type="text" name="name" placeholder="Имя категории">
 			</fieldset>
 			<fieldset>
 				<button id="create-category-button" class="uk-button uk-button-primary">Создать</button>

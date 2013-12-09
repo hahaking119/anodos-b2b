@@ -40,6 +40,37 @@ class AnodosModelAjax extends JModelList {
 		return $result;
 	}
 
+	public function createVendor($vendorName) {
+
+		// Подключаем библиотеки
+		require_once JPATH_COMPONENT.'/helpers/anodos.php';
+		require_once JPATH_COMPONENT.'/models/helpers/vendor.php';
+
+		// Проверяем право доступа
+		$user = JFactory::getUser();
+		$canDo = AnodosHelper::getActions();
+		if (!$canDo->get('core.admin')) {
+			$this->addMsg('Error #'.__LINE__.' - отказано в доступе.');
+			return false;
+		}
+
+		// Вносим необходимые правки
+		$vendor->asset_id = 0;
+		$vendor->name = $vendorName;
+		$vendor->alias = JFilterOutput::stringURLSafe($vendorName);
+		$vendor->published = 1;
+		$vendor->created_by = $user->id;
+
+		// Проверяем наличие такого производителя в базе
+		if (isset(Vendor::getVendorFromAlias($vendor->alias)->id)) {
+			return false;
+		}
+
+		// Добавляем производителя в базу
+		$result = Vendor::createVendor($vendor);
+		return $result;
+	}
+
 	public function linkSynonymToCategory($synonymId, $categoryId) {
 
 		// Подключаем библиотеки
@@ -58,6 +89,27 @@ class AnodosModelAjax extends JModelList {
 
 		// Привязываем синоним к категории
 		Category::linkSynonymToCategory($synonymId, $categoryId);
+	 	return true;
+	}
+
+	public function linkSynonymToVendor($synonymId, $vendorId) {
+
+		// Подключаем библиотеки
+		require_once JPATH_COMPONENT.'/helpers/anodos.php';
+		require_once JPATH_COMPONENT.'/models/helpers/vendor.php';
+
+		// Получаем объект текущего пользователя
+		$user = JFactory::getUser();
+
+		// Проверяем право доступа
+		$canDo = AnodosHelper::getActions();
+		if (!$canDo->get('core.admin')) {
+			$this->addMsg('Error #'.__LINE__.' - отказано в доступе.</div>');
+			return false;
+		}
+
+		// Привязываем синоним к производителю
+		Vendor::linkSynonymToVendor($synonymId, $vendorId);
 	 	return true;
 	}
 

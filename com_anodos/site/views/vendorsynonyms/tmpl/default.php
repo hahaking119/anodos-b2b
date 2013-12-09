@@ -34,7 +34,7 @@ echo $this->msg;
 
 <div class="uk-grid">
 	<div class="uk-width-1-1">
-		<button class="uk-button" data-uk-modal="{target:'#addVendorModal'}"><i class="uk-icon-building"></i>&nbsp;<span id="vendor-selected">Добавить производителя</button>
+		<button class="uk-button" data-uk-modal="{target:'#createVendorModal'}"><i class="uk-icon-building"></i>&nbsp;<span id="vendor-selected">Добавить производителя</button>
 	</div>
 </div>
 
@@ -82,16 +82,21 @@ echo $this->msg;
 </div>
 <?php endif; ?>
 
-<div id="addVendorModal" class="uk-modal">
+<div id="createVendorModal" class="uk-modal">
 	<div class="uk-modal-dialog">
 		<a class="uk-modal-close uk-close"></a>
 		<h1>Добавить производителя?</h1>
 		<div class="uk-form">
-			<input id="add-vendor-name" type="text" name="name" placeholder="Имя производителя">
-			<button id="add-vendor-button" class="uk-button uk-modal-close">Добавить</button>
+			<fieldset>
+				<input id="create-vendor-name" class="uk-width-1-1" type="text" name="name" placeholder="Имя производителя">
+			</fieldset>
+			<fieldset>
+				<button id="create-vendor-button" class="uk-button uk-button-primary">Добавить</button>
+				<button class="uk-button uk-modal-close">Отменить</button>
+			</fieldset>
 		</div>
 		<hr />
-		<div id="add-vendor-messages">
+		<div id="create-vendor-messages">
 			<div class="uk-alert" data-uk-alert><a href="" class="uk-alert-close uk-close"></a><p>AJAX готов.</p></div>
 		</div>
 	</div>

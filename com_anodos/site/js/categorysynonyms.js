@@ -33,6 +33,6 @@ window.addEvent('domready', function() {
 					element.addClass('uk-form-danger');
 				}
 			}
-		}).post({'category': category, 'synonym': synonym});
+		}).post({'synonym': synonym, 'category': category});
 	});
 });

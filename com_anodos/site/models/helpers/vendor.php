@@ -26,7 +26,7 @@ class Vendor {
 	}
 
 	// TODO TEST Добавляет контрагента в базу, возвращает объект контрагента
-	public function addVendor($vendor) {
+	public function createVendor($vendor) {
 
 		// Инициализируем переменные и готовим запрос
 		$db = JFactory::getDBO();
@@ -52,6 +52,21 @@ class Vendor {
 				{$vendor->created_by});";
 		$db->setQuery($query);
 		$db->query();
+
+		// Выполняем запрос
+		$query = "
+			SELECT *
+			FROM #__anodos_partner
+			WHERE alias = {$vendor->alias};";
+		$db->setQuery($query);
+		$vendor = $db->loadObject();
+
+		// Возвращаем результат
+		if(!isset($vendor->id)) {
+			return false;
+		} else {
+			return $vendor;
+		}
 	}
 
 	// Определяем id производителя

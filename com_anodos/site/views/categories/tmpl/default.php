@@ -40,17 +40,19 @@ echo $this->msg;
 			<tr data-category-id="<?php echo $category->id; ?>">
 				<td class="uk-text-center"><?php echo $i+1; ?></td>
 				<td class="uk-text-center uk-form">
-					<button
-						class="uk-button uk-button-mini rename-category"
-						data-uk-modal="{target:'#renameCategoryModal'}"
-						data-category-id="<?php echo $category->id; ?>"
-						data-category-name="<?php echo $category->title; ?>">
-						<i class="uk-icon-edit"></i></button>
-					<button
-						class="uk-button uk-button-mini remove-category"
-						data-uk-modal="{target:'#removeCategoryModal'}"
-						data-category-id="<?php echo $category->id; ?>">
-						<i class="uk-icon-remove"></i></button>
+					<div class="uk-button-group">
+						<button
+							class="uk-button uk-button-mini rename-category"
+							data-uk-modal="{target:'#renameCategoryModal'}"
+							data-category-id="<?php echo $category->id; ?>"
+							data-category-name="<?php echo $category->title; ?>">
+							<i class="uk-icon-edit"></i></button>
+						<button
+							class="uk-button uk-button-mini remove-category"
+							data-uk-modal="{target:'#removeCategoryModal'}"
+							data-category-id="<?php echo $category->id; ?>">
+							<i class="uk-icon-remove"></i></button>
+					</div>
 				</td>
 				<td class="uk-text-left"><?php echo $category->name; ?></td>
 				<td class="uk-text-left">
