@@ -30,7 +30,7 @@ window.addEvent('domready', function() {
 		$('rename-category-name').set('value', this.get("data-category-name"));
 	});
 
-	// Редактирование категории
+	// Переименование категории
 	$('rename-category-button').addEvent('click', function(event) {
 		var id = this.get("data-category-id");
 		var name = $('rename-category-name').get('value');
@@ -43,7 +43,7 @@ window.addEvent('domready', function() {
 
 				if (r.data) {
 					// Показываем переименованную категорию
-					var Msg = new Element('div', {'class': 'uk-alert', 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>Категория переименована: [' + r.data.id + '] '+ r.data.title + '.'});
+					var Msg = new Element('div', {'class': 'uk-alert uk-alert-success', 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>Категория переименована: [' + r.data.id + '] '+ r.data.title + '.'});
 					container.grab(Msg);
 				} else {
 					var Msg = new Element('div', {'class': 'uk-alert uk-alert-danger', 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>Не получилось переименовать категорию.'});
@@ -71,9 +71,12 @@ window.addEvent('domready', function() {
 				if (r.data) {
 					// Показываем удаленные категории
 					for (var i = 0; i < r.data.length; i++) {
-						var Msg = new Element('div', {'class': 'uk-alert', 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>Удалена категория: [' + r.data[i].id + '] '+ r.data[i].title + '.'});
+						var Msg = new Element('div', {'class': 'uk-alert uk-alert-success', 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>Удалена категория: [' + r.data[i].id + '] '+ r.data[i].title + '.'});
 						container.grab(Msg);
 					}
+				} else {
+					var Msg = new Element('div', {'class': 'uk-alert uk-alert-danger', 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>Не удалось удалить категорию.'});
+					container.grab(Msg);
 				}
 			}
 		}).get({'id': id});

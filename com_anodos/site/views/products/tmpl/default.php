@@ -92,17 +92,19 @@ $canDo = AnodosHelper::getActions();
 				<td class="text-center"><?php echo $i+1; ?></td>
 				<?php if ($canDo->get('core.admin')) : ?>
 				<td class="uk-form">
+					<div class="uk-button-group">
 					<button
-						class="uk-button uk-button-mini"
+						class="uk-button uk-button-mini rename-product"
 						data-uk-modal="{target:'#renameProductModal'}"
-						data-product-id="<?php echo $product->product_id; ?>"
-						data-product-name="<?php echo $category->product_name; ?>">
+						data-product-id="<?php echo $product->product_id; ?>">
 						<i class="uk-icon-edit"></i></button>
 					<button
-						class="uk-button uk-button-mini"
+						class="uk-button uk-button-mini "
 						data-uk-modal="{target:'#moveProductModal'}"
-						data-product-id="<?php echo $product->product_id; ?>">
+						data-product-id="<?php echo $product->product_id; ?>"
+						date-product-category="<?php echo $product->category_id; ?>">
 						<i class="uk-icon-folder-open-alt"></i></button>
+					</div>
 				</td>
 				<?php endif; ?>
 				<td class="text-center">
@@ -110,10 +112,10 @@ $canDo = AnodosHelper::getActions();
 						class="uk-button uk-button-mini"
 						data-uk-modal="{target:'#addToOrderModal'}"
 						data-product-id="<?php echo $product->product_id; ?>">
-						<i class="uk-icon-plus"></i>
+						<i class="uk-icon-shopping-cart"></i>
 					</button>
 				</td>
-				<td class="text-left name"><?php echo $product->product_name.' ['.$product->product_article.']'; ?></td>
+				<td class="text-left name"><span id="product-name-<?php echo $product->product_id; ?>"><?php echo $product->product_name; ?></span><span><?php echo ' ['.$product->product_article.']'; ?></span></td>
 				<td class="text-center"><?php echo $product->vendor_name; ?></td>
 				<?php if ($canDo->get('core.manage')) : ?>
 				<td class="text-right td-price" data-uk-tooltip title="<?php echo $product->stock_name; ?>">
@@ -165,9 +167,9 @@ $canDo = AnodosHelper::getActions();
 		<a class="uk-modal-close uk-close"></a>
 		<h1>Добавить в заказ</h1>
 		<p>В разработке.</p>
+		<p>В разработке.</p>
 	</div>
 </div>
-
 
 <?php if ($canDo->get('core.admin')) : ?>
 <div id="renameProductModal" class="uk-modal">
@@ -176,8 +178,11 @@ $canDo = AnodosHelper::getActions();
 		<h1>Переименовать продукт?</h1>
 		<div class="uk-form">
 			<fieldset>
-				<input id="rename-product-name" type="text" name="name" placeholder="Имя продукта">
-				<button id="rename-product-button" class="uk-button">Готово</button>
+				<textarea id="rename-product-name" class="uk-width-1-1" rows="8" name="name" placeholder="Имя продукта"></textarea>
+			</fieldset>
+			<fieldset>
+				<button id="rename-product-button" class="uk-button uk-button-primary">Переименовать</button>
+				<button class="uk-button uk-modal-close">Отменить</button>
 			</fieldset>
 		</div>
 		<hr />
@@ -198,7 +203,8 @@ $canDo = AnodosHelper::getActions();
 					echo "<option value=\"{$category->id}\">{$category->title}</option>";
 					endforeach; ?>
 				</select>
-				<button id="move-product-button" class="uk-button">Готово</button>
+				<button id="move-product-button" class="uk-button uk-button-primary">Переместить</button>
+				<button class="uk-button uk-modal-close">Отменить</button>
 			</fieldset>
 		</div>
 		<hr />

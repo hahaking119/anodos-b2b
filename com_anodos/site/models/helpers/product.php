@@ -119,6 +119,34 @@ class Product {
 		return $product;
 	}
 
+	// Переименовывает продукт
+	public function renameProduct($productId, $productName) {
+
+		// Подколючаемся к базе
+		$db = JFactory::getDBO();
+
+		// Исключаем инъекцию
+		$productId = $db->quote($productId);
+		$productName = $db->quote($productName);
+
+		// Выполняем запрос
+		$query = "UPDATE #__anodos_product SET name = {$productName} WHERE id = {$productId};";
+		$db->setQuery($query);
+		$db->query();
+
+		// Выполняем запрос выборки
+		$query = "SELECT * FROM #__anodos_product WHERE {$productId} = id;";
+		$db->setQuery($query);
+		$product = $db->loadObject();
+
+		// Возвращаем результат
+		if(!isset($product->id)) {
+			return false;
+		} else {
+			return $product;
+		}
+	}
+
 	// Удаляет товар
 	public function removeProduct($productId) {
 

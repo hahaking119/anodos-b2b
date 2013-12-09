@@ -5,12 +5,10 @@ window.addEvent('domready', function() {
 		url:'/index.php?option=com_anodos&task=products.getVendorsFromCategory',
 		onSuccess: function(r) {
 
-			// Прячем производителей
 			$$("button.vendor-name").addClass('hide');
 			$('vendor-all').removeClass('hide');
 
 			if (r.data) {
-				// Показываем нужных производителей
 				for (var i = 0; i < r.data.length; i++) {
 					$('vendor-' + r.data[i].vendor_id).removeClass('hide');
 				}
@@ -32,17 +30,14 @@ window.addEvent('domready', function() {
 			$('subcategories-checkbox').removeProperty('disabled');
 		}
 
-		// Обновить список производителей
 		new Request.JSON({
 			url:'/index.php?option=com_anodos&task=products.getVendorsFromCategory',
 			onSuccess: function(r) {
 
-				// Прячем производителей
 				$$("button.vendor-name").addClass('hide');
 				$('vendor-all').removeClass('hide');
 
 				if (r.data) {
-					// Показываем нужных производителей
 					for (var i = 0; i < r.data.length; i++) {
 						$('vendor-' + r.data[i].vendor_id).removeClass('hide');
 					}
@@ -84,5 +79,33 @@ window.addEvent('domready', function() {
 	// Нажатие на кнопке "показать"
 	$('show-product-button').addEvent('click', function(event){
 		$('form-show-product').submit();
+	});
+
+	// Вызов окна переименования продукта
+	$$('.rename-product').addEvent('click', function(event){
+		var id = this.get("data-product-id");
+		$('rename-product-button').set("data-product-id", this.get("data-product-id"));
+		$('rename-product-name').set('text', $('product-name-' + id).get('text'));
+		$('rename-product-name').set('value', $('product-name-' + id).get('text'));
+	});
+
+	// Переименование продукта
+	$('rename-product-button').addEvent('click', function(event) {
+		var id = this.get("data-product-id");
+		var name = $('rename-product-name').get('value');
+		var container = $('rename-product-messages');
+
+		new Request.JSON({
+			url:'/index.php?option=com_anodos&task=ajax.renameProduct',
+			onSuccess: function(r) {
+				if (r.data) {
+					var Msg = new Element('div', {'class': 'uk-alert uk-alert-success', 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>Продукт переименован: [' + r.data.id + '] '+ r.data.alias + '.'});
+					container.grab(Msg);
+				} else {
+					var Msg = new Element('div', {'class': 'uk-alert uk-alert-danger', 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>Не получилось переименовать продукт.'});
+					container.grab(Msg);
+				}
+			}
+		}).post({'id': id, 'name': name});
 	});
 });

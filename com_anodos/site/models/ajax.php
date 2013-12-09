@@ -111,7 +111,6 @@ class AnodosModelAjax extends JModelList {
 		return $result;
 	}
 
-	// Выводит список id, name производителей из указанной категории
 	public function removeProductCategory($categoryId) {
 
 		// Подключаем библиотеки
@@ -167,5 +166,26 @@ class AnodosModelAjax extends JModelList {
 
 		// Возвращаем список удаленных категорий
 		return $categories;
+	}
+
+	public function renameProduct($productId, $productName) {
+
+		// Подключаем библиотеки
+		require_once JPATH_COMPONENT.'/helpers/anodos.php';
+		require_once JPATH_COMPONENT.'/models/helpers/product.php';
+
+		// Проверяем право доступа
+		$user = JFactory::getUser();
+		$canDo = AnodosHelper::getActions();
+		if (!$canDo->get('core.admin')) {
+			$this->addMsg('Error #'.__LINE__.' - отказано в доступе.');
+			return false;
+		}
+
+		// Переименовываем продукт
+		$result = Product::renameProduct($productId, $productName);
+
+		// Возвращаем объект переименованного продукта
+		return $result;
 	}
 }

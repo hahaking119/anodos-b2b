@@ -68,6 +68,27 @@ class AnodosControllerAjax extends AnodosController {
 		JFactory::getApplication()->close();
 	}
 
+	// Переименование продукта
+	public function renameProduct() {
+
+		$app = JFactory::getApplication();
+		$params = $app->getParams();
+
+		// Получаем данные
+		$id = JRequest::getVar('id', false);
+		$name = JRequest::getVar('name', false);
+
+		// Передаем данные в модель
+		$model = parent::getModel('Ajax', 'AnodosModel', array('ignore_request' => true));
+		$result = $model->renameProduct($id, $name);
+
+		// Выводим сообщения из модели
+		echo new JResponseJson($result, JText::_('COM_COMPONENT_MY_TASK_ERROR'), true);
+
+		// Закрываем приложение
+		JFactory::getApplication()->close();
+	}
+
 	// TODO функция представлена в другой модели
 	public function addVendor() {
 
