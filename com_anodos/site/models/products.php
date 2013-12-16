@@ -436,14 +436,32 @@ class AnodosModelProducts extends JModelList {
 	}
 
 	public function getOrders() {
-		return 'public function getOrders()';
+
+		// Инициализируем переменные
+		$db = JFactory::getDBO();
+
+		// Выполняем запрос выборки
+		$query = "
+			SELECT *
+			FROM #__anodos_order
+			WHERE state = 1
+			ORDER BY name ASC;";
+		$db->setQuery($query);
+		return $db->loadObjectList();
 	}
 
-	public function getOrderProducts() {
-		return 'public function getOrderProducts()';
-	}
+	public function getClients() {
 
-	public function getParameters() {
-		return 'public function getParameters()';
+		// Инициализируем переменные
+		$db = JFactory::getDBO();
+
+		// Выполняем запрос выборки
+		$query = "
+			SELECT *
+			FROM #__anodos_partner
+			WHERE client = 1
+			ORDER BY name ASC;";
+		$db->setQuery($query);
+		return $db->loadObjectList();
 	}
 }

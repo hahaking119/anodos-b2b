@@ -302,4 +302,46 @@ class AnodosModelAjax extends JModelList {
 		// Возвращаем объект перемещенного продукта
 		return $result;
 	}
+
+	public function addToOrder($productId, $orderId, $orderName, $clientId, $clientName, $quantity) {
+
+		// Подключаем библиотеки
+		require_once JPATH_COMPONENT.'/helpers/anodos.php';
+		require_once JPATH_COMPONENT.'/models/helpers/order.php';
+
+		$result = new JObject;
+
+		// Разрешаем только зарегистрированным пользователям
+		$user = JFactory::getUser();
+		$canDo = AnodosHelper::getActions();
+		if ($user->guest) {
+			$result->status = 'danger';
+			$result->text = 'Error #'.__LINE__.' - отказано в доступе. Авторизуйтесь или зарегистрируйтесь.';
+			return $result;
+		}
+
+		if (0 === $orderId) { // Новый заказ
+			$order = Order::createOrder($orderName, $clientId, $clientName);
+			if (isset($order->id)) {
+				$orderId = $order->id;
+			} else {
+				$result->status = 'danger';
+				$result->text = 'Error #'.__LINE__.' - не удалось создать новый заказ.';
+				return $result;
+			}
+		} else { // Существующий заказ
+			// TODO проверяем есть ли заказ в базе и права на его редактирование
+
+		}
+
+
+
+
+		// Готовим ответ
+		$result->status = 'success';
+		$result->text = "Тестовый вывод: \$productId = $productId, \$orderId = $orderId, \$orderName = $orderName, \$clientId = $clientId, \$clientName = $clientName, \$quantity = $quantity";
+
+		// Возвращаем результат
+		return $result;
+	}
 }

@@ -161,8 +161,79 @@ class AnodosControllerAjax extends AnodosController {
 		$category = JRequest::getVar('category', 0);
 
 		// Передаем данные в модель
-		$model = parent::getModel('Products', 'AnodosModel', array('ignore_request' => true));
+		$model = parent::getModel('Ajax', 'AnodosModel', array('ignore_request' => true));
 		$result = $model->getVendorsFromCategory($category);
+
+		// Выводим сообщения из модели
+		echo new JResponseJson($result, JText::_('COM_COMPONENT_MY_TASK_ERROR'), true);
+		JFactory::getApplication()->close();
+	}
+
+	// TODO функция не представлена в модели
+	public function getOrdersFromClient() {
+
+		$app = JFactory::getApplication();
+		$params = $app->getParams();
+
+		// TODO ??
+		JFactory::getDocument()->setMimeEncoding('application/json');
+		JResponse::setHeader('Content-Disposition','attachment;filename="progress-report-results.json"');
+
+		// Получаем данные
+		$client = JRequest::getVar('client', 0);
+
+		// Передаем данные в модель
+		$model = parent::getModel('Ajax', 'AnodosModel', array('ignore_request' => true));
+		$result = $model->getOrdersFromClient($client);
+
+		// Выводим сообщения из модели
+		echo new JResponseJson($result, JText::_('COM_COMPONENT_MY_TASK_ERROR'), true);
+		JFactory::getApplication()->close();
+	}
+
+	// TODO функция не представлена в модели
+	public function getFromOrder() {
+
+		$app = JFactory::getApplication();
+		$params = $app->getParams();
+
+		// TODO ??
+		JFactory::getDocument()->setMimeEncoding('application/json');
+		JResponse::setHeader('Content-Disposition','attachment;filename="progress-report-results.json"');
+
+		// Получаем данные
+		$order = JRequest::getVar('order', 0);
+
+		// Передаем данные в модель
+		$model = parent::getModel('Ajax', 'AnodosModel', array('ignore_request' => true));
+		$result = $model->getProductFromOrder($order);
+
+		// Выводим сообщения из модели
+		echo new JResponseJson($result, JText::_('COM_COMPONENT_MY_TASK_ERROR'), true);
+		JFactory::getApplication()->close();
+	}
+
+	// TODO функция не представлена в модели
+	public function addToOrder() {
+
+		$app = JFactory::getApplication();
+		$params = $app->getParams();
+
+		// TODO ??
+		JFactory::getDocument()->setMimeEncoding('application/json');
+		JResponse::setHeader('Content-Disposition','attachment;filename="progress-report-results.json"');
+
+		// Получаем данные
+		$productId = JRequest::getInt('productId', 0);
+		$orderId = JRequest::getInt('orderId', 0);
+		$orderName = JRequest::getVar('orderName', '');
+		$clientId = JRequest::getInt('clientId', 0);
+		$clientName = JRequest::getVar('orderName', '');
+		$quantity = JRequest::getInt('quantity', 1);
+
+		// Передаем данные в модель
+		$model = parent::getModel('Ajax', 'AnodosModel', array('ignore_request' => true));
+		$result = $model->addToOrder($productId, $orderId, $orderName, $clientId, $clientName, $quantity);
 
 		// Выводим сообщения из модели
 		echo new JResponseJson($result, JText::_('COM_COMPONENT_MY_TASK_ERROR'), true);

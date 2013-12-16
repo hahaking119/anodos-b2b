@@ -1,14 +1,18 @@
 <?php
 defined('_JEXEC') or die('Restricted access');
 
-// Подключаем скрипты и стили
-$doc = JFactory::getDocument();
-$doc->addScript($this->baseurl.'/components/com_anodos/js/products.js', 'text/javascript', true);
-$doc->addStyleSheet($this->baseurl.'/components/com_anodos/css/style.css');
-
 // Определяем уровень доступа
 require_once JPATH_COMPONENT.'/helpers/anodos.php';
 $canDo = AnodosHelper::getActions();
+
+// Подключаем скрипты и стили
+$doc = JFactory::getDocument();
+$doc->addScript($this->baseurl.'/components/com_anodos/js/products.js', 'text/javascript', true);
+if ($canDo->get('core.admin')) {
+	$doc->addScript($this->baseurl.'/components/com_anodos/js/products-admin.js', 'text/javascript', true);
+}
+$doc->addStyleSheet($this->baseurl.'/components/com_anodos/css/style.css');
+
 
 // echo $this->msg;
 ?>
@@ -109,7 +113,7 @@ $canDo = AnodosHelper::getActions();
 				<?php endif; ?>
 				<td class="text-center">
 					<button
-						class="uk-button uk-button-mini"
+						class="uk-button uk-button-mini add-to-order"
 						data-uk-modal="{target:'#addToOrderModal'}"
 						data-product-id="<?php echo $product->product_id; ?>">
 						<i class="uk-icon-shopping-cart"></i>
@@ -162,16 +166,53 @@ $canDo = AnodosHelper::getActions();
 	</div>
 </div>
 
+<!-- TODO Добавление товара в заказ -->
 <div id="addToOrderModal" class="uk-modal">
 	<div class="uk-modal-dialog">
 		<a class="uk-modal-close uk-close"></a>
-		<h1>Добавить в заказ</h1>
-		<p>В разработке.</p>
-		<p>В разработке.</p>
+		<h1>Добавить в заказ?</h1>
+		<div id="add-to-order-product-desc" class="uk-panel uk-panel-box"></div>
+		<hr/>
+		<div class="uk-form">
+			<?php if ($canDo->get('core.manage')) : ?>
+			<fieldset>
+				<select id="add-to-oder-client" class="uk-width-1-2">
+					<option value="0">Новый заказчик</option>
+					<?php foreach($this->clients as $j => $client):
+					echo "<option value=\"{$client->id}\">{$client->name}</option>";
+					endforeach; ?>
+				</select>
+				<input id="add-to-oder-client-name" type="text" placeholder="Имя заказчика" value="">
+			</fieldset>
+			<?php else : ?>
+				<input id="add-to-oder-client" type="hidden" value="0">
+				<input id="add-to-oder-client-name" type="hidden" value="">
+			<?php endif; ?>
+			<fieldset>
+				<select id="add-to-oder-order" class="uk-width-1-2">
+					<option value="0">Новый заказ</option>
+					<?php foreach($this->orders as $j => $order):
+					echo "<option value=\"{$order->id}\">{$order->name}</option>";
+					endforeach; ?>
+				</select>
+				<input id="add-to-oder-order-name" type="text" placeholder="Имя заказа">
+			</fieldset>
+			<fieldset>
+				<label class="uk-form-label" for="add-to-oder-quantity">Количество:</label>
+				<input id="add-to-oder-quantity" class="uk-form-width-small" type="number" min="1" value="1">
+			</fieldset>
+			<fieldset>
+				<button id="add-to-order-button" class="uk-button uk-button-primary">Добавить</button>
+				<button class="uk-button uk-modal-close">Отменить</button>
+			</fieldset>
+		</div>
+		<hr />
+		<div id="add-to-order-products-from-order" class="hidden"></div>
 	</div>
 </div>
 
 <?php if ($canDo->get('core.admin')) : ?>
+<!-- Переименование продукта TODO test -->
 <div id="renameProductModal" class="uk-modal">
 	<div class="uk-modal-dialog">
 		<a class="uk-modal-close uk-close"></a>
@@ -191,17 +232,21 @@ $canDo = AnodosHelper::getActions();
 		</div>
 	</div>
 </div>
+
+<!-- Перемещение продукта TODO test -->
 <div id="moveProductModal" class="uk-modal">
 	<div class="uk-modal-dialog">
 		<a class="uk-modal-close uk-close"></a>
 		<h1>Перенести продукт?</h1>
 		<div class="uk-form">
 			<fieldset>
-				<select id="move-product-category" name="category" class="inputbox">
+				<select id="move-product-category" name="category" class="uk-width-1-1 inputbox">
 					<?php foreach($this->parentCategoryList as $j => $category):
 					echo "<option value=\"{$category->id}\">{$category->title}</option>";
 					endforeach; ?>
 				</select>
+			<fieldset>
+			</fieldset>
 				<button id="move-product-button" class="uk-button uk-button-primary">Переместить</button>
 				<button class="uk-button uk-modal-close">Отменить</button>
 			</fieldset>

@@ -1,63 +1,44 @@
 <?php
-/**
- * @version     0.0.1
- * @package     com_anodos
- * @copyright   © 2013. Все права защищены.
- * @license     GNU General Public License версии 2 или более поздней; Смотрите LICENSE.txt
- * @author      Andrey J Bezpalov <abezpalov@ya.ru> - http://anodos.ru
- */
 
-// No direct access
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
 
-/**
- * View class for a list of Anodos.
- */
 class AnodosViewOrders extends JViewLegacy {
 
-	protected $items;
-	protected $pagination;
-	protected $state;
+	protected $orders;
+
     protected $params;
 
 	public function display($tpl = null) {
 
-        $app                = JFactory::getApplication();
-        
-        $this->state		= $this->get('State');
-        $this->items		= $this->get('Items');
-        $this->pagination	= $this->get('Pagination');
-        $this->params       = $app->getParams('com_anodos');
-        
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {;
-            throw new Exception(implode("\n", $errors));
-        }
-        
-        $this->_prepareDocument();
-        parent::display($tpl);
+		$app = JFactory::getApplication();
+
+		$this->params = $app->getParams('com_anodos');
+
+		$this->orders = $this->get('Orders');
+
+		if (count($errors = $this->get('Errors'))) {;
+			throw new Exception(implode("\n", $errors));
+		}
+
+		$this->_prepareDocument();
+		parent::display($tpl);
 	}
 
+	protected function _prepareDocument() {
 
-	/**
-	 * Prepares the document
-	 */
-	protected function _prepareDocument()
-	{
-		$app	= JFactory::getApplication();
-		$menus	= $app->getMenu();
-		$title	= null;
+		$app = JFactory::getApplication();
+		$menus = $app->getMenu();
+		$title = null;
 
 		// Because the application sets a default page title,
 		// we need to get it from the menu item itself
 		$menu = $menus->getActive();
-		if($menu)
-		{
+		if($menu) {
 			$this->params->def('page_heading', $this->params->get('page_title', $menu->title));
 		} else {
-			$this->params->def('page_heading', JText::_('com_anodos_DEFAULT_PAGE_TITLE'));
+			$this->params->def('page_heading', JText::_('COM_ANODOS_DEFAULT_PAGE_TITLE'));
 		}
 		$title = $this->params->get('page_title', '');
 		if (empty($title)) {
@@ -85,6 +66,5 @@ class AnodosViewOrders extends JViewLegacy {
 		{
 			$this->document->setMetadata('robots', $this->params->get('robots'));
 		}
-	}    
-    	
+	}
 }

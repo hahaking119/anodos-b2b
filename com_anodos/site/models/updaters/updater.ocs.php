@@ -270,7 +270,7 @@ class UpdaterOCS {
 		foreach ($return as $r) {
 			if ($r["CategoryID"] === "") { // Корень - не интересует
 				continue;
-			} elseif ($r["ParentCategoryID"] === "" ) { // Верхний уковень категорий
+			} elseif ($r["ParentCategoryID"] === "" ) { // Верхний уровень категорий
 
 				// Инициализируем переменные
 				$category = array();
@@ -309,7 +309,7 @@ class UpdaterOCS {
 
 				// В цикле добавляем имена родительских категорий
 				$parent = $r["ParentCategoryID"];
-				while (false !== $parent) {
+				while (false != $parent) {
 					$category["name"] = $categories[$parent]["name"].' | '.$category["name"];
 					$parent = $categories[$parent]["parent_id"];
 				}

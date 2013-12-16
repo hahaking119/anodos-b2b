@@ -8,7 +8,6 @@ class AnodosViewProducts extends JViewLegacy {
 
 	protected $msg;
 
-	// Переменные из GET
 	protected $category;
 	protected $subcategories;
 	protected $vendor;
@@ -21,8 +20,8 @@ class AnodosViewProducts extends JViewLegacy {
 	protected $vendors;
 
 	protected $products;
+	protected $clients;
 	protected $orders;
-	protected $orderProducts;
 
 	protected $params;
 
@@ -44,10 +43,9 @@ class AnodosViewProducts extends JViewLegacy {
 		$this->vendors = $this->get('Vendors');
 
 		$this->products = $this->get('Products');
-//		$this->orders = $this->get('Orders');
-//		$this->orderProducts = $this->get('OrderProducts');
-//		$this->parameters = $this->get('Parameters');
-//		$this->msg = $this->get('Msg');
+
+		$this->clients = $this->get('Clients');
+		$this->orders = $this->get('Orders');
 
 		$this->parentCategoryList = $this->get('ParentCategoryList');
 
@@ -71,7 +69,7 @@ class AnodosViewProducts extends JViewLegacy {
 		if($menu) {
 			$this->params->def('page_heading', $this->params->get('page_title', $menu->title));
 		} else {
-			$this->params->def('page_heading', JText::_('com_anodos_DEFAULT_PAGE_TITLE'));
+			$this->params->def('page_heading', JText::_('COM_ANODOS_DEFAULT_PAGE_TITLE'));
 		}
 		$title = $this->params->get('page_title', '');
 		if (empty($title)) {

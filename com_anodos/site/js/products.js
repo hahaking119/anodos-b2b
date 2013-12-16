@@ -89,49 +89,35 @@ window.addEvent('domready', function() {
 		$('rename-product-name').set('value', $('product-name-' + id).get('text'));
 	});
 
-	// Переименование продукта
-	$('rename-product-button').addEvent('click', function(event) {
+	// Вызов окна добавления продукта в заказ
+	$$('.add-to-order').addEvent('click', function(event){
 		var id = this.get("data-product-id");
-		var name = $('rename-product-name').get('value');
-		var container = $('rename-product-messages');
-		new Request.JSON({
-			url:'/index.php?option=com_anodos&task=ajax.renameProduct',
-			onSuccess: function(r) {
-				if (r.data) {
-					var Msg = new Element('div', {'class': 'uk-alert uk-alert-success', 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>Продукт переименован: [' + r.data.id + '] '+ r.data.alias + '.'});
-					container.grab(Msg);
-				} else {
-					var Msg = new Element('div', {'class': 'uk-alert uk-alert-danger', 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>Не получилось переименовать продукт.'});
-					container.grab(Msg);
-				}
-			}
-		}).post({'id': id, 'name': name});
+		$('add-to-order-button').set("data-product-id", this.get("data-product-id"));
+		$('add-to-order-product-desc').set('text', $('product-name-' + id).get('text'));
 	});
 
-	// Вызов окна перемещения продукта
-	$$('.move-product').addEvent('click', function(event){
-		var id = this.get("data-product-id");
-		var category = this.get("data-category-id");
-		$('move-product-button').set("data-product-id", id);
-		$('move-product-category').set('value', category);
-	});
-
-	// Перемещение продукта
-	$('move-product-button').addEvent('click', function(event) {
-		var id = this.get("data-product-id");
-		var category = $('move-product-category').get('value');
-		var container = $('move-product-messages');
+	// Добавление продукта в заказ
+	$('add-to-order-button').addEvent('click', function(event) {
+		var productId = this.get("data-product-id");
+		var orderId = $('add-to-oder-order').get('value');
+		var orderName = $('add-to-oder-order-name').get('value');
+		var clientId = $('add-to-oder-client').get('value');
+		var clientName = $('add-to-oder-client-name').get('value');
+		var quantity = $('add-to-oder-quantity').get('value');
+		var container = $('add-to-order-products-from-order');
 		new Request.JSON({
-			url:'/index.php?option=com_anodos&task=ajax.moveProduct',
+			url:'/index.php?option=com_anodos&task=ajax.addToOrder',
 			onSuccess: function(r) {
 				if (r.data) {
-					var Msg = new Element('div', {'class': 'uk-alert uk-alert-success', 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>Продукт перемещен: [' + r.data.id + '] '+ r.data.alias + '.'});
+					var Msg = new Element('div', {'class': 'uk-alert uk-alert-' + r.data.status, 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>' + r.data.text });
 					container.grab(Msg);
+					container.removeClass('hidden');
 				} else {
-					var Msg = new Element('div', {'class': 'uk-alert uk-alert-danger', 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>Не получилось переместить продукт.'});
+					var Msg = new Element('div', {'class': 'uk-alert uk-alert-danger', 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>Не удалось добавить продукт в заказ.'});
 					container.grab(Msg);
+					container.removeClass('hidden');
 				}
 			}
-		}).post({'id': id, 'category': category});
+		}).post({'productId': productId, 'orderId': orderId, 'orderName': orderName, 'clientId': clientId, 'clientName': clientName, 'quantity': quantity});
 	});
 });
