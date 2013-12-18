@@ -303,11 +303,12 @@ class AnodosModelAjax extends JModelList {
 		return $result;
 	}
 
-	public function addToOrder($productId, $orderId, $orderName, $clientId, $clientName, $quantity) {
+	public function addToOrder($productId, $clientId, $clientName, $contractorId, $contractorName, $orderId, $orderName, $quantity) {
 
 		// Подключаем библиотеки
 		require_once JPATH_COMPONENT.'/helpers/anodos.php';
 		require_once JPATH_COMPONENT.'/models/helpers/order.php';
+		require_once JPATH_COMPONENT.'/models/helpers/price.php';
 
 		$result = new JObject;
 
@@ -320,26 +321,44 @@ class AnodosModelAjax extends JModelList {
 			return $result;
 		}
 
+		// Получаем объект заказа
 		if (0 === $orderId) { // Новый заказ
-			$order = Order::createOrder($orderName, $clientId, $clientName);
-			if (isset($order->id)) {
-				$orderId = $order->id;
-			} else {
-				$result->status = 'danger';
-				$result->text = 'Error #'.__LINE__.' - не удалось создать новый заказ.';
-				return $result;
-			}
+			$order = Order::createOrder($clientId, $clientName, $contractorId, $contractorName, $orderId, $orderName);
 		} else { // Существующий заказ
+			$order = Order::getOrderById($orderId);
 			// TODO проверяем есть ли заказ в базе и права на его редактирование
-
 		}
 
+		// Проверяем объект заказа
+		if (isset($order->id)) {
+			$orderId = $order->id;
+		} else {
+			$result->status = 'danger';
+			$result->text = 'Error #'.__LINE__.' - не удалось получить объект заказа.';
+			return $result;
+		}
 
+		// Получаем объект цены продукта
+		$price = Price::getPrice($productId);
 
+		// Проверяем объект цены продукта
+		if (!isset($price->price)) {
+			$result->status = 'danger';
+			$result->text = 'Error #'.__LINE__.' - не удалось получить объект цены.';
+			return $result;
+		}
+
+		// Добавляем строку в заказ
+		Order::addOrderLine($order, $price, $quantity);
+
+		// Получаем список строк заказа
+		$orderLines = Order::getLinesFromOrder($order->id);
 
 		// Готовим ответ
 		$result->status = 'success';
-		$result->text = "Тестовый вывод: \$productId = $productId, \$orderId = $orderId, \$orderName = $orderName, \$clientId = $clientId, \$clientName = $clientName, \$quantity = $quantity";
+		$result->text = 'Добавлено';
+		$result->order = $order;
+		$result->lines = $orderLines;
 
 		// Возвращаем результат
 		return $result;

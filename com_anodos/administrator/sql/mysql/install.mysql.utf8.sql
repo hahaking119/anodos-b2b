@@ -13,6 +13,7 @@ DROP TABLE IF EXISTS `#__anodos_updater`;
 DROP TABLE IF EXISTS `#__anodos_product`;
 DROP TABLE IF EXISTS `#__anodos_measure_unit`;
 DROP TABLE IF EXISTS `#__anodos_product_vat`;
+DROP TABLE IF EXISTS `#__anodos_contractor`;
 DROP TABLE IF EXISTS `#__anodos_partner`;
 
 CREATE TABLE IF NOT EXISTS `#__anodos_partner` (
@@ -42,6 +43,40 @@ CREATE TABLE IF NOT EXISTS `#__anodos_partner` (
   CONSTRAINT `fk_partner_category_id`
     FOREIGN KEY (`category_id`)
     REFERENCES `#__categories` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `#__anodos_contractor` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `partner_id` BIGINT UNSIGNED NULL,
+  `name` VARCHAR(255) NOT NULL,
+  `full_name` VARCHAR(255) NULL,
+  `alias` VARCHAR(255) NULL,
+  `vat_number` VARCHAR(10) NULL,
+  `kpp_number` VARCHAR(9) NULL,
+  `okpo_number` VARCHAR(15) NULL,
+  `adress` VARCHAR(255) NULL,
+  `phone` VARCHAR(45) NULL,
+  `fax` VARCHAR(45) NULL,
+  `e-mail` VARCHAR(255) NULL,
+  `state` TINYINT(3) NOT NULL DEFAULT '1',
+  `created` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `created_by` BIGINT UNSIGNED NOT NULL DEFAULT '0',
+  `modified` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `modified_by` BIGINT UNSIGNED NOT NULL DEFAULT '0',
+  `publish_up` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `publish_down` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`),
+  INDEX `partner_idx` (`partner_id` ASC),
+  INDEX `vat_number_idx` (`vat_number` ASC),
+  INDEX `kpp_number_idx` (`kpp_number` ASC),
+  INDEX `okpo_number_idx` (`okpo_number` ASC),
+  INDEX `state_idx` (`state` ASC),
+  CONSTRAINT `fk_contractor_partner_id`
+    FOREIGN KEY (`partner_id`)
+    REFERENCES `#__anodos_partner` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -405,6 +440,9 @@ INSERT INTO `#__anodos_order_stage` (`id`, `name`, `alias`) VALUES (6, 'Закр
 CREATE TABLE IF NOT EXISTS `#__anodos_order` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `partner_id` BIGINT UNSIGNED NULL,
+  `partner_name` VARCHAR(255) NULL,
+  `contractor_id` BIGINT UNSIGNED NULL,
+  `contractor_name` VARCHAR(255) NULL,
   `created` DATETIME NOT NULL,
   `created_by` BIGINT NOT NULL DEFAULT '0',
   `name` VARCHAR(255) NOT NULL DEFAULT 'Новый заказ',
@@ -424,6 +462,7 @@ CREATE TABLE IF NOT EXISTS `#__anodos_order` (
   INDEX `state_idx` (`state` ASC),
   INDEX `modified_by_idx` (`modified_by` ASC),
   INDEX `manager_idx` (`manager_id` ASC),
+  INDEX `contractor_idx` (`contractor_id` ASC),
   CONSTRAINT `fk_order_order_stage_id`
     FOREIGN KEY (`stage_id`)
     REFERENCES `#__anodos_order_stage` (`id`)
@@ -433,6 +472,11 @@ CREATE TABLE IF NOT EXISTS `#__anodos_order` (
     FOREIGN KEY (`partner_id`)
     REFERENCES `#__anodos_partner` (`id`)
     ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_order_contractor_id`
+    FOREIGN KEY (`contractor_id`)
+    REFERENCES `#__anodos_contractor` (`id`)
+    ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
@@ -441,11 +485,13 @@ CREATE TABLE IF NOT EXISTS `#__anodos_order_line` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `order_id` BIGINT UNSIGNED NOT NULL,
   `product_id` BIGINT UNSIGNED NULL,
-  `name` VARCHAR(255) NOT NULL DEFAULT '',
+  `product_name` VARCHAR(255) NULL,
   `quantity` DECIMAL(13,2) NOT NULL DEFAULT '1.00',
   `measure_unit_id` INT UNSIGNED NOT NULL DEFAULT '1',
   `price_in` DECIMAL NULL,
   `currency_in_id` BIGINT UNSIGNED NULL,
+  `price_type_in_id` BIGINT UNSIGNED NULL,
+  `stock_id` BIGINT UNSIGNED NULL,
   `price_out` DECIMAL NULL,
   `currency_out_id` BIGINT UNSIGNED NULL,
   `created` DATETIME NOT NULL,
@@ -460,6 +506,8 @@ CREATE TABLE IF NOT EXISTS `#__anodos_order_line` (
   INDEX `measure_unit_idx` (`measure_unit_id` ASC),
   INDEX `created_idx` (`created` ASC),
   INDEX `modified_idx` (`modified` ASC),
+  INDEX `price_type_in_idx` (`price_type_in_id` ASC),
+  INDEX `stock_idx` (`stock_id` ASC),
   CONSTRAINT `fk_order_line_order_id`
     FOREIGN KEY (`order_id`)
     REFERENCES `#__anodos_order` (`id`)
@@ -483,6 +531,16 @@ CREATE TABLE IF NOT EXISTS `#__anodos_order_line` (
   CONSTRAINT `fk_order_line_measure_unit_id`
     FOREIGN KEY (`measure_unit_id`)
     REFERENCES `#__anodos_measure_unit` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_order_line_price_type_in_id`
+    FOREIGN KEY (`price_type_in_id`)
+    REFERENCES `#__anodos_price_type` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_order_line_anodos_stock_id`
+    FOREIGN KEY (`stock_id`)
+    REFERENCES `#__anodos_stock` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB

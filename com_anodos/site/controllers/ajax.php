@@ -225,15 +225,17 @@ class AnodosControllerAjax extends AnodosController {
 
 		// Получаем данные
 		$productId = JRequest::getInt('productId', 0);
+		$clientId = JRequest::getInt('clientId', 0);
+		$clientName = JRequest::getVar('clientName', '');
+		$contractorId = JRequest::getInt('contractorId', 0);
+		$contractorName = JRequest::getVar('contractorName', '');
 		$orderId = JRequest::getInt('orderId', 0);
 		$orderName = JRequest::getVar('orderName', '');
-		$clientId = JRequest::getInt('clientId', 0);
-		$clientName = JRequest::getVar('orderName', '');
 		$quantity = JRequest::getInt('quantity', 1);
 
 		// Передаем данные в модель
 		$model = parent::getModel('Ajax', 'AnodosModel', array('ignore_request' => true));
-		$result = $model->addToOrder($productId, $orderId, $orderName, $clientId, $clientName, $quantity);
+		$result = $model->addToOrder($productId, $clientId, $clientName, $contractorId, $contractorName, $orderId, $orderName, $quantity);
 
 		// Выводим сообщения из модели
 		echo new JResponseJson($result, JText::_('COM_COMPONENT_MY_TASK_ERROR'), true);

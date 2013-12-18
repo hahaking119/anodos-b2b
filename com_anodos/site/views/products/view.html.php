@@ -21,6 +21,7 @@ class AnodosViewProducts extends JViewLegacy {
 
 	protected $products;
 	protected $clients;
+	protected $contractors;
 	protected $orders;
 
 	protected $params;
@@ -45,6 +46,7 @@ class AnodosViewProducts extends JViewLegacy {
 		$this->products = $this->get('Products');
 
 		$this->clients = $this->get('Clients');
+		$this->contractors = $this->get('Contractors');
 		$this->orders = $this->get('Orders');
 
 		$this->parentCategoryList = $this->get('ParentCategoryList');

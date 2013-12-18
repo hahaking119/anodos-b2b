@@ -99,25 +99,36 @@ window.addEvent('domready', function() {
 	// Добавление продукта в заказ
 	$('add-to-order-button').addEvent('click', function(event) {
 		var productId = this.get("data-product-id");
-		var orderId = $('add-to-oder-order').get('value');
-		var orderName = $('add-to-oder-order-name').get('value');
 		var clientId = $('add-to-oder-client').get('value');
 		var clientName = $('add-to-oder-client-name').get('value');
+		var contractorId = $('add-to-oder-contractor').get('value');
+		var contractorName = $('add-to-oder-contractor-name').get('value');
+		var orderId = $('add-to-oder-order').get('value');
+		var orderName = $('add-to-oder-order-name').get('value');
 		var quantity = $('add-to-oder-quantity').get('value');
-		var container = $('add-to-order-products-from-order');
 		new Request.JSON({
 			url:'/index.php?option=com_anodos&task=ajax.addToOrder',
 			onSuccess: function(r) {
 				if (r.data) {
 					var Msg = new Element('div', {'class': 'uk-alert uk-alert-' + r.data.status, 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>' + r.data.text });
-					container.grab(Msg);
-					container.removeClass('hidden');
+					$('add-to-order-messages').grab(Msg);
+					$('add-to-order-products').removeClass('hidden');
+					$$('#add-to-order-products-list tr').destroy();
+					// Показываем содержание заказа
+					for (var i = 0; i < r.data.lines.length; i++) {
+						n = i + 1;
+						name = r.data.lines[i].product_name;
+						price = String(parseFloat(r.data.lines[i].price_out).toFixed(2));
+						quantity = String(parseFloat(r.data.lines[i].quantity).toFixed(0));
+						sum = String(parseFloat(r.data.lines[i].price_out * r.data.lines[i].quantity).toFixed(2));
+						var tr = new Element('tr', {html: '<td class="uk-text-center">' + n + '</td><td>' + name + '</td><td class="uk-text-right">'+ price + '</td><td class="uk-text-center">' + quantity + '</td><td class="uk-text-right">' + sum + '</td>'});
+						$('add-to-order-products-list').grab(tr);
+					}
 				} else {
 					var Msg = new Element('div', {'class': 'uk-alert uk-alert-danger', 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>Не удалось добавить продукт в заказ.'});
-					container.grab(Msg);
-					container.removeClass('hidden');
+					$('add-to-order-messages').grab(Msg);
 				}
 			}
-		}).post({'productId': productId, 'orderId': orderId, 'orderName': orderName, 'clientId': clientId, 'clientName': clientName, 'quantity': quantity});
+		}).post({'productId': productId, 'clientId': clientId, 'clientName': clientName, 'contractorId': contractorId, 'contractorName': contractorName, 'orderId': orderId, 'orderName': orderName, 'quantity': quantity});
 	});
 });

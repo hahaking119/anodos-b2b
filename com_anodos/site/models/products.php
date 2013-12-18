@@ -435,21 +435,6 @@ class AnodosModelProducts extends JModelList {
 		}
 	}
 
-	public function getOrders() {
-
-		// Инициализируем переменные
-		$db = JFactory::getDBO();
-
-		// Выполняем запрос выборки
-		$query = "
-			SELECT *
-			FROM #__anodos_order
-			WHERE state = 1
-			ORDER BY name ASC;";
-		$db->setQuery($query);
-		return $db->loadObjectList();
-	}
-
 	public function getClients() {
 
 		// Инициализируем переменные
@@ -460,6 +445,35 @@ class AnodosModelProducts extends JModelList {
 			SELECT *
 			FROM #__anodos_partner
 			WHERE client = 1
+			ORDER BY name ASC;";
+		$db->setQuery($query);
+		return $db->loadObjectList();
+	}
+
+	public function getContractors() {
+
+		// Инициализируем переменные
+		$db = JFactory::getDBO();
+
+		// Выполняем запрос выборки
+		$query = "
+			SELECT *
+			FROM #__anodos_contractor
+			ORDER BY name ASC;";
+		$db->setQuery($query);
+		return $db->loadObjectList();
+	}
+
+	public function getOrders() {
+
+		// Инициализируем переменные
+		$db = JFactory::getDBO();
+
+		// Выполняем запрос выборки
+		$query = "
+			SELECT *
+			FROM #__anodos_order
+			WHERE state = 1
 			ORDER BY name ASC;";
 		$db->setQuery($query);
 		return $db->loadObjectList();

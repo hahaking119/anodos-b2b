@@ -35,7 +35,9 @@ $doc->addStyleSheet($this->baseurl.'/components/com_anodos/css/style.css');
 					echo $this->vendorName;
 				}
 				?></span></button>
-				<button id="show-product-button" class="uk-button"><i class="uk-icon-list"></i>&nbsp;<?php echo JText::_('COM_ANODOS_SHOW'); ?></button>
+			<?php // TODO Подстановка иконки gears если параметры выбраны, передача параметров из модели ?>
+			<button class="uk-button" disabled><i class="uk-icon-gear"></i>&nbsp;<span id="gears-selected">Параметры</span></button>
+			<button id="show-product-button" class="uk-button"><i class="uk-icon-list"></i>&nbsp;<?php echo JText::_('COM_ANODOS_SHOW'); ?></button>
 
 		</div>
 		<label><input id="subcategories-checkbox" type="checkbox"<?php
@@ -178,24 +180,33 @@ $doc->addStyleSheet($this->baseurl.'/components/com_anodos/css/style.css');
 			<fieldset>
 				<select id="add-to-oder-client" class="uk-width-1-2">
 					<option value="0">Новый заказчик</option>
-					<?php foreach($this->clients as $j => $client):
+					<?php foreach($this->clients as $j => $client) :
 					echo "<option value=\"{$client->id}\">{$client->name}</option>";
 					endforeach; ?>
 				</select>
-				<input id="add-to-oder-client-name" type="text" placeholder="Имя заказчика" value="">
+				<input id="add-to-oder-client-name" type="text" placeholder="Заказчик" value="">
 			</fieldset>
 			<?php else : ?>
 				<input id="add-to-oder-client" type="hidden" value="0">
 				<input id="add-to-oder-client-name" type="hidden" value="">
 			<?php endif; ?>
 			<fieldset>
+				<select id="add-to-oder-contractor" class="uk-width-1-2">
+					<option value="0">Новое юридическое лицо</option>
+					<?php foreach($this->contractors as $j => $contractor) :
+					echo "<option value=\"{$contractor->id}\">{$contractor->name}</option>";
+					endforeach; ?>
+				</select>
+				<input id="add-to-oder-contractor-name" type="text" placeholder="Юридическое лицо" value="">
+			</fieldset>
+			<fieldset>
 				<select id="add-to-oder-order" class="uk-width-1-2">
 					<option value="0">Новый заказ</option>
-					<?php foreach($this->orders as $j => $order):
+					<?php foreach($this->orders as $j => $order) :
 					echo "<option value=\"{$order->id}\">{$order->name}</option>";
 					endforeach; ?>
 				</select>
-				<input id="add-to-oder-order-name" type="text" placeholder="Имя заказа">
+				<input id="add-to-oder-order-name" type="text" placeholder="Заказ">
 			</fieldset>
 			<fieldset>
 				<label class="uk-form-label" for="add-to-oder-quantity">Количество:</label>
@@ -207,7 +218,20 @@ $doc->addStyleSheet($this->baseurl.'/components/com_anodos/css/style.css');
 			</fieldset>
 		</div>
 		<hr />
-		<div id="add-to-order-products-from-order" class="hidden"></div>
+		<div id="add-to-order-messages"></div>
+		<table id="add-to-order-products" class="uk-table hidden">
+			<thead>
+				<tr>
+					<th><i class="uk-icon-list-ol"></i><?php $col++; ?></th>
+					<th><?php echo JText::_('COM_ANODOS_NAME'); $col++; ?></th>
+					<th><?php echo JText::_('COM_ANODOS_PRICE'); $col++; ?></th>
+					<th><?php echo JText::_('COM_ANODOS_QUANTITY'); $col++; ?></th>
+					<th><?php echo JText::_('COM_ANODOS_SUM'); $col++; ?></th>
+				</tr>
+			</thead>
+			<tbody id="add-to-order-products-list">
+			</tbody>
+		</table>
 	</div>
 </div>
 
