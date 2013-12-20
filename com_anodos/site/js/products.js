@@ -22,10 +22,10 @@ window.addEvent('domready', function() {
 		var name = this.get('text');
 		$('category-selected').set('text', name);
 		$('form-category-selected').setProperty('value', id);
+		$('form-subcategories').setProperty('value', 1);
 		if ('all' == id) {
 			$('subcategories-checkbox').setProperty('checked', true);
 			$('subcategories-checkbox').setProperty('disabled', true);
-			$('form-subcategories').setProperty('value', 1);
 		} else {
 			$('subcategories-checkbox').removeProperty('disabled');
 		}

@@ -36,7 +36,7 @@ $doc->addStyleSheet($this->baseurl.'/components/com_anodos/css/style.css');
 				}
 				?></span></button>
 			<?php // TODO Подстановка иконки gears если параметры выбраны, передача параметров из модели ?>
-			<button class="uk-button" disabled><i class="uk-icon-gear"></i>&nbsp;<span id="gears-selected">Параметры</span></button>
+			<button class="uk-button" disabled data-uk-tooltip title="В разработке"><i class="uk-icon-gear"></i>&nbsp;<span id="gears-selected">Параметры</span></button>
 			<button id="show-product-button" class="uk-button"><i class="uk-icon-list"></i>&nbsp;<?php echo JText::_('COM_ANODOS_SHOW'); ?></button>
 
 		</div>
@@ -48,13 +48,17 @@ $doc->addStyleSheet($this->baseurl.'/components/com_anodos/css/style.css');
 					echo ' checked="checked"';
 				}
 				?>>&nbsp;Включая подкатегории</label>
+		<form id="form-show-product" class="uk-form" action="" method="get">
+			<input id="form-category-selected" name="category" type="hidden" value="<?php echo $this->category; ?>"/>
+			<input id="form-vendor-selected" name="vendor" type="hidden" value="<?php echo $this->vendor; ?>"/>
+			<input id="form-subcategories" name="subcategories" type="hidden" value="<?php echo $this->subcategories; ?>"/>
+		</form>
+		
+		
 	</div>
 	<div class="uk-width-1-2 uk-text-right">
-		<form id="form-show-product" class="uk-form" action="" method="get">
+		<form id="form-search-product" class="uk-form" action="" method="get">
 			<fieldset>
-				<input id="form-category-selected" name="category" type="hidden" value="<?php echo $this->category; ?>"/>
-				<input id="form-vendor-selected" name="vendor" type="hidden" value="<?php echo $this->vendor; ?>"/>
-				<input id="form-subcategories" name="subcategories" type="hidden" value="<?php echo $this->subcategories; ?>"/>
 				<input id="form-search" name="search" type="text" placeholder="Поиск по складу" value="<?php echo $this->search; ?>" />
 				<button class="uk-button" type="submit"><i class="uk-icon-search"></i>&nbsp;Найти</button>
 			</fieldset>
