@@ -1,38 +1,60 @@
-window.addEvent('domready', function() {
+jQuery(document).ready(function() {
 
-	// Добавляем категории в базу
-	$('create-category-button').addEvent('click', function(event) {
-		var name = $('create-category-name').get('value');
-		var parent = $('create-category-parent').get('value');
-		var container = $('create-category-messages');
-		new Request.JSON({
-			url:'/index.php?option=com_anodos&task=ajax.createProductCategory',
-			onSuccess: function(r) {
-				if (r.data) {
-					var Msg = new Element('div', {'class': 'uk-alert uk-alert-success', 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>Создана категория: [' + r.data.id + '] '+ r.data.title + '.'});
-					container.grab(Msg);
+	// Добавляем категорию
+	jQuery('#create-category-button').click(function() {
+
+		// Инициализируем переменные
+		var name = jQuery('#create-category-name').val();
+		var parent = jQuery('#create-category-parent').val();
+
+		// Выполняем запрос
+		jQuery.ajax({
+			cache: false ,
+			data: 'name=' + name + '&parent=' + parent,
+			dataType: 'json',
+			type: 'POST',
+			url: '/index.php?option=com_anodos&task=ajax.createProductCategory',
+			success: function(r) {
+				if (r.data.status) {
+					jQuery('#create-category-messages').prepend('<div class = "uk-alert uk-alert-' + r.data.status + '" data-uk-alert><a href="" class="uk-alert-close uk-close"></a>' + r.data.text + '</div>');
 				} else {
-					var Msg = new Element('div', {'class': 'uk-alert uk-alert-danger', 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>Не удалось создать категорию.'});
-					container.grab(Msg);
+					jQuery('#create-category-messages').prepend('<div class = "uk-alert uk-alert-danger" data-uk-alert><a href="" class="uk-alert-close uk-close"></a>Create Category Ajax Error</div>');
 				}
+			},
+			error: function() {
+				alert('Create Category Ajax Error');
 			}
-		}).post({'name': name, 'parent': parent});
+		});
 	});
 
-	// Привязываем синоним к производителю
-	$$('.select-category').addEvent('change', function(event){
-		var synonym = this.get("data-synonym-id");
-		var category = this.get('value');
+	// Привязываем синоним к категории
+	jQuery('.select-category').change(function() {
+
+		// Инициализируем переменные
+		var synonym = jQuery(this).data("synonymId");
+		var category = jQuery(this).val();
 		var element = this;
-		new Request.JSON({
-			url:'/index.php?option=com_anodos&task=ajax.linkSynonymToCategory',
-			onSuccess: function(r) {
+
+		// Выполняем запрос
+		jQuery.ajax({
+			cache: false ,
+			data: 'synonym=' + synonym + '&category=' + category,
+			dataType: 'json',
+			type: 'POST',
+			url: '/index.php?option=com_anodos&task=ajax.linkSynonymToCategory',
+			success: function(r) {
 				if (r.data) {
-					element.addClass('uk-form-success');
+					jQuery(element).removeClass("uk-form-danger");
+					jQuery(element).addClass("uk-form-success");
 				} else {
-					element.addClass('uk-form-danger');
+					jQuery(element).removeClass("uk-form-success");
+					jQuery(element).addClass("uk-form-danger");
 				}
+			},
+			error: function() {
+				jQuery(element).removeClass("uk-form-success");
+				jQuery(element).addClass("uk-form-danger");
 			}
-		}).post({'synonym': synonym, 'category': category});
+		});
 	});
 });

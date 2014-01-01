@@ -1,84 +1,98 @@
-window.addEvent('domready', function() {
+jQuery(document).ready(function() {
 
-	// Добавляем категории в базу
-	$('add-category-button').addEvent('click', function(event) {
-		var container = $('add-category-messages');
-		var name = $('add-category-name').get('value');
-		var parent = $('add-category-parent').get('value');
-		var categoryHTMLRequest = new Request({
-			url:'/index.php',
-			method:'get',
-			data: 'option=com_anodos&task=updater.addProductCategory&name=' + name + '&parent=' + parent,
-			onProgress: function(event, xhr) {
-				// Действия во время выполнения запроса
+	// Добавляем категорию
+	jQuery('#create-category-button').click(function() {
+
+		// Инициализируем переменные
+		var name = jQuery('#create-category-name').val();
+		var parent = jQuery('#create-category-parent').val();
+
+		// Выполняем запрос
+		jQuery.ajax({
+			cache: false ,
+			data: 'name=' + name + '&parent=' + parent,
+			dataType: 'json',
+			type: 'POST',
+			url: '/index.php?option=com_anodos&task=ajax.createProductCategory',
+			success: function(r) {
+				if (r.data.status) {
+					jQuery('#create-category-messages').prepend('<div class = "uk-alert uk-alert-' + r.data.status + '" data-uk-alert><a href="" class="uk-alert-close uk-close"></a>' + r.data.text + '</div>');
+				} else {
+					jQuery('#create-category-messages').prepend('<div class = "uk-alert uk-alert-danger" data-uk-alert><a href="" class="uk-alert-close uk-close"></a>Create Category Ajax Error</div>');
+				}
 			},
-			onSuccess: function(responseText) {
-				container.set('text', responseText);
-			},
-			onFailure: function() {
-				container.set('html', 'The request failed.');
-			},
-			onCancel: function() {
-				container.set('html', 'The request calcelled.');
+			error: function() {
+				alert('Create Category Ajax Error');
 			}
-		}).send();
+		});
 	});
 
 	// Вызов окна переименования категории
-	$$('.rename-category').addEvent('click', function(event){
-		$('rename-category-button').set("data-category-id", this.get("data-category-id"));
-		$('rename-category-name').set('value', this.get("data-category-name"));
+	jQuery('.rename-category').click(function() {
+		jQuery('#rename-category-button').data("categoryId", jQuery(this).data("categoryId"));
+		jQuery('#rename-category-name').val(jQuery(this).data("categoryName"));
 	});
 
 	// Переименование категории
-	$('rename-category-button').addEvent('click', function(event) {
-		var id = this.get("data-category-id");
-		var name = $('rename-category-name').get('value');
-		var container = $('rename-category-messages');
+	jQuery('#rename-category-button').click(function() {
 
-		// Обновить список производителей
-		new Request.JSON({
-			url:'/index.php?option=com_anodos&task=ajax.renameCategory',
-			onSuccess: function(r) {
+		// Инициализируем переменные
+		var id = jQuery(this).data("categoryId");
+		var name = jQuery('#rename-category-name').val();
 
-				if (r.data) {
-					// Показываем переименованную категорию
-					var Msg = new Element('div', {'class': 'uk-alert uk-alert-success', 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>Категория переименована: [' + r.data.id + '] '+ r.data.title + '.'});
-					container.grab(Msg);
+		// Выполняем запрос
+		jQuery.ajax({
+			cache: false ,
+			data: 'id=' + id + '&name=' + name,
+			dataType: 'json',
+			type: 'POST',
+			url: '/index.php?option=com_anodos&task=ajax.renameCategory',
+			success: function(r) {
+				if (r.data.status) {
+					jQuery('#rename-category-messages').prepend('<div class = "uk-alert uk-alert-' + r.data.status + '" data-uk-alert><a href="" class="uk-alert-close uk-close"></a>' + r.data.text + '</div>');
 				} else {
-					var Msg = new Element('div', {'class': 'uk-alert uk-alert-danger', 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>Не получилось переименовать категорию.'});
-					container.grab(Msg);
+					jQuery('#rename-category-messages').prepend('<div class = "uk-alert uk-alert-danger" data-uk-alert><a href="" class="uk-alert-close uk-close"></a>Rename Category Ajax Error</div>');
 				}
+			},
+			error: function() {
+				alert('Rename Category Ajax Error');
 			}
-		}).get({'id': id, 'name': name});
+		});
 	});
 
 	// Вызов окна удаления категории
-	$$('.remove-category').addEvent('click', function(event){
-		$('remove-category-button').set("data-category-id", this.get("data-category-id"));
+	jQuery('.remove-category').click(function() {
+		jQuery('#remove-category-button').data("categoryId", jQuery(this).data("categoryId"));
 	});
 
 	// Удаление категории
-	$('remove-category-button').addEvent('click', function(event) {
-		var id = this.get("data-category-id");
-		var container = $('remove-category-messages');
+	jQuery('#remove-category-button').click(function() {
 
-		// Обновить список производителей
-		new Request.JSON({
-			url:'/index.php?option=com_anodos&task=ajax.removeProductCategory',
-			onSuccess: function(r) {
+		// Инициализируем переменные
+		var id = jQuery(this).data("categoryId");
 
-				if (r.data) {
-					// Показываем удаленные категории
-					for (var i = 0; i < r.data.length; i++) {
-						var Msg = new Element('div', {'class': 'uk-alert uk-alert-success', 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>Удалена категория: [' + r.data[i].id + '] '+ r.data[i].title + '.'});
-						container.grab(Msg);
+		// Выполняем запрос
+		jQuery.ajax({
+			cache: false ,
+			data: 'id=' + id,
+			dataType: 'json',
+			type: 'POST',
+			url: '/index.php?option=com_anodos&task=ajax.removeProductCategory',
+			success: function(r) {
+				if (r.data.status) {
+					jQuery('#remove-category-messages').prepend('<div class = "uk-alert uk-alert-' + r.data.status + '" data-uk-alert><a href="" class="uk-alert-close uk-close"></a>' + r.data.text + '</div>');
+					if (r.data.categories) {
+						for (var i = 0; i < r.data.categories.length; i++) {
+							jQuery('#remove-category-messages').prepend('<div class = "uk-alert uk-alert-success" data-uk-alert><a href="" class="uk-alert-close uk-close"></a>Удалена категория: ' + r.data.categories[i].title + '</div>');
+						}
 					}
 				} else {
-					var Msg = new Element('div', {'class': 'uk-alert uk-alert-danger', 'data-uk-alert': '', html: '<a href="" class="uk-alert-close uk-close"></a>Не удалось удалить категорию.'});
-					container.grab(Msg);
+					jQuery('#remove-category-messages').prepend('<div class = "uk-alert uk-alert-danger" data-uk-alert><a href="" class="uk-alert-close uk-close"></a>Remove Category Ajax Error</div>');
 				}
+			},
+			error: function() {
+				alert('Remove Category Ajax Error');
 			}
-		}).get({'id': id});
+		});
 	});
 });

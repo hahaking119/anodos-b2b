@@ -292,7 +292,9 @@ class Category {
 
 		// Исключаем инъекцию
 		$synonymId = $db->quote($synonymId);
-		$categoryId = $db->quote($categoryId);
+		if ('NULL' !== $categoryId) {
+			$categoryId = $db->quote($categoryId);
+		}
 
 		// Выполняем запрос
 		$query = "

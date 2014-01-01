@@ -189,6 +189,9 @@ class AnodosModelProducts extends JModelList {
 
 	public function getProducts() {
 
+		// Подключаем библиотеки
+		require_once JPATH_COMPONENT.'/models/helpers/price.php';
+
 		// Инициализируем переменные
 		$componentParams = JComponentHelper::getParams('com_anodos');
 		$categories = array();
@@ -219,6 +222,8 @@ class AnodosModelProducts extends JModelList {
 				vendor.id AS vendor_id,
 				vendor.name AS vendor_name,
 				price.price AS price,
+				price_type.alias AS price_type_alias,
+				price_type.name AS price_type_name,
 				MIN(price.price*rate.rate/rate.quantity) AS price_rub,
 				currency.id AS currency_id,
 				currency.name_html AS currency_name,
@@ -226,15 +231,18 @@ class AnodosModelProducts extends JModelList {
 				stock.id AS stock_id,
 				stock.name AS stock_name,
 				stock.delivery_time_min AS delivery_time_min,
-				stock.delivery_time_max AS delivery_time_max
+				stock.delivery_time_max AS delivery_time_max,
+				distributor.name AS distributor_name
 			FROM #__anodos_product AS product
 			INNER JOIN #__categories AS category ON product.category_id = category.id
 			INNER JOIN #__anodos_partner AS vendor ON product.vendor_id = vendor.id
-			INNER JOIN #__anodos_price AS price ON price.product_id = product.id	
+			INNER JOIN #__anodos_price AS price ON price.product_id = product.id
+			INNER JOIN #__anodos_price_type AS price_type ON price.price_type_id = price_type.id
 			INNER JOIN #__anodos_currency AS currency ON currency.id = price.currency_id
 			INNER JOIN #__anodos_currency_rate AS rate ON rate.currency_id = currency.id
 			INNER JOIN #__anodos_product_quantity AS quantity ON quantity.product_id = product.id
 			INNER JOIN #__anodos_stock AS stock ON stock.id = quantity.stock_id
+			INNER JOIN #__anodos_partner AS distributor ON distributor.id = stock.partner_id
 			WHERE price.stock_id = quantity.stock_id
 			AND quantity.quantity != 0
 		";
@@ -305,7 +313,7 @@ class AnodosModelProducts extends JModelList {
 			// Исключаем инъекцию
 			$search = $db->quote($search);
 			// Добавляем условие выборки
-			$query .= $prefix." ((LOCATE({$search}, product.name) != 0) OR (LOCATE({$search}, product.article) != 0)) ";
+			$query .= $prefix." ((LOCATE({$search}, product.name) != 0) OR (LOCATE({$search}, product.article) != 0) OR (LOCATE({$search}, vendor.name) != 0)) ";
 
 			// Правим префикс
 			$prefix = " AND ";
@@ -324,17 +332,20 @@ class AnodosModelProducts extends JModelList {
 		$db->setQuery($query);
 		$products = $db->loadObjectList();
 
-		// Получаем стандартную наценку
-		$marginStd = $componentParams->get('margin-std', 8);
-
 		// Обрабатываем результат
 		foreach($products as $i => $product) {
 
-			// Входная цена в рублях
-			$products[$i]->price_rub_in = number_format (round($product->price_rub, 0, PHP_ROUND_HALF_UP), 2, ',', ' ');
-			$products[$i]->price_rub_out = number_format (round($product->price_rub * (100 + $marginStd) / 100, 0, PHP_ROUND_HALF_UP), 2, ',', ' ');
+			// Получаем выходную цену
+			$price = new JObject;
+			$price->product_id = $product->product_id;
+			$price->price_in_rub = $product->price_rub;
+			$price->price_type_in_alias = $product->price_type_alias;
+			$price = Price::getPriceOut($price);
+
+			// Форматируем цены
 			$products[$i]->price_in = number_format (round($product->price, 2, PHP_ROUND_HALF_UP), 2, ',', ' ');
-			$products[$i]->price_out = number_format (round($product->price * (100 + $marginStd) / 100, 2, PHP_ROUND_HALF_UP), 2, ',', ' ');
+			$products[$i]->price_rub_in = number_format (round($product->price_rub, 0, PHP_ROUND_HALF_UP), 2, ',', ' ');
+			$products[$i]->price_rub_out = number_format (round($price->price_rub_out, 0, PHP_ROUND_HALF_UP), 2, ',', ' ');
 		}
 
 		return $products;

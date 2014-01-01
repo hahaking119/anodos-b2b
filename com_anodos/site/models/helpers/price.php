@@ -4,12 +4,24 @@ defined('_JEXEC') or die;
 
 class Price {
 
+	// TODO test
 	// Возвращает объект лучшей цены на продукт
-	public function getPrice($productId) {// TODO
+	public function getPrice($productId) {
+
+		// Обрабатываем результат
+		$price = Price::getPriceIn($productId);
+		$price = Price::getPriceOut($price);
+
+		// Возвращаем результат
+		return $price;
+	}
+
+	// TODO test
+	// Возвращает объект входной цены для продукта
+	public function getPriceIn($productId) {
 
 		// Инициализируем переменные
 		$db = JFactory::getDBO();
-		$componentParams = JComponentHelper::getParams('com_anodos');
 
 		// Исключаем инъекцию
 		$productId = $db->quote($productId);
@@ -20,15 +32,20 @@ class Price {
 				product.id AS product_id,
 				product.name AS product_name,
 				product.measure_unit_id AS measure_unit_id,
-				price.price AS price,
-				MIN(price.price*rate.rate/rate.quantity) AS price_rub,
+				price.price AS price_in,
+				MIN(price.price*rate.rate/rate.quantity) AS price_in_rub,
 				price.price_type_id AS price_type_in_id,
+				price_type.alias AS price_type_in_alias,
+				price_type.name AS price_type_in_name,
 				currency.id AS currency_in_id,
+				currency.alias AS currency_alias,
+				currency.name_html AS currency_name,
 				quantity.quantity AS quantity,
 				stock.id AS stock_id,
 				stock.name AS stock_name
 			FROM #__anodos_product AS product
 			INNER JOIN #__anodos_price AS price ON price.product_id = product.id
+			INNER JOIN #__anodos_price_type AS price_type ON price.price_type_id = price_type.id
 			INNER JOIN #__anodos_currency AS currency ON currency.id = price.currency_id
 			INNER JOIN #__anodos_currency_rate AS rate ON rate.currency_id = currency.id
 			INNER JOIN #__anodos_product_quantity AS quantity ON quantity.product_id = product.id
@@ -41,22 +58,75 @@ class Price {
 		$db->setQuery($query);
 		$price = $db->loadObject();
 
-		// Получаем стандартную наценку
-		$marginStd = $componentParams->get('margin-std', 8);
-
 		// Обрабатываем результат
-		$price->price_in = round($price->price, 2, PHP_ROUND_HALF_UP);
-		$price->price_out = round($price->price_rub * (100 + $marginStd) / 100, 0, PHP_ROUND_HALF_UP);
+		$price->price_in = round($price->price_in, 2, PHP_ROUND_HALF_UP);
 
 		// Возвращаем результат
 		return $price;
 	}
 
-	public function getPriceOut() {
-		// TODO
+	// TODO test
+	// Возвращает объект розничной цены для продукта
+	// На вход получает или id-продукта или объект цены с product_id, price_in, price_type_in_alias
+	public function getPriceOut($input = 0) {
+
+		// Инициализируем переменные
+		$db = JFactory::getDBO();
+		$componentParams = JComponentHelper::getParams('com_anodos');
+
+		// 
+		if ((!isset($input->product_id)) or (!isset($input->price_in_rub)) or (!isset($input->price_type_in_alias))) {
+
+			// Исключаем инъекцию
+			$productId = $db->quote($input);
+
+			// Выполняем запрос
+			$query="
+				SELECT
+					product.id AS product_id,
+					product.name AS product_name,
+					product.measure_unit_id AS measure_unit_id,
+					price.price AS price_in,
+					MIN(price.price*rate.rate/rate.quantity) AS price_in_rub,
+					price.price_type_id AS price_type_in_id,
+					price_type.alias AS price_type_in_alias,
+					price_type.name AS price_type_in_name,
+					currency.id AS currency_in_id,
+					currency.alias AS currency_alias,
+					currency.name_html AS currency_name,
+					quantity.quantity AS quantity,
+					stock.id AS stock_id,
+					stock.name AS stock_name
+				FROM #__anodos_product AS product
+				INNER JOIN #__anodos_price AS price ON price.product_id = product.id
+				INNER JOIN #__anodos_price_type AS price_type ON price.price_type_id = price_type.id
+				INNER JOIN #__anodos_currency AS currency ON currency.id = price.currency_id
+				INNER JOIN #__anodos_currency_rate AS rate ON rate.currency_id = currency.id
+				INNER JOIN #__anodos_product_quantity AS quantity ON quantity.product_id = product.id
+				INNER JOIN #__anodos_stock AS stock ON stock.id = quantity.stock_id
+				WHERE price.stock_id = quantity.stock_id
+				AND quantity.quantity != 0
+				AND product.id = {$productId}
+				GROUP BY product_id;
+			";
+			$db->setQuery($query);
+			$price = $db->loadObject();
+
+			// Обрабатываем результат
+			$price->price_in = round($price->price_in, 2, PHP_ROUND_HALF_UP);
+		} else {
+			$price = $input;
+		}
+
+		// Получаем стандартную наценку
+		$marginStd = $componentParams->get('margin-std', 8);
+
+		// Обрабатываем результат
+		$price->price_rub_out = round($price->price_in_rub * (100 + $marginStd) / 100, 0, PHP_ROUND_HALF_UP);
+
+		// Возвращаем результат
+		return $price;
 	}
-
-
 
 	// Заносит цену в базу
 	public function addPrice($stockId, $productId, $price, $currencyId, $priceTypeId, $addDate = 3, $createdBy = 0) {

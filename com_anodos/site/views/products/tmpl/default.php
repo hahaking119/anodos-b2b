@@ -12,9 +12,6 @@ if ($canDo->get('core.admin')) {
 	$doc->addScript($this->baseurl.'/components/com_anodos/js/products-admin.js', 'text/javascript', true);
 }
 $doc->addStyleSheet($this->baseurl.'/components/com_anodos/css/style.css');
-
-
-// echo $this->msg;
 ?>
 <div class="uk-grid">
 	<div class="uk-width-1-2">
@@ -36,7 +33,7 @@ $doc->addStyleSheet($this->baseurl.'/components/com_anodos/css/style.css');
 				}
 				?></span></button>
 			<?php // TODO Подстановка иконки gears если параметры выбраны, передача параметров из модели ?>
-			<button class="uk-button" disabled data-uk-tooltip title="В разработке"><i class="uk-icon-gear"></i>&nbsp;<span id="gears-selected">Параметры</span></button>
+			<button class="uk-button" disabled><i class="uk-icon-gear"></i>&nbsp;<span id="gears-selected">Параметры</span></button>
 			<button id="show-product-button" class="uk-button"><i class="uk-icon-list"></i>&nbsp;<?php echo JText::_('COM_ANODOS_SHOW'); ?></button>
 
 		</div>
@@ -127,8 +124,8 @@ $doc->addStyleSheet($this->baseurl.'/components/com_anodos/css/style.css');
 				</td>
 				<td class="text-left name"><span id="product-name-<?php echo $product->product_id; ?>"><?php echo $product->product_name; ?></span><span><?php echo ' ['.$product->product_article.']'; ?></span></td>
 				<td class="text-center"><?php echo $product->vendor_name; ?></td>
-				<?php if ($canDo->get('core.manage')) : ?>
-				<td class="text-right td-price" data-uk-tooltip title="<?php echo $product->stock_name; ?>">
+				<?php if ($canDo->get('core.edit')) : ?>
+				<td class="text-right td-price" data-uk-tooltip title="<?php echo $product->distributor_name; ?>">
 					<?php echo $product->price_in; ?> <?php echo $product->currency_name; ?>
 				</td>
 				<td class="text-right td-price">
@@ -139,9 +136,15 @@ $doc->addStyleSheet($this->baseurl.'/components/com_anodos/css/style.css');
 					<?php echo $product->price_rub_out; ?> р.
 				</td>
 				<?php endif; ?>
+				<?php if ($canDo->get('core.edit')) : ?>
+				<td class="uk-form text-right" data-uk-tooltip title="<?php echo $product->stock_name; ?>">
+					<?php echo $product->quantity; ?>
+				</td>
+				<?php else : ?>
 				<td class="uk-form text-right">
 					<?php echo $product->quantity; ?>
 				</td>
+				<?php endif; ?>
 			</tr>
 		<?php endforeach; ?>
 		</tbody>

@@ -16,7 +16,7 @@ echo $this->msg;
 
 <div class="uk-grid">
 	<div class="uk-width-1-1">
-		<button class="uk-button" data-uk-modal="{target:'#addCategoryModal'}"><i class="uk-icon-building"></i>&nbsp;<span id="vendor-selected">Добавить категорию</button>
+		<button class="uk-button" data-uk-modal="{target:'#createCategoryModal'}"><i class="uk-icon-building"></i>&nbsp;<span id="vendor-selected">Добавить категорию</button>
 	</div>
 </div>
 
@@ -32,7 +32,6 @@ echo $this->msg;
 				<th class="uk-text-center"><?php echo JText::_('COM_ANODOS_N'); $col++; ?></th>
 				<th class="uk-text-center"><i class="uk-icon-edit"></i><?php $col++; ?></th>
 				<th class="uk-text-left"><?php echo JText::_('COM_ANODOS_NAME'); $col++; ?></th>
-				<th class="uk-text-left"><?php echo JText::_('COM_ANODOS_PARENT'); $col++; ?></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -55,19 +54,6 @@ echo $this->msg;
 					</div>
 				</td>
 				<td class="uk-text-left"><?php echo $category->name; ?></td>
-				<td class="uk-text-left">
-					<select
-						class="select-category"
-						data-category-id="<?php echo $category->parent_id; ?>"
-					>
-						<?php $selected = isset($category->parent_id) ? '' : ' selected'; ?>
-						<option value="1"<?php echo $selected; ?>> - В корень - </option>
-						<?php foreach($this->parentCategoryList as $j => $parent):
-							$selected = $parent->id == $category->parent_id ? ' selected' : '';
-							echo "<option value=\"{$parent->id}\"{$selected}>{$parent->name}</option>";
-						endforeach; ?>
-					</select>
-				</td>
 			</tr>
 			<?php endforeach; ?>
 		</tbody>
@@ -76,22 +62,22 @@ echo $this->msg;
 </div>
 <?php endif; ?>
 
-<div id="addCategoryModal" class="uk-modal">
+<div id="createCategoryModal" class="uk-modal">
 	<div class="uk-modal-dialog">
 		<a class="uk-modal-close uk-close"></a>
 		<h1>Добавить категорию?</h1>
 		<div class="uk-form">
-			<select id="add-category-parent" name="parent" class="inputbox">
+			<select id="create-category-parent" name="parent" class="inputbox">
 				<option value="1" selected> - В корень - </option>
 				<?php foreach($this->parentCategoryList as $j => $category):
 				echo "<option value=\"{$category->id}\">{$category->title}</option>";
 				endforeach; ?>
 			</select>
-			<input id="add-category-name" type="text" name="name" placeholder="Имя категории">
-			<button id="add-category-button" class="uk-button uk-modal-close">Добавить</button>
+			<input id="create-category-name" type="text" name="name" placeholder="Имя категории">
+			<button id="create-category-button" class="uk-button">Добавить</button>
 		</div>
 		<hr />
-		<div id="add-category-messages">
+		<div id="create-category-messages">
 			<div class="uk-alert" data-uk-alert><a href="" class="uk-alert-close uk-close"></a>AJAX готов.</div>
 		</div>
 	</div>

@@ -129,6 +129,9 @@ class UpdaterMerlionMsk {
 		// Отмечаем время обновления
 		Updater::setUpdated($this->updater->id);
 
+		// Выполняем постобработку данных
+		$this->postUpdate();
+
 		// Выводим сообщение о завершении обработки
 		$this->addMsg('<div class="uk-alert uk-alert-success">Обработка завершена.</div>');
 		return true;
@@ -480,4 +483,29 @@ class UpdaterMerlionMsk {
 			}
 		}
 	}
+
+	protected function postUpdate() {
+
+		// Инициализируем переменные
+		$db = JFactory::getDBO();
+
+		// Выполняем запрос
+		$query = "UPDATE #__anodos_category_synonym SET state = 0 WHERE partner_id = {$this->partner->id} AND LOCATE('ПЛОХАЯ УПАКОВКА', name) = 1;";
+		$db->setQuery($query);
+		$db->query();
+
+		// Выполняем запрос
+		$query = "UPDATE #__anodos_category_synonym SET state = 0 WHERE partner_id = {$this->partner->id} AND LOCATE('ТОВАР Б/У', name) = 1;";
+		$db->setQuery($query);
+		$db->query();
+
+		// Выполняем запрос
+		$query = "UPDATE #__anodos_category_synonym SET state = 0 WHERE partner_id = {$this->partner->id} AND LOCATE('ПОЗИТРОНИКА', name) = 1;";
+		$db->setQuery($query);
+		$db->query();
+
+		// Возвращаем результат
+		return true;
+	}
+
 }

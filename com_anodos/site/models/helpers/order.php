@@ -4,7 +4,7 @@ defined('_JEXEC') or die;
 class Order {
 
 	// TODO
-	public function createOrder($clientId, $clientName, $contractorId, $contractorName, $orderId, $orderName) {
+	public function createOrder($clientId, $clientName, $contractorId, $contractorName, $orderName) {
 
 		// Инициализируем переменные
 		$db = JFactory::getDBO();
@@ -13,6 +13,8 @@ class Order {
 		// Если имя заказа не задано
 		if ('' === $orderName) {
 			$orderName = $db->quote('Новый заказ');
+		} else {
+			$orderName = $db->quote($orderName);
 		}
 
 		// Если новый заказчик
@@ -21,6 +23,8 @@ class Order {
 			// Если имя заказчика не задано
 			if ('' === $clientName) {
 				$clientName = $db->quote('Новый заказчик');
+			} else {
+				$clientName = $db->quote($clientName);
 			}
 		} else {
 			$clientId = $db->quote($clientId);
@@ -33,6 +37,8 @@ class Order {
 			// Если имя юридического лица не задано
 			if ('' === $contractorName) {
 				$contractorName = $db->quote('Новое юридическое лицо');
+			} else {
+				$contractorName = $db->quote($contractorName);
 			}
 		} else {
 			$contractorId = $db->quote($contractorId);
@@ -44,7 +50,7 @@ class Order {
 
 		// Определяем публичные ключи
 		$viewKey = md5(microtime());
-		$editKey = md5($viewKey);
+		$editKey = md5($viewKey . microtime());
 
 		// Выполняем запрос вставки
 		$query = "
@@ -81,12 +87,16 @@ class Order {
 		$db->setQuery($query);
 		$db->query();
 
+		// Получаем последний id
+		$query = "SELECT MAX(id) FROM #__anodos_order;";
+		$db->setQuery($query);
+		$orderId = $db->loadResult();
+
 		// Выполняем запрос выборки
 		$query = "
 			SELECT *
 			FROM #__anodos_order
-			WHERE {$db->quote($viewKey)} = view_open_key
-			AND {$db->quote($editKey)} = edit_open_key;";
+			WHERE {$orderId} = id;";
 		$db->setQuery($query);
 		$order = $db->loadObject();
 
@@ -130,7 +140,7 @@ class Order {
 		$currencyInId = $db->quote($price->currency_in_id);
 		$priceTypeInId = $db->quote($price->price_type_in_id);
 		$stockId = $db->quote($price->stock_id);
-		$priceOut = $db->quote($price->price_out);
+		$priceOut = $db->quote($price->price_rub_out);
 		$createdBy = $db->quote($user->id);
 
 		// Выполняем запрос вставки

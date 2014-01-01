@@ -20,24 +20,164 @@ class AnodosModelAjax extends JModelList {
 		$this->msg .= $msg."<br/>";
 	}
 
+	// Создает новую категорию продуктов
+	// TODO test
 	public function createProductCategory($categoryName, $parentId) {
 
 		// Подключаем библиотеки
 		require_once JPATH_COMPONENT.'/helpers/anodos.php';
 		require_once JPATH_COMPONENT.'/models/helpers/category.php';
 
+		// Инициализируем переменные
+		$result = new JObject;
+
 		// Проверяем право доступа
 		$user = JFactory::getUser();
 		$canDo = AnodosHelper::getActions();
 		if (!$canDo->get('core.admin')) {
-			$this->addMsg('Error #'.__LINE__.' - отказано в доступе.');
-			return false;
+			$result->status = 'danger';
+			$result->text = 'Error #'.__LINE__.' - отказано в доступе.';
+			return $result;
 		}
 
 		// Добавляем категорию в базу
-		$result = Category::createProductCategory($categoryName, $parentId);
+		$result->category = Category::createProductCategory($categoryName, $parentId);
 
+		// Возвращаем результат
+		if(isset($result->category->id)) {
+			$result->status = 'success';
+			$result->text = "Добавлена категория: {$result->category->title}.";
+			return $result;
+		} else {
+			$result->status = 'danger';
+			$result->text = 'Error #'.__LINE__.' - не удалось создать категорию.';
+			return $result;
+		}
+	}
+
+	// Переименовывает категорию
+	// TODO test
+	public function renameCategory($categoryId, $categoryName) {
+
+		// Подключаем библиотеки
+		require_once JPATH_COMPONENT.'/helpers/anodos.php';
+		require_once JPATH_COMPONENT.'/models/helpers/category.php';
+
+		// Инициализируем переменные
+		$result = new JObject;
+
+		// Проверяем право доступа
+		$user = JFactory::getUser();
+		$canDo = AnodosHelper::getActions();
+		if (!$canDo->get('core.admin')) {
+			$result->status = 'danger';
+			$result->text = 'Error #'.__LINE__.' - отказано в доступе.';
+			return $result;
+		}
+
+		// Переименовываем категорию
+		$result->category = Category::renameCategory($categoryId, $categoryName);
+
+		// Возвращаем результат
+		if(isset($result->category->id)) {
+			$result->status = 'success';
+			$result->text = "Переименована категория: {$result->category->title}.";
+			return $result;
+		} else {
+			$result->status = 'danger';
+			$result->text = 'Error #'.__LINE__.' - не удалось переименовать категорию.';
+			return $result;
+		}
+	}
+
+	// Удаляет категорию продуктов
+	// TODO test
+	public function removeProductCategory($categoryId) {
+
+		// Подключаем библиотеки
+		require_once JPATH_COMPONENT.'/helpers/anodos.php';
+		require_once JPATH_COMPONENT.'/models/helpers/category.php';
+		require_once JPATH_COMPONENT.'/models/helpers/product.php';
+		require_once JPATH_COMPONENT.'/models/helpers/price.php';
+		require_once JPATH_COMPONENT.'/models/helpers/stock.php';
+
+		// Инициализируем переменные
+		$result = new JObject;
+
+		// Проверяем право доступа
+		$user = JFactory::getUser();
+		$canDo = AnodosHelper::getActions();
+		if (!$canDo->get('core.admin')) {
+			$result->status = 'danger';
+			$result->text = 'Error #'.__LINE__.' - отказано в доступе.';
+			return $result;
+		}
+
+		// Получаем список категорий (указанная и все дочерние)
+		$categories = Category::getTreeFromCategory($categoryId);
+		if (false == $categories) {
+			$result->status = 'danger';
+			$result->text = 'Error #'.__LINE__.' - не удалось выстроить дерево категорий.';
+			return $result;
+		}
+
+		// Проходим по каждой категории
+		foreach($categories as $i => $c) {
+
+			// Отвязываем все синонимы
+			Category::unlinkSynonymOfCategory($c->id);
+
+			// Получаем полный список продуктов в категории
+			$products = Product::getProductsFromCategory($c->id);
+
+			// Проходим по каждому продукту
+			foreach($products as $j => $p) {
+
+				// Удаляем цены
+				Price::removePriceOfProduct($p->id);
+
+				// Удаляем состояние складов
+				Stock::removeQuantityOfProduct($p->id);
+
+				// Удаляем продукт
+				Product::removeProduct($p->id);
+			}
+
+			// Удаляем категорию
+			Category::removeCategory($c->id);
+		}
+
+		// Перестраиваем дерево категорий
+		$category = JTable::getInstance('Category');
+		$category->rebuildPath(1);
+
+		// Возвращаем результат
+		$result->status = 'success';
+		$result->text = "Удаление категории завершено.";
+		$result->categories = $categories;
 		return $result;
+	}
+
+	// Привязывает синоним к категории
+	// TODO test
+	public function linkSynonymToCategory($synonymId, $categoryId) {
+
+		// Подключаем библиотеки
+		require_once JPATH_COMPONENT.'/helpers/anodos.php';
+		require_once JPATH_COMPONENT.'/models/helpers/category.php';
+
+		// Получаем объект текущего пользователя
+		$user = JFactory::getUser();
+
+		// Проверяем право доступа
+		$canDo = AnodosHelper::getActions();
+		if (!$canDo->get('core.admin')) {
+			return false;
+		}
+
+		// Привязываем синоним к категории
+		Category::linkSynonymToCategory($synonymId, $categoryId);
+	 	return true;
 	}
 
 	public function createVendor($vendorName) {
@@ -69,27 +209,6 @@ class AnodosModelAjax extends JModelList {
 		// Добавляем производителя в базу
 		$result = Vendor::createVendor($vendor);
 		return $result;
-	}
-
-	public function linkSynonymToCategory($synonymId, $categoryId) {
-
-		// Подключаем библиотеки
-		require_once JPATH_COMPONENT.'/helpers/anodos.php';
-		require_once JPATH_COMPONENT.'/models/helpers/category.php';
-
-		// Получаем объект текущего пользователя
-		$user = JFactory::getUser();
-
-		// Проверяем право доступа
-		$canDo = AnodosHelper::getActions();
-		if (!$canDo->get('core.admin')) {
-			$this->addMsg('Error #'.__LINE__.' - отказано в доступе.</div>');
-			return false;
-		}
-
-		// Привязываем синоним к категории
-		Category::linkSynonymToCategory($synonymId, $categoryId);
-	 	return true;
 	}
 
 	public function linkSynonymToVendor($synonymId, $vendorId) {
@@ -182,125 +301,74 @@ class AnodosModelAjax extends JModelList {
 		}
 	}
 
-	// Выводит список id, name производителей из указанной категории
-	public function renameCategory($categoryId, $categoryName) {
-
-		// Подключаем библиотеки
-		require_once JPATH_COMPONENT.'/helpers/anodos.php';
-		require_once JPATH_COMPONENT.'/models/helpers/category.php';
-
-		// Проверяем право доступа
-		$user = JFactory::getUser();
-		$canDo = AnodosHelper::getActions();
-		if (!$canDo->get('core.admin')) {
-			$this->addMsg('Error #'.__LINE__.' - отказано в доступе.');
-			return false;
-		}
-
-		// Переименовываем категорию
-		$result = Category::renameCategory($categoryId, $categoryName);
-
-		// Возвращаем список удаленных категорий
-		return $result;
-	}
-
-	public function removeProductCategory($categoryId) {
-
-		// Подключаем библиотеки
-		require_once JPATH_COMPONENT.'/helpers/anodos.php';
-		require_once JPATH_COMPONENT.'/models/helpers/category.php';
-		require_once JPATH_COMPONENT.'/models/helpers/product.php';
-		require_once JPATH_COMPONENT.'/models/helpers/price.php';
-		require_once JPATH_COMPONENT.'/models/helpers/stock.php';
-
-		// Проверяем право доступа
-		$user = JFactory::getUser();
-		$canDo = AnodosHelper::getActions();
-		if (!$canDo->get('core.admin')) {
-			$this->addMsg('Error #'.__LINE__.' - отказано в доступе.');
-			return false;
-		}
-
-		// Получаем список категорий (указанная и все дочерние)
-		$categories = Category::getTreeFromCategory($categoryId);
-		if (false == $categories) {
-			return false;
-		}
-
-		// Проходим по каждой категории
-		foreach($categories as $i => $c) {
-
-			// Отвязываем все синонимы
-			Category::unlinkSynonymOfCategory($c->id);
-
-			// Получаем полный список продуктов в категории
-			$products = Product::getProductsFromCategory($c->id);
-
-			// Проходим по каждому продукту
-			foreach($products as $j => $p) {
-
-				// Удаляем цены
-				Price::removePriceOfProduct($p->id);
-
-				// Удаляем состояние складов
-				Stock::removeQuantityOfProduct($p->id);
-
-				// Удаляем продукт
-				Product::removeProduct($p->id);
-			}
-
-			// Удаляем категорию
-			Category::removeCategory($c->id);
-		}
-
-		// Перестраиваем дерево категорий
-		$category = JTable::getInstance('Category');
-		$category->rebuildPath(1);
-
-		// Возвращаем список удаленных категорий
-		return $categories;
-	}
-
+	// Переименовывает продукт
+	// TODO test
 	public function renameProduct($productId, $productName) {
 
 		// Подключаем библиотеки
 		require_once JPATH_COMPONENT.'/helpers/anodos.php';
 		require_once JPATH_COMPONENT.'/models/helpers/product.php';
 
+		// Инициализируем переменные
+		$result = new JObject;
+
 		// Проверяем право доступа
 		$user = JFactory::getUser();
 		$canDo = AnodosHelper::getActions();
 		if (!$canDo->get('core.admin')) {
-			$this->addMsg('Error #'.__LINE__.' - отказано в доступе.');
-			return false;
+			$result->status = 'danger';
+			$result->text = 'Error #'.__LINE__.' - отказано в доступе.';
+			return $result;
 		}
 
 		// Переименовываем продукт
-		$result = Product::renameProduct($productId, $productName);
+		$result->product = Product::renameProduct($productId, $productName);
 
-		// Возвращаем объект переименованного продукта
-		return $result;
+		// Возвращаем результат
+		if(isset($result->product->id)) {
+			$result->status = 'success';
+			$result->text = "Переименован продукт: {$result->product->name}.";
+			return $result;
+		} else {
+			$result->status = 'danger';
+			$result->text = 'Error #'.__LINE__.' - не удалось переименовать продукт.';
+			return $result;
+		}
 	}
 
+	// Перемещает продукт
+	// TODO test
 	public function moveProduct($productId, $categoryId) {
 
 		// Подключаем библиотеки
 		require_once JPATH_COMPONENT.'/helpers/anodos.php';
 		require_once JPATH_COMPONENT.'/models/helpers/product.php';
 
+		// Инициализируем переменные
+		$result = new JObject;
+
 		// Проверяем право доступа
 		$user = JFactory::getUser();
 		$canDo = AnodosHelper::getActions();
 		if (!$canDo->get('core.admin')) {
-			$this->addMsg('Error #'.__LINE__.' - отказано в доступе.');
-			return false;
+			$result->status = 'danger';
+			$result->text = 'Error #'.__LINE__.' - отказано в доступе.';
+			return $result;
 		}
 
 		// Переименовываем продукт
-		$result = Product::moveProduct($productId, $categoryId);
+		$result->product = Product::moveProduct($productId, $categoryId);
 
-		// Возвращаем объект перемещенного продукта
-		return $result;
+		// Возвращаем результат
+		if(isset($result->product->id)) {
+			$result->status = 'success';
+			$result->text = "Перемещен продукт: {$result->product->name}.";
+			return $result;
+		} else {
+			$result->status = 'danger';
+			$result->text = 'Error #'.__LINE__.' - не удалось переместить продукт.';
+			return $result;
+		}
 	}
 
 	public function addToOrder($productId, $clientId, $clientName, $contractorId, $contractorName, $orderId, $orderName, $quantity) {
@@ -310,6 +378,7 @@ class AnodosModelAjax extends JModelList {
 		require_once JPATH_COMPONENT.'/models/helpers/order.php';
 		require_once JPATH_COMPONENT.'/models/helpers/price.php';
 
+		// Инициализируем переменные
 		$result = new JObject;
 
 		// Разрешаем только зарегистрированным пользователям
@@ -323,7 +392,7 @@ class AnodosModelAjax extends JModelList {
 
 		// Получаем объект заказа
 		if (0 === $orderId) { // Новый заказ
-			$order = Order::createOrder($clientId, $clientName, $contractorId, $contractorName, $orderId, $orderName);
+			$order = Order::createOrder($clientId, $clientName, $contractorId, $contractorName, $orderName);
 		} else { // Существующий заказ
 			$order = Order::getOrderById($orderId);
 			// TODO проверяем есть ли заказ в базе и права на его редактирование
@@ -342,7 +411,7 @@ class AnodosModelAjax extends JModelList {
 		$price = Price::getPrice($productId);
 
 		// Проверяем объект цены продукта
-		if (!isset($price->price)) {
+		if (!isset($price->price_rub_out)) {
 			$result->status = 'danger';
 			$result->text = 'Error #'.__LINE__.' - не удалось получить объект цены.';
 			return $result;
@@ -363,4 +432,11 @@ class AnodosModelAjax extends JModelList {
 		// Возвращаем результат
 		return $result;
 	}
+
+	public function setCategorySynonymState($synonymId, $state) {
+		
+	}
+
+
+
 }

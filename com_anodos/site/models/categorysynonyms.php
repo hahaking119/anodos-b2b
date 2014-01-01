@@ -87,6 +87,7 @@ class AnodosModelCategorysynonyms extends JModelList {
 			SELECT
 				synonym.id AS synonym_id,
 				synonym.name AS synonym_name,
+				synonym.state AS synonym_state,
 				partner.id AS partner_id,
 				partner.name AS partner_name,
 				category.id AS category_id,
@@ -108,6 +109,7 @@ class AnodosModelCategorysynonyms extends JModelList {
 			$query .= "{$prefix} synonym.partner_id = {$partnerId} ";
 			$prefix = 'AND';
 		}
+		$query .= "{$prefix} synonym.state = 1 ";
 
 		// Сортируем
 		if (true != $sortBy) {
