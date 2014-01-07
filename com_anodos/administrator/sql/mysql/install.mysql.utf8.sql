@@ -627,7 +627,7 @@ CREATE TABLE IF NOT EXISTS `#__anodos_person_info` (
   `type_id` BIGINT UNSIGNED NOT NULL,
   `content` VARCHAR(255) NOT NULL,
   `can_remove` INT NOT NULL DEFAULT '1',
-  `ordering` DECIMAL NULL,
+  `ordering` BIGINT UNSIGNED NOT NULL DEFAULT '0',
   `state` TINYINT(3) NOT NULL DEFAULT '1',
   `created` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
   `created_by` BIGINT NOT NULL DEFAULT '0',
