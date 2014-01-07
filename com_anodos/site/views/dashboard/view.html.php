@@ -4,16 +4,15 @@ defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
 
-class AnodosViewOrders extends JViewLegacy {
+class AnodosViewDashboard extends JViewLegacy {
 
-	protected $client;
-	protected $contractor;
-	protected $stage;
-	protected $name;
+	protected $person;
+	protected $partner;
+	protected $manager;
 
-	protected $clients;
+	protected $partners;
 	protected $contractors;
-	protected $stages;
+	protected $tasks;
 
 	protected $orders;
 
@@ -23,14 +22,13 @@ class AnodosViewOrders extends JViewLegacy {
 
 		$app = JFactory::getApplication();
 
-		$this->client = $this->get('Client');
-		$this->contractor = $this->get('Contractor');
-		$this->stage = $this->get('Stage');
-		$this->name = $this->get('Name');
+		$this->person = $this->get('Person');
+		$this->partner = $this->get('Partner');
+		$this->manager = $this->get('Manager');
 
-		$this->clients = $this->get('Clients');
+		$this->partners = $this->get('Partners');
 		$this->contractors = $this->get('Contractors');
-		$this->stages = $this->get('Stages');
+		$this->tasks = $this->get('Tasks');
 
 		$this->orders = $this->get('Orders');
 

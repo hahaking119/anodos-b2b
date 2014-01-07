@@ -13,9 +13,7 @@ abstract class AnodosHelper {
 
 		$assetName = 'com_anodos';
 
-		$actions = array(
-			'core.admin', 'core.manage', 'core.create', 'core.edit', 'core.edit.own', 'core.edit.state', 'core.delete'
-		);
+		$actions = array('core.admin', 'core.sale', 'core.sale.manager', 'core.vendor', 'core.distributor', 'core.client');
 
 		foreach ($actions as $action) {
 			$result->set($action, $user->authorise($action, $assetName));

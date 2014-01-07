@@ -1,18 +1,37 @@
+DROP TABLE IF EXISTS `#__anodos_task_to_contract_specification`;
+DROP TABLE IF EXISTS `#__anodos_task_to_order`;
+DROP TABLE IF EXISTS `#__anodos_task_to_contract`;
+DROP TABLE IF EXISTS `#__anodos_task_to_contract_template`;
+DROP TABLE IF EXISTS `#__anodos_task`;
+
+DROP TABLE IF EXISTS `#__anodos_contract_specification`;
+DROP TABLE IF EXISTS `#__anodos_contract`;
+DROP TABLE IF EXISTS `#__anodos_contract_template`;
+
+DROP TABLE IF EXISTS `#__anodos_person_info`;
+DROP TABLE IF EXISTS `#__anodos_person_info_type`;
+DROP TABLE IF EXISTS `#__anodos_person`;
+
 DROP TABLE IF EXISTS `#__anodos_order_line`;
 DROP TABLE IF EXISTS `#__anodos_order`;
 DROP TABLE IF EXISTS `#__anodos_order_stage`;
+
 DROP TABLE IF EXISTS `#__anodos_currency_rate`;
 DROP TABLE IF EXISTS `#__anodos_price`;
 DROP TABLE IF EXISTS `#__anodos_currency`;
 DROP TABLE IF EXISTS `#__anodos_price_type`;
+
 DROP TABLE IF EXISTS `#__anodos_product_quantity`;
 DROP TABLE IF EXISTS `#__anodos_stock`;
+
 DROP TABLE IF EXISTS `#__anodos_vendor_synonym`;
 DROP TABLE IF EXISTS `#__anodos_category_synonym`;
 DROP TABLE IF EXISTS `#__anodos_updater`;
+
 DROP TABLE IF EXISTS `#__anodos_product`;
 DROP TABLE IF EXISTS `#__anodos_measure_unit`;
 DROP TABLE IF EXISTS `#__anodos_product_vat`;
+
 DROP TABLE IF EXISTS `#__anodos_contractor`;
 DROP TABLE IF EXISTS `#__anodos_partner`;
 
@@ -430,8 +449,8 @@ CREATE TABLE IF NOT EXISTS `#__anodos_order_stage` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
-INSERT INTO `#__anodos_order_stage` (`id`, `name`, `alias`) VALUES (1, 'Не согласован', 'Не согласован');
-INSERT INTO `#__anodos_order_stage` (`id`, `name`, `alias`) VALUES (2, 'Согласован', 'Согласован');
+INSERT INTO `#__anodos_order_stage` (`id`, `name`, `alias`) VALUES (1, 'Не размещен', 'Не размещен');
+INSERT INTO `#__anodos_order_stage` (`id`, `name`, `alias`) VALUES (2, 'Размещен', 'Размещен');
 INSERT INTO `#__anodos_order_stage` (`id`, `name`, `alias`) VALUES (3, 'Ожидание предоплаты', 'Ожидание предоплаты');
 INSERT INTO `#__anodos_order_stage` (`id`, `name`, `alias`) VALUES (4, 'В работе', 'В работе');
 INSERT INTO `#__anodos_order_stage` (`id`, `name`, `alias`) VALUES (5, 'Ожидание постоплаты', 'Ожидание постоплаты');
@@ -548,3 +567,270 @@ DEFAULT CHARACTER SET = utf8;
 
 ALTER TABLE `#__anodos_category_synonym` ADD COLUMN `original_id` VARCHAR(45) NULL AFTER `category_id`;
 ALTER TABLE `#__anodos_vendor_synonym` ADD COLUMN `original_id` VARCHAR(45) NULL AFTER `vendor_id`;
+
+CREATE TABLE IF NOT EXISTS `#__anodos_person` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NULL,
+  `partner_id` BIGINT UNSIGNED NULL,
+  `position` VARCHAR(255) NULL,
+  `state` TINYINT(3) NOT NULL DEFAULT '1',
+  `created` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `created_by` BIGINT NOT NULL DEFAULT '0',
+  `modified` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `modified_by` BIGINT NOT NULL DEFAULT '0',
+  `users_id` BIGINT NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  INDEX `partner_idx` (`partner_id` ASC),
+  INDEX `state_idx` (`state` ASC),
+  INDEX `user_idx` (`users_id` ASC),
+  UNIQUE INDEX `users_id_UNIQUE` (`users_id` ASC),
+  CONSTRAINT `fk_person_partner_id`
+    FOREIGN KEY (`partner_id`)
+    REFERENCES `#__anodos_partner` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `#__anodos_person_info_type` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  `alias` VARCHAR(255) NOT NULL,
+  `icon` VARCHAR(255) NULL,
+  `max` INT NOT NULL DEFAULT '0',
+  `state` TINYINT(3) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `alias_UNIQUE` (`alias` ASC))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (1, 'Имя, отчество, фамилия', 'name', 'user', 1, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (2, 'Организация', 'company', 'group', 1, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (3, 'Должность', 'position', 'briefcase', 1, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (4, 'Телефон', 'phone', 'phone', 0, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (5, 'Мобильный телефон', 'mobile', 'mobile', 0, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (6, 'Электронная почта', 'email', 'envelope-o', 0, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (7, 'Skype', 'skype', 'skype', 0, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (8, 'ICQ', 'icq', 'info', 0, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (9, 'VK', 'vk', 'vk', 0, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (10, 'Facebook', 'facebook', 'facebook', 0, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (11, 'Веб-сайт', 'www', 'link', 0, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (12, 'Рабочий адрес', 'work-adress', 'building-o', 0, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (13, 'Домашний адрес', 'home-adress', 'home', 0, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (14, 'Дата рождения', 'birthday', 'calendar', 1, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (15, 'Профессиональный праздник', 'holiday', 'calendar-o', 0, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (16, 'Комментарий', 'comment', 'comment-o', 0, 1);
+
+CREATE TABLE IF NOT EXISTS `#__anodos_person_info` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `person_id` BIGINT UNSIGNED NOT NULL,
+  `type_id` BIGINT UNSIGNED NOT NULL,
+  `content` VARCHAR(255) NOT NULL,
+  `can_remove` INT NOT NULL DEFAULT '1',
+  `ordering` DECIMAL NULL,
+  `state` TINYINT(3) NOT NULL DEFAULT '1',
+  `created` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `created_by` BIGINT NOT NULL DEFAULT '0',
+  `modified` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `modified_by` BIGINT NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  INDEX `person_idx` (`person_id` ASC),
+  INDEX `type_idx` (`type_id` ASC),
+  INDEX `state_idx` (`state` ASC),
+  CONSTRAINT `fk_person_info_person_id`
+    FOREIGN KEY (`person_id`)
+    REFERENCES `#__anodos_person` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_person_info_person_info_type_id`
+    FOREIGN KEY (`type_id`)
+    REFERENCES `#__anodos_person_info_type` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `#__anodos_contract_template` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `contractor_id` BIGINT UNSIGNED NULL COMMENT 'Контрагент',
+  `name` VARCHAR(255) NOT NULL,
+  `alias` VARCHAR(255) NOT NULL,
+  `frame` INT NOT NULL COMMENT 'Рамочный',
+  `prepayment` DECIMAL(5,2) NOT NULL DEFAULT '100.00' COMMENT 'Процент предоплаты',
+  `delay` INT NOT NULL DEFAULT '0' COMMENT 'Отсрочка',
+  `description` TEXT NULL COMMENT 'Основные положения договора',
+  `state` TINYINT(3) NOT NULL DEFAULT '1',
+  `created` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `created_by` BIGINT NOT NULL DEFAULT '0',
+  `modified` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `modified_by` BIGINT NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  INDEX `contractor_idx` (`contractor_id` ASC),
+  INDEX `state_idx` (`state` ASC),
+  CONSTRAINT `fk_contract_template_contractor_id`
+    FOREIGN KEY (`contractor_id`)
+    REFERENCES `#__anodos_contractor` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `#__anodos_contract` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `contractor_id` BIGINT UNSIGNED NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
+  `alias` VARCHAR(255) NOT NULL,
+  `frame` INT NOT NULL COMMENT 'Рамочный',
+  `prepayment` DECIMAL(5,2) NOT NULL DEFAULT '100.00',
+  `delay` INT NOT NULL DEFAULT '0',
+  `description` TEXT NULL COMMENT 'Основные положения договора',
+  `state` TINYINT(3) NOT NULL DEFAULT '1',
+  `signed_of_contractor` INT NOT NULL DEFAULT '0',
+  `signed` INT NOT NULL DEFAULT '0',
+  `created` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `created_by` BIGINT NOT NULL DEFAULT '0',
+  `modified` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `modified_by` BIGINT NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  INDEX `contractor_idx` (`contractor_id` ASC),
+  INDEX `state_idx` (`state` ASC),
+  CONSTRAINT `fk_anodos_contract_contractor_id`
+    FOREIGN KEY (`contractor_id`)
+    REFERENCES `#__anodos_contractor` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `#__anodos_contract_specification` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `contract_id` BIGINT UNSIGNED NOT NULL COMMENT 'Договор',
+  `order_id` BIGINT UNSIGNED NULL,
+  `name` VARCHAR(255) NOT NULL,
+  `alias` VARCHAR(255) NOT NULL,
+  `prepayment` DECIMAL(5,2) NOT NULL COMMENT 'Процент предоплаты',
+  `delay` INT NOT NULL COMMENT 'Отсрочка',
+  `description` TEXT NULL COMMENT 'Основные положения спецификации',
+  `state` TINYINT(3) NOT NULL DEFAULT '1',
+  `signed_of_contractor` INT NOT NULL DEFAULT '0',
+  `signed` INT NOT NULL DEFAULT '0',
+  `created` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `created_by` BIGINT NOT NULL DEFAULT '0',
+  `modified` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `modified_by` BIGINT NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  INDEX `contract_idx` (`contract_id` ASC),
+  INDEX `order_idx` (`order_id` ASC),
+  INDEX `state_idx` (`state` ASC),
+  CONSTRAINT `fk_contract_specification_contract_id`
+    FOREIGN KEY (`contract_id`)
+    REFERENCES `#__anodos_contract` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_contract_specification_order_id`
+    FOREIGN KEY (`order_id`)
+    REFERENCES `#__anodos_order` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `#__anodos_task` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  `alias` VARCHAR(255) NOT NULL,
+  `description` TEXT NOT NULL,
+  `deadline` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `executor_id` BIGINT NOT NULL DEFAULT '0' COMMENT 'Исполнитель задачи',
+  `executor_role` VARCHAR(255) NOT NULL,
+  `manager_id` BIGINT NOT NULL DEFAULT '0' COMMENT 'Ответственный за выполнение задачи',
+  `manager_role` VARCHAR(255) NOT NULL,
+  `state` INT NOT NULL DEFAULT '1',
+  `complited` INT NOT NULL DEFAULT '0',
+  `tested` INT NOT NULL DEFAULT '0',
+  `created` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `created_by` BIGINT NOT NULL DEFAULT '0',
+  `modified` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `modified_by` BIGINT NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  INDEX `state_idx` (`state` ASC),
+  INDEX `complited_idx` (`complited` ASC),
+  INDEX `tested_idx` (`tested` ASC))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `#__anodos_task_to_contract_template` (
+  `task_id` BIGINT UNSIGNED NOT NULL,
+  `contract_template_id` BIGINT UNSIGNED NOT NULL,
+  PRIMARY KEY (`task_id`, `contract_template_id`),
+  INDEX `contract_template_idx` (`contract_template_id` ASC),
+  INDEX `task_idx` (`task_id` ASC),
+  CONSTRAINT `fk_task_to_contract_template_task_id`
+    FOREIGN KEY (`task_id`)
+    REFERENCES `#__anodos_task` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_task_to_contract_template_template_id`
+    FOREIGN KEY (`contract_template_id`)
+    REFERENCES `#__anodos_contract_template` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `#__anodos_task_to_contract` (
+  `task_id` BIGINT UNSIGNED NOT NULL,
+  `contract_id` BIGINT UNSIGNED NOT NULL,
+  PRIMARY KEY (`task_id`, `contract_id`),
+  INDEX `contract_idx` (`contract_id` ASC),
+  INDEX `task_idx` (`task_id` ASC),
+  CONSTRAINT `fk_task_to_contract_task_id`
+    FOREIGN KEY (`task_id`)
+    REFERENCES `#__anodos_task` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_task_to_contract_contract_id`
+    FOREIGN KEY (`contract_id`)
+    REFERENCES `#__anodos_contract` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `#__anodos_task_to_order` (
+  `task_id` BIGINT UNSIGNED NOT NULL,
+  `order_id` BIGINT UNSIGNED NOT NULL,
+  PRIMARY KEY (`task_id`, `order_id`),
+  INDEX `order_idx` (`order_id` ASC),
+  INDEX `task_idx` (`task_id` ASC),
+  CONSTRAINT `fk_task_to_order_task_id`
+    FOREIGN KEY (`task_id`)
+    REFERENCES `#__anodos_task` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_task_to_order_order_id`
+    FOREIGN KEY (`order_id`)
+    REFERENCES `#__anodos_order` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `#__anodos_task_to_contract_specification` (
+  `task_id` BIGINT UNSIGNED NOT NULL,
+  `specification_id` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`task_id`, `specification_id`),
+  INDEX `specification_idx` (`specification_id` ASC),
+  INDEX `task_idx` (`task_id` ASC),
+  CONSTRAINT `fk_task_to_contract_specification_task_id`
+    FOREIGN KEY (`task_id`)
+    REFERENCES `#__anodos_task` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_task_to_contract_specification_specification_id`
+    FOREIGN KEY (`specification_id`)
+    REFERENCES `#__anodos_contract_specification` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;

@@ -182,8 +182,9 @@ $doc->addStyleSheet($this->baseurl.'/components/com_anodos/css/style.css');
 		<h1>Добавить в заказ?</h1>
 		<div id="add-to-order-product-desc" class="uk-panel uk-panel-box"></div>
 		<hr/>
+		<?php if ($canDo->get('core.sale')) : ?>
 		<div class="uk-form">
-			<?php if ($canDo->get('core.manage')) : ?>
+			<?php if ($canDo->get('core.sale')) : ?>
 			<fieldset>
 				<select id="add-to-oder-client" class="uk-width-1-2">
 					<option value="0">Новый заказчик</option>
@@ -224,6 +225,12 @@ $doc->addStyleSheet($this->baseurl.'/components/com_anodos/css/style.css');
 				<button class="uk-button uk-modal-close">Отменить</button>
 			</fieldset>
 		</div>
+		<?php else : ?>
+		<div class="uk-alert uk-alert-large" >
+			<h2>Необходима регистрация</h2>
+			<p>Создание заказов доступно только зарегистрированным пользователям: пожалуйста, авторизуйтесь или <a href="/component/users/?view=registration">зарегистрируйтесь</a>.</p>
+		</div>
+		<?php endif; ?>
 		<hr />
 		<div id="add-to-order-messages"></div>
 		<table id="add-to-order-products" class="uk-table hidden">

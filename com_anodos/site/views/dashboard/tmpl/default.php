@@ -14,40 +14,38 @@ if ($canDo->get('core.sale')) {
 $doc->addStyleSheet($this->baseurl.'/components/com_anodos/css/style.css');
 ?>
 <div class="uk-grid">
-	<div class="uk-width-1-1">
-		<div class="uk-form">
-			<?php if ($canDo->get('core.sale')) : ?>
-			<select id="client-selected">
-				<?php $selected = ($this->client = 0) ? ' selected' : ''; ?>
-				<option value="0"<?php echo $selected; ?>>Все заказчики</option>
-				<?php foreach($this->clients as $j => $client):
-					$selected = $client->id == $this->client ? ' selected' : '';
-					echo "<option value=\"{$client->id}\"{$selected}>{$client->name}</option>";
-				endforeach; ?>
-			</select>
-			<?php else : ?>
-			<input id="client-selected" type="hidden" value="0"/>
+	<div class="uk-width-large-3-4">
+		<div class="uk-panel uk-panel-box">
+			<?php if ($this->tasks) : ?>
+			 <h3>Задачи</h3>
 			<?php endif; ?>
-			<select id="contractor-selected">
-				<?php $selected = ($this->contractor = 0) ? ' selected' : ''; ?>
-				<option value="0"<?php echo $selected; ?>>Все юридические лица</option>
-				<?php foreach($this->contractors as $j => $contractor):
-					$selected = $contractor->id == $this->contractor ? ' selected' : '';
-					echo "<option value=\"{$contractor->id}\"{$selected}>{$contractor->name}</option>";
-				endforeach; ?>
-			</select>
-			<select id="stage-selected">
-				<?php $selected = ($this->stage = 0) ? ' selected' : ''; ?>
-				<option value="0"<?php echo $selected; ?>>Любое состояние заказа</option>
-				<?php foreach($this->stages as $j => $stage):
-					$selected = $stage->id == $this->stage ? ' selected' : '';
-					echo "<option value=\"{$stage->id}\"{$selected}>{$stage->name}</option>";
-				endforeach; ?>
-			</select>
-			<input id="name-filtered" type="text" placeholder="Фильтр по названию" value="<?php echo $this->name; ?>"/>
-			<button id="orders-show" class="uk-button">
-				<i class="uk-icon-list"></i>&nbsp;<span id="vendor-selected">Показать</span>
-			</button>
+		</div>
+		<div class="uk-panel uk-panel-box">
+			<?php if ($this->orders) : ?>
+			<h3>Активные заказы</h3>
+			<?php endif; ?>
+		</div>
+	</div>
+	<div class="uk-width-large-1-4">
+		<div class="uk-panel uk-panel-box">
+			<?php if ($this->person) : ?>
+			<h3>Пользователь</h3>
+			<?php endif; ?>
+		</div>
+		<div class="uk-panel uk-panel-box">
+			<?php if ($this->manager) : ?>
+			<h3>Менеджер</h3>
+			<?php endif; ?>
+		</div>
+		<div class="uk-panel uk-panel-box">
+			<?php if ($this->partners) : ?>
+			<h3>Партнеры</h3>
+			<?php endif; ?>
+		</div>
+		<div class="uk-panel uk-panel-box">
+			<?php if ($this->contractors) : ?>
+			<h3>Юридические лица</h3>
+			<?php endif; ?>
 		</div>
 	</div>
 </div>
