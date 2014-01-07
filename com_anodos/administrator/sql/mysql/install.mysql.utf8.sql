@@ -598,28 +598,29 @@ CREATE TABLE IF NOT EXISTS `#__anodos_person_info_type` (
   `alias` VARCHAR(255) NOT NULL,
   `icon` VARCHAR(255) NULL,
   `max` INT NOT NULL DEFAULT '0',
+  `ordering` BIGINT UNSIGNED NOT NULL DEFAULT '0',
   `state` TINYINT(3) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE INDEX `alias_UNIQUE` (`alias` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
-INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (1, 'Имя, отчество, фамилия', 'name', 'user', 1, 1);
-INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (2, 'Организация', 'company', 'group', 1, 1);
-INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (3, 'Должность', 'position', 'briefcase', 1, 1);
-INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (4, 'Телефон', 'phone', 'phone', 0, 1);
-INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (5, 'Мобильный телефон', 'mobile', 'mobile', 0, 1);
-INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (6, 'Электронная почта', 'email', 'envelope-o', 0, 1);
-INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (7, 'Skype', 'skype', 'skype', 0, 1);
-INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (8, 'ICQ', 'icq', 'info', 0, 1);
-INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (9, 'VK', 'vk', 'vk', 0, 1);
-INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (10, 'Facebook', 'facebook', 'facebook', 0, 1);
-INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (11, 'Веб-сайт', 'www', 'link', 0, 1);
-INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (12, 'Рабочий адрес', 'work-adress', 'building-o', 0, 1);
-INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (13, 'Домашний адрес', 'home-adress', 'home', 0, 1);
-INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (14, 'Дата рождения', 'birthday', 'calendar', 1, 1);
-INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (15, 'Профессиональный праздник', 'holiday', 'calendar-o', 0, 1);
-INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `state`) VALUES (16, 'Комментарий', 'comment', 'comment-o', 0, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `ordering`, `state`) VALUES (1, 'Имя, отчество, фамилия', 'name', 'user', 1, 1, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `ordering`, `state`) VALUES (2, 'Организация', 'company', 'group', 1, 2, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `ordering`, `state`) VALUES (3, 'Должность', 'position', 'briefcase', 1, 3, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `ordering`, `state`) VALUES (4, 'Телефон', 'phone', 'phone', 0, 4, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `ordering`, `state`) VALUES (5, 'Мобильный телефон', 'mobile', 'mobile', 0, 5, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `ordering`, `state`) VALUES (6, 'Электронная почта', 'email', 'envelope-o', 0, 6, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `ordering`, `state`) VALUES (7, 'Skype', 'skype', 'skype', 0, 7, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `ordering`, `state`) VALUES (8, 'ICQ', 'icq', 'info', 0, 8, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `ordering`, `state`) VALUES (9, 'VK', 'vk', 'vk', 0, 9, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `ordering`, `state`) VALUES (10, 'Facebook', 'facebook', 'facebook', 0, 10, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `ordering`, `state`) VALUES (11, 'Веб-сайт', 'www', 'link', 0, 11, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `ordering`, `state`) VALUES (12, 'Рабочий адрес', 'work-adress', 'building-o', 0, 12, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `ordering`, `state`) VALUES (13, 'Домашний адрес', 'home-adress', 'home', 0, 13, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `ordering`, `state`) VALUES (14, 'Дата рождения', 'birthday', 'calendar', 1, 14, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `ordering`, `state`) VALUES (15, 'Профессиональный праздник', 'holiday', 'calendar-o', 0, 15, 1);
+INSERT INTO `#__anodos_person_info_type` (`id`, `name`, `alias`, `icon`, `max`, `ordering`, `state`) VALUES (16, 'Комментарий', 'comment', 'comment-o', 0, 16, 1);
 
 CREATE TABLE IF NOT EXISTS `#__anodos_person_info` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
