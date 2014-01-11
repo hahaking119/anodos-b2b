@@ -42,16 +42,16 @@ class AnodosViewUpdaters extends JViewLegacy {
 		$formPath = JPATH_COMPONENT_ADMINISTRATOR.'/views/updater';
 		if (file_exists($formPath)) {
 
-			if ($canDo->get('core.create')) {
+			if ($canDo->get('core.sale.manager')) {
 				JToolBarHelper::addNew('updater.add','JTOOLBAR_NEW');
 			}
 
-			if ($canDo->get('core.edit') && isset($this->items[0])) {
+			if ($canDo->get('core.sale.manager') && isset($this->items[0])) {
 				JToolBarHelper::editList('updater.edit','JTOOLBAR_EDIT');
 			}
 		}
 
-		if ($canDo->get('core.edit.state')) {
+		if ($canDo->get('core.sale.manager')) {
 
 			if (isset($this->items[0]->state)) {
 				JToolBarHelper::divider();
@@ -82,11 +82,11 @@ class AnodosViewUpdaters extends JViewLegacy {
 			}
 		}
 
-		if ($canDo->get('core.admin')) {
+		if ($canDo->get('core.sale.manager')) {
 			JToolBarHelper::preferences('com_anodos');
 		}
 
-		if ($canDo->get('core.create')) {
+		if ($canDo->get('core.sale.managere')) {
 			JToolBarHelper::divider();
 			JToolBarHelper::apply('updaters.update', 'COM_ANODOS_UPDATE', true);
 		}

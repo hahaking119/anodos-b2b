@@ -1,8 +1,16 @@
+DROP TABLE IF EXISTS `#__anodos_file_to_order`;
+DROP TABLE IF EXISTS `#__anodos_file_to_task`;
+DROP TABLE IF EXISTS `#__anodos_file_to_contract_specification`;
+DROP TABLE IF EXISTS `#__anodos_file_to_contract`;
+DROP TABLE IF EXISTS `#__anodos_file_to_contract_template`;
+DROP TABLE IF EXISTS `#__anodos_file`;
+
 DROP TABLE IF EXISTS `#__anodos_task_to_contract_specification`;
 DROP TABLE IF EXISTS `#__anodos_task_to_order`;
 DROP TABLE IF EXISTS `#__anodos_task_to_contract`;
 DROP TABLE IF EXISTS `#__anodos_task_to_contract_template`;
 DROP TABLE IF EXISTS `#__anodos_task`;
+DROP TABLE IF EXISTS `#__anodos_task_stage`;
 
 DROP TABLE IF EXISTS `#__anodos_contract_specification`;
 DROP TABLE IF EXISTS `#__anodos_contract`;

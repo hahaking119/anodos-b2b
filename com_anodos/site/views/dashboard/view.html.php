@@ -6,6 +6,8 @@ jimport('joomla.application.component.view');
 
 class AnodosViewDashboard extends JViewLegacy {
 
+    protected $params;
+
 	protected $person;
 	protected $partner;
 	protected $manager;
@@ -16,11 +18,10 @@ class AnodosViewDashboard extends JViewLegacy {
 
 	protected $orders;
 
-    protected $params;
-
 	public function display($tpl = null) {
 
 		$app = JFactory::getApplication();
+		$this->params = $app->getParams('com_anodos');
 
 		$this->person = $this->get('Person');
 		$this->partner = $this->get('Partner');
@@ -31,8 +32,6 @@ class AnodosViewDashboard extends JViewLegacy {
 		$this->tasks = $this->get('Tasks');
 
 		$this->orders = $this->get('Orders');
-
-		$this->params = $app->getParams('com_anodos');
 
 		if (count($errors = $this->get('Errors'))) {
 			throw new Exception(implode("\n", $errors));

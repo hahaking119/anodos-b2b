@@ -35,7 +35,7 @@ class AnodosViewUpdater extends JViewLegacy {
 		$isNew = $this->item->id == 0;
 		JToolBarHelper::title($isNew ? JText::_('COM_ANODOS_UPDATER_NEW') : JText::_('COM_ANODOS_UPDATER_EDIT'), 'updater.png');
 
-		if ($this->canDo->get('core.create')) {
+		if ($this->canDo->get('core.sale.manager')) {
 			JToolBarHelper::apply('updater.apply', 'JTOOLBAR_APPLY');
 			JToolBarHelper::save('updater.save', 'JTOOLBAR_SAVE');
 			JToolBarHelper::custom('updater.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);

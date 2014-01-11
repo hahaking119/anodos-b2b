@@ -13,103 +13,56 @@ if ($canDo->get('core.sale')) {
 }
 $doc->addStyleSheet($this->baseurl.'/components/com_anodos/css/style.css');
 ?>
-<div class="uk-grid">
-	<div class="uk-width-large-3-4">
-		<div class="uk-panel uk-panel-box">
-			<?php if ($this->tasks) : ?>
-			 <h3>Задачи</h3>
-			<?php endif; ?>
-		</div>
-		<div class="uk-panel uk-panel-box">
-			<?php if ($this->orders) : ?>
-			<h3>Активные заказы</h3>
-			<?php endif; ?>
-		</div>
-	</div>
-	<div class="uk-width-large-1-4">
-		<div class="uk-panel uk-panel-box">
-			<?php if ($this->person) : ?>
-			<h3>Пользователь</h3>
-			<?php endif; ?>
-		</div>
-		<div class="uk-panel uk-panel-box">
-			<?php if ($this->manager) : ?>
-			<h3>Менеджер</h3>
-			<?php endif; ?>
-		</div>
-		<div class="uk-panel uk-panel-box">
-			<?php if ($this->partners) : ?>
-			<h3>Партнеры</h3>
-			<?php endif; ?>
-		</div>
-		<div class="uk-panel uk-panel-box">
-			<?php if ($this->contractors) : ?>
-			<h3>Юридические лица</h3>
-			<?php endif; ?>
-		</div>
-	</div>
-</div>
-
-<?php
-	$col = 0;
-	$lastCategoryId = 0;
-	if (isset($this->orders)) :
-?>
-<div class="uk-grid">
-	<div class="uk-width-1-1">
-		<table id="orders-list" class="uk-table">
-		<thead>
-			<tr>
-				<th class="uk-text-center"><i class="uk-icon-list-ol"></i><?php $col++; ?></th>
-				<?php if ($canDo->get('core.sale')) : ?>
-				<th class="uk-text-center">Партнер</th>
+<article class="uk-article">
+	<h1 class="uk-article-title">B2B-система</h1>
+	<div class="uk-grid">
+		<div class="uk-width-large-3-4 uk-width-medium-2-3">
+			<div class="uk-panel uk-panel-box">
+				<?php if ($this->tasks) : ?>
+				 <h3>Задачи</h3>
 				<?php endif; ?>
-				<th class="uk-text-center">Юридическое лицо</th>
-				<th class="uk-text-center">Название</th>
-				<th class="uk-text-center">Стоимость</th>
-				<th class="uk-text-center">Статус</th>
-			</tr>
-		</thead>
-		<tbody>
-			<?php foreach($this->orders as $i => $order): ?>
-			<tr>
-				<td class="uk-text-center"><?php echo $i+1; ?></td>
-				<?php if ($canDo->get('core.sale')) : ?>
-				<td class="uk-text-left"><?php
-					if (isset($order->partner_name)) {
-						echo $order->partner_name;
-					} elseif (isset($order->partner_name_draft)) {
-						echo $order->partner_name_draft;
-						echo '<span class="uk-badge uk-badge-warning">Черновик</span>';
-					} else {
-						echo 'Не указан';
-					}
-				?></td>
+			</div>
+			<div class="uk-panel uk-panel-box">
+				<?php if ($this->orders) : ?>
+				<h3>Активные заказы</h3>
 				<?php endif; ?>
-				<td class="uk-text-left"><?php
-					if (isset($order->contractor_name)) {
-						echo $order->contractor_name;
-					} elseif (isset($order->contractor_name_draft)) {
-						echo $order->contractor_name_draft;
-						echo '<span class="uk-badge uk-badge-warning">Черновик</span>';
-					} else {
-						echo 'Не указан';
-					}
-				?></td>
-				<td class="uk-text-left"><?php echo $order->order_name; ?></td>
-				<td class="uk-text-right"><?php echo $order->order_sum; ?>&nbsp;р.</td>
-				<td class="uk-text-center">
-					<button
-						class="uk-button"
-						data-uk-modal="{target:'#editStageModal'}"
-						data-task="edit-stage"
-						data-order-id="<?php echo $order->order_id; ?>">
-						<i class="uk-icon-edit"></i> <?php echo $order->order_stage; ?></button>
-				</td>
-			</tr>
-		<?php endforeach; ?>
-		</tbody>
-		</table>
+			</div>
+		</div>
+		<div class="uk-width-large-1-4 uk-width-medium-1-3">
+			<div class="uk-panel uk-panel-box">
+				<?php if ($this->person) : ?>
+				<div class="uk-form">
+					<?php foreach($this->person->info as $i => $info): ?>
+					<div class="tm-form-icon uk-form-icon">
+						<i class="uk-icon-<?php echo $info->type_icon ?>"></i>
+						<input
+							type="text"
+							placeholder="<?php echo $info->name ?>"
+							data-info-id="<?php echo $info->id ?>"
+							value="<?php echo $info->content ?>"
+						/>
+					</div>
+					<?php endforeach; ?>
+				</div>
+				<?php else: ?>
+					<p>Не желаете ли авторизоваться или <a href="<?php echo $this->baseurl.'/component/users/?view=registration'?>">​​зарегистрироваться</a>?​</p>
+				<?php endif; ?>
+			</div>
+			<div class="uk-panel uk-panel-box">
+				<?php if ($this->manager) : ?>
+				<h3>Менеджер</h3>
+				<?php endif; ?>
+			</div>
+			<div class="uk-panel uk-panel-box">
+				<?php if ($this->partners) : ?>
+				<h3>Партнеры</h3>
+				<?php endif; ?>
+			</div>
+			<div class="uk-panel uk-panel-box">
+				<?php if ($this->contractors) : ?>
+				<h3>Юридические лица</h3>
+				<?php endif; ?>
+			</div>
+		</div>
 	</div>
-</div>
-<?php endif; ?>
+</article>

@@ -8,15 +8,12 @@ $canDo = AnodosHelper::getActions();
 // Подключаем скрипты и стили
 $doc = JFactory::getDocument();
 $doc->addScript($this->baseurl.'/components/com_anodos/js/products.js', 'text/javascript', true);
-if ($canDo->get('core.admin')) {
-	$doc->addScript($this->baseurl.'/components/com_anodos/js/products-admin.js', 'text/javascript', true);
-}
 $doc->addStyleSheet($this->baseurl.'/components/com_anodos/css/style.css');
 ?>
 <div class="uk-grid">
 	<div class="uk-width-1-2">
 		<div class="uk-button-group">
-			<button class="uk-button" data-uk-modal="{target:'#selectCategoryModal'}"><i class="uk-icon-folder-close-alt"></i>&nbsp;<span id="category-selected"><?php
+			<button class="uk-button" data-uk-modal="{target:'#selectCategoryModal'}"><i class="uk-icon-folder-o"></i>&nbsp;<span id="category-selected"><?php
 				if ('0' == $this->category) {
 					echo JText::_('COM_ANODOS_SELECT_CATEGORY');
 				} elseif ('all' === $this->category) {
@@ -25,7 +22,7 @@ $doc->addStyleSheet($this->baseurl.'/components/com_anodos/css/style.css');
 					echo $this->categoryName;
 				}
 				?></span></button>
-			<button class="uk-button" data-uk-modal="{target:'#selectVendorModal'}"><i class="uk-icon-building"></i>&nbsp;<span id="vendor-selected"><?php
+			<button class="uk-button" data-uk-modal="{target:'#selectVendorModal'}"><i class="uk-icon-building-o"></i>&nbsp;<span id="vendor-selected"><?php
 				if (('all' === $this->vendor) or ('0' == $this->vendor)) {
 					echo JText::_('COM_ANODOS_ALL_VENDORS');
 				} else {
@@ -80,7 +77,7 @@ $doc->addStyleSheet($this->baseurl.'/components/com_anodos/css/style.css');
 				<th><i class="uk-icon-shopping-cart"></i><?php $col++; ?></th>
 				<th><?php echo JText::_('COM_ANODOS_NAME').' ['.JText::_('COM_ANODOS_ARTICLE').']'; $col++; ?></th>
 				<th><?php echo JText::_('COM_ANODOS_VENDOR'); $col++; ?></th>
-				<?php if ($canDo->get('core.manage')) : ?>
+				<?php if ($canDo->get('core.sale')) : ?>
 				<th colspan="2"><?php echo JText::_('COM_ANODOS_PRICE_IN_OUT'); $col++; $col++; ?></th>
 				<?php else : ?>
 				<th><?php echo JText::_('COM_ANODOS_PRICE'); $col++; ?></th>
@@ -96,9 +93,9 @@ $doc->addStyleSheet($this->baseurl.'/components/com_anodos/css/style.css');
 			</tr>
 			<?php endif; $lastCategoryId = $product->category_id; ?>
 			<tr>
-				<td class="text-center"><?php echo $i+1; ?></td>
+				<td class="uk-text-center"><?php echo $i+1; ?></td>
 				<?php if ($canDo->get('core.admin')) : ?>
-				<td class="uk-form">
+				<td class="uk-text-center uk-form">
 					<div class="uk-button-group">
 					<button
 						class="uk-button uk-button-mini rename-product"
@@ -110,11 +107,11 @@ $doc->addStyleSheet($this->baseurl.'/components/com_anodos/css/style.css');
 						data-uk-modal="{target:'#moveProductModal'}"
 						data-product-id="<?php echo $product->product_id; ?>"
 						data-category-id="<?php echo $product->category_id; ?>">
-						<i class="uk-icon-folder-open-alt"></i></button>
+						<i class="uk-icon-folder-open-o"></i></button>
 					</div>
 				</td>
 				<?php endif; ?>
-				<td class="text-center">
+				<td class="uk-text-center">
 					<button
 						class="uk-button uk-button-mini add-to-order"
 						data-uk-modal="{target:'#addToOrderModal'}"
@@ -122,26 +119,26 @@ $doc->addStyleSheet($this->baseurl.'/components/com_anodos/css/style.css');
 						<i class="uk-icon-shopping-cart"></i>
 					</button>
 				</td>
-				<td class="text-left name"><span id="product-name-<?php echo $product->product_id; ?>"><?php echo $product->product_name; ?></span><span><?php echo ' ['.$product->product_article.']'; ?></span></td>
-				<td class="text-center"><?php echo $product->vendor_name; ?></td>
-				<?php if ($canDo->get('core.edit')) : ?>
-				<td class="text-right td-price" data-uk-tooltip title="<?php echo $product->distributor_name; ?>">
+				<td class="uk-text-left"><span id="product-name-<?php echo $product->product_id; ?>"><?php echo $product->product_name; ?></span><span><?php echo ' ['.$product->product_article.']'; ?></span></td>
+				<td class="uk-text-center"><?php echo $product->vendor_name; ?></td>
+				<?php if ($canDo->get('core.sale')) : ?>
+				<td class="uk-text-right td-price" data-uk-tooltip title="<?php echo $product->distributor_name; ?>">
 					<?php echo $product->price_in; ?> <?php echo $product->currency_name; ?>
 				</td>
-				<td class="text-right td-price">
-					<?php echo $product->price_rub_out; ?> р.
+				<td class="uk-text-right td-price">
+					<?php echo $product->price_rub_out; ?> <i class="uk-icon-rub"></i>
 				</td>
 				<?php else : ?>
-				<td class="text-right td-price">
-					<?php echo $product->price_rub_out; ?> р.
+				<td class="uk-text-right td-price">
+					<?php echo $product->price_rub_out; ?> <i class="uk-icon-rub"></i>
 				</td>
 				<?php endif; ?>
-				<?php if ($canDo->get('core.edit')) : ?>
-				<td class="uk-form text-right" data-uk-tooltip title="<?php echo $product->stock_name; ?>">
+				<?php if ($canDo->get('core.sale')) : ?>
+				<td class="uk-text-right td-price" data-uk-tooltip title="<?php echo $product->stock_name; ?>">
 					<?php echo $product->quantity; ?>
 				</td>
 				<?php else : ?>
-				<td class="uk-form text-right">
+				<td class="uk-text-right">
 					<?php echo $product->quantity; ?>
 				</td>
 				<?php endif; ?>

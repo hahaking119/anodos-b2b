@@ -42,16 +42,16 @@ class AnodosViewPartners extends JViewLegacy {
 		$formPath = JPATH_COMPONENT_ADMINISTRATOR.'/views/partner';
 		if (file_exists($formPath)) {
 
-			if ($canDo->get('core.create')) {
+			if ($canDo->get('core.sale')) {
 				JToolBarHelper::addNew('partner.add','JTOOLBAR_NEW');
 			}
 
-			if ($canDo->get('core.edit') && isset($this->items[0])) {
+			if ($canDo->get('core.sale') && isset($this->items[0])) {
 				JToolBarHelper::editList('partner.edit','JTOOLBAR_EDIT');
 			}
 		}
 
-		if ($canDo->get('core.edit.state')) {
+		if ($canDo->get('core.sale')) {
 
 			if (isset($this->items[0]->state)) {
 				JToolBarHelper::divider();
@@ -76,7 +76,7 @@ class AnodosViewPartners extends JViewLegacy {
 			if ($state->get('filter.state') == -2 && $canDo->get('core.delete')) {
 				JToolBarHelper::deleteList('', 'partners.delete','JTOOLBAR_EMPTY_TRASH');
 				JToolBarHelper::divider();
-			} else if ($canDo->get('core.edit.state')) {
+			} else if ($canDo->get('core.sale')) {
 				JToolBarHelper::trash('partners.trash','JTOOLBAR_TRASH');
 				JToolBarHelper::divider();
 			}

@@ -1,8 +1,16 @@
+DROP TABLE IF EXISTS `#__anodos_file_to_order`;
+DROP TABLE IF EXISTS `#__anodos_file_to_task`;
+DROP TABLE IF EXISTS `#__anodos_file_to_contract_specification`;
+DROP TABLE IF EXISTS `#__anodos_file_to_contract`;
+DROP TABLE IF EXISTS `#__anodos_file_to_contract_template`;
+DROP TABLE IF EXISTS `#__anodos_file`;
+
 DROP TABLE IF EXISTS `#__anodos_task_to_contract_specification`;
 DROP TABLE IF EXISTS `#__anodos_task_to_order`;
 DROP TABLE IF EXISTS `#__anodos_task_to_contract`;
 DROP TABLE IF EXISTS `#__anodos_task_to_contract_template`;
 DROP TABLE IF EXISTS `#__anodos_task`;
+DROP TABLE IF EXISTS `#__anodos_task_stage`;
 
 DROP TABLE IF EXISTS `#__anodos_contract_specification`;
 DROP TABLE IF EXISTS `#__anodos_contract`;
@@ -578,12 +586,12 @@ CREATE TABLE IF NOT EXISTS `#__anodos_person` (
   `created_by` BIGINT NOT NULL DEFAULT '0',
   `modified` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
   `modified_by` BIGINT NOT NULL DEFAULT '0',
-  `users_id` BIGINT NOT NULL DEFAULT '0',
+  `user_id` BIGINT NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   INDEX `partner_idx` (`partner_id` ASC),
   INDEX `state_idx` (`state` ASC),
-  INDEX `user_idx` (`users_id` ASC),
-  UNIQUE INDEX `users_id_UNIQUE` (`users_id` ASC),
+  INDEX `user_idx` (`user_id` ASC),
+  UNIQUE INDEX `user_id_UNIQUE` (`user_id` ASC),
   CONSTRAINT `fk_person_partner_id`
     FOREIGN KEY (`partner_id`)
     REFERENCES `#__anodos_partner` (`id`)
@@ -736,6 +744,24 @@ CREATE TABLE IF NOT EXISTS `#__anodos_contract_specification` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
+
+CREATE TABLE IF NOT EXISTS `#__anodos_task_stage` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  `alias` VARCHAR(255) NOT NULL,
+  `ordering` INT UNSIGNED NOT NULL DEFAULT '0',
+  `state` INT NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+INSERT INTO `#__anodos_task_stage` (`id`, `name`, `alias`, `ordering`, `state`) VALUES (1, 'To Do', 'to-do', 1, 1);
+INSERT INTO `#__anodos_task_stage` (`id`, `name`, `alias`, `ordering`, `state`) VALUES (2, 'In Progress', 'in-progress', 2, 1);
+INSERT INTO `#__anodos_task_stage` (`id`, `name`, `alias`, `ordering`, `state`) VALUES (3, 'On Review', 'on-review', 3, 1);
+INSERT INTO `#__anodos_task_stage` (`id`, `name`, `alias`, `ordering`, `state`) VALUES (4, 'Commited', 'commited', 4, 1);
+INSERT INTO `#__anodos_task_stage` (`id`, `name`, `alias`, `ordering`, `state`) VALUES (5, 'Testing', 'testing', 5, 1);
+INSERT INTO `#__anodos_task_stage` (`id`, `name`, `alias`, `ordering`, `state`) VALUES (6, 'Done', 'done', 6, 1);
+
 CREATE TABLE IF NOT EXISTS `#__anodos_task` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
@@ -746,17 +772,20 @@ CREATE TABLE IF NOT EXISTS `#__anodos_task` (
   `executor_role` VARCHAR(255) NOT NULL,
   `manager_id` BIGINT NOT NULL DEFAULT '0' COMMENT 'Ответственный за выполнение задачи',
   `manager_role` VARCHAR(255) NOT NULL,
+  `stage_id` INT UNSIGNED NOT NULL DEFAULT '1',
   `state` INT NOT NULL DEFAULT '1',
-  `complited` INT NOT NULL DEFAULT '0',
-  `tested` INT NOT NULL DEFAULT '0',
   `created` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
   `created_by` BIGINT NOT NULL DEFAULT '0',
   `modified` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
   `modified_by` BIGINT NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   INDEX `state_idx` (`state` ASC),
-  INDEX `complited_idx` (`complited` ASC),
-  INDEX `tested_idx` (`tested` ASC))
+  INDEX `stage_idx` (`stage_id` ASC),
+  CONSTRAINT `fk_anodos_task_stage_id`
+    FOREIGN KEY (`stage_id`)
+    REFERENCES `#__anodos_task_stage` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
@@ -831,6 +860,120 @@ CREATE TABLE IF NOT EXISTS `#__anodos_task_to_contract_specification` (
   CONSTRAINT `fk_task_to_contract_specification_specification_id`
     FOREIGN KEY (`specification_id`)
     REFERENCES `#__anodos_contract_specification` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+CREATE TABLE IF NOT EXISTS `#__anodos_file` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  `alias` VARCHAR(255) NOT NULL,
+  `type` VARCHAR(255) NOT NULL,
+  `url` TEXT NOT NULL,
+  `ordering` BIGINT UNSIGNED NOT NULL DEFAULT '0',
+  `description` TEXT NULL,
+  `state` INT NOT NULL DEFAULT '0',
+  `created` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `created_by` BIGINT NOT NULL DEFAULT '0',
+  `modified` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `modified_by` BIGINT NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  INDEX `state_idx` (`state` ASC))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `#__anodos_file_to_contract_template` (
+  `file_id` BIGINT UNSIGNED NOT NULL,
+  `contract_template_id` BIGINT UNSIGNED NOT NULL,
+  PRIMARY KEY (`file_id`, `contract_template_id`),
+  INDEX `contract_template_idx` (`contract_template_id` ASC),
+  INDEX `file_idx` (`file_id` ASC),
+  CONSTRAINT `fk_file_to_contract_template_file_id`
+    FOREIGN KEY (`file_id`)
+    REFERENCES `#__anodos_file` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_file_to_contract_template_template_id`
+    FOREIGN KEY (`contract_template_id`)
+    REFERENCES `#__anodos_contract_template` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `#__anodos_file_to_contract` (
+  `file_id` BIGINT UNSIGNED NOT NULL,
+  `contract_id` BIGINT UNSIGNED NOT NULL,
+  PRIMARY KEY (`file_id`, `contract_id`),
+  INDEX `contract_idx` (`contract_id` ASC),
+  INDEX `file_idx` (`file_id` ASC),
+  CONSTRAINT `fk_file_to_contract_file_id`
+    FOREIGN KEY (`file_id`)
+    REFERENCES `#__anodos_file` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_file_to_contract_contract_id`
+    FOREIGN KEY (`contract_id`)
+    REFERENCES `#__anodos_contract` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `#__anodos_file_to_contract_specification` (
+  `file_id` BIGINT UNSIGNED NOT NULL,
+  `contract_specification_id` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`file_id`, `contract_specification_id`),
+  INDEX `contract_specification_idx` (`contract_specification_id` ASC),
+  INDEX `file_idx` (`file_id` ASC),
+  CONSTRAINT `fk_file_to_contract_specification_file_id`
+    FOREIGN KEY (`file_id`)
+    REFERENCES `#__anodos_file` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_file_to_contract_specification_specification_id`
+    FOREIGN KEY (`contract_specification_id`)
+    REFERENCES `#__anodos_contract_specification` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `#__anodos_file_to_task` (
+  `file_id` BIGINT UNSIGNED NOT NULL,
+  `task_id` BIGINT UNSIGNED NOT NULL,
+  PRIMARY KEY (`file_id`, `task_id`),
+  INDEX `task_idx` (`task_id` ASC),
+  INDEX `file_idx` (`file_id` ASC),
+  CONSTRAINT `fk_file_to_task_file_id`
+    FOREIGN KEY (`file_id`)
+    REFERENCES `#__anodos_file` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_file_to_task_task_id`
+    FOREIGN KEY (`task_id`)
+    REFERENCES `#__anodos_task` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `#__anodos_file_to_order` (
+  `file_id` BIGINT UNSIGNED NOT NULL,
+  `order_id` BIGINT UNSIGNED NOT NULL,
+  PRIMARY KEY (`file_id`, `order_id`),
+  INDEX `order_idx` (`order_id` ASC),
+  INDEX `file_idx` (`file_id` ASC),
+  CONSTRAINT `fk_file_to_order_file_id`
+    FOREIGN KEY (`file_id`)
+    REFERENCES `#__anodos_file` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_file_to_order_order_id`
+    FOREIGN KEY (`order_id`)
+    REFERENCES `#__anodos_order` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB

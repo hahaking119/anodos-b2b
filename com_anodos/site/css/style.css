@@ -58,3 +58,8 @@
 .td-price {
 	white-space: nowrap;
 }
+
+.tm-form-icon {
+	margin-top: 4px !important;
+	width: 100% !important;
+}

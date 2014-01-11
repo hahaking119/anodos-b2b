@@ -20,17 +20,18 @@ class AnodosViewProducts extends JViewLegacy {
 	protected $vendors;
 
 	protected $products;
+
 	protected $clients;
 	protected $contractors;
 	protected $orders;
+
+	protected $parentCategoryList;
 
 	protected $params;
 
 	public function display($tpl = null) {
 
 		$app = JFactory::getApplication();
-
-		$this->params  = $app->getParams('com_anodos');
 
 		$this->category = $this->get('Category');
 		$this->subcategories = $this->get('SubCategories');
@@ -50,6 +51,8 @@ class AnodosViewProducts extends JViewLegacy {
 		$this->orders = $this->get('Orders');
 
 		$this->parentCategoryList = $this->get('ParentCategoryList');
+
+		$this->params  = $app->getParams('com_anodos');
 
 		if (count($errors = $this->get('Errors'))) {;
 			throw new Exception(implode("\n", $errors));
